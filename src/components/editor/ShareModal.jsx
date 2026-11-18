@@ -3,6 +3,8 @@ import { QRCodeCanvas } from 'qrcode.react';
 import toast from 'react-hot-toast';
 import { Copy, Download, ExternalLink, MessageCircle, Send, Share2 } from 'lucide-react';
 import Modal from '../ui/Modal';
+import DemoNotice from '../ui/DemoNotice';
+import { isDemoMode } from '../../services';
 import { publicUrl } from '../../lib/utils';
 
 // lucide-react no longer ships brand icons.
@@ -62,6 +64,7 @@ export default function ShareModal({ open, onClose, invitation, onPublish }) {
         </div>
       ) : (
         <div className="space-y-6">
+          {isDemoMode && <DemoNotice />}
           <div>
             <label className="label">Invitation link</label>
             <div className="flex gap-2">

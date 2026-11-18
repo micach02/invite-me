@@ -1,7 +1,27 @@
 import { createClient } from '@supabase/supabase-js';
 
-const url = import.meta.env.VITE_SUPABASE_URL;
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+/**
+ * The project URL is just the origin: https://<id>.supabase.co
+ * People often paste the "REST URL" (…/rest/v1/) or another endpoint from the dashboard instead. supabase-js
+ * appends /rest/v1, /auth/v1 … itself, so an extra path makes every request fail with the gateway's
+ * "Invalid path specified in request URL". Keep only the origin.
+ */
+export function normalizeSupabaseUrl(raw) {
+  const value = (raw || '').trim();
+  if (!value) return '';
+  try {
+    const { origin, pathname } = new URL(value);
+    if (pathname && pathname !== '/') {
+      console.warn(`[InviteMe] VITE_SUPABASE_URL contained a path ("${pathname}") — using ${origin}. Use the project URL without a path.`);
+    }
+    return origin;
+  } catch {
+    return value;
+  }
+}
+
+const url = normalizeSupabaseUrl(import.meta.env.VITE_SUPABASE_URL);
+const anonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
 
 /**
  * InviteMe keeps ALL of its tables in its own Postgres schema so it can share a Supabase project

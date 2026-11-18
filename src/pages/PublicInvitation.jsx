@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, EyeOff, Frown } from 'lucide-react';
-import { invitations, rsvps, notifyHostOfRsvp } from '../services';
+import { invitations, rsvps, notifyHostOfRsvp, isDemoMode } from '../services';
 import { useAuth } from '../context/AuthContext';
 import { createDefaultConfig } from '../data/defaultConfig';
 import { deepMerge, publicUrl } from '../lib/utils';
@@ -67,7 +67,9 @@ export default function PublicInvitation({ preview = false }) {
     return (
       <div className="grid min-h-screen place-items-center bg-canvas p-6">
         <EmptyState icon={preview ? EyeOff : Frown} title="Invitation not found"
-          text={error || 'This link may be mistyped, or the host has unpublished the invitation.'}
+          text={error || (isDemoMode
+            ? 'This site is running in demo mode, where invitations are saved only in the browser that created them — so a link or QR code can only be opened on that same device. The host needs to connect Supabase to share invitations with guests.'
+            : 'This link may be mistyped, or the host has unpublished the invitation.')}
           action={<Link to="/" className="btn-primary">Visit InviteMe</Link>} />
       </div>
     );

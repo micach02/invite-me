@@ -10,6 +10,9 @@ const fail = (error, fallback = 'Something went wrong.') => {
   if (error.code === 'PGRST106' || /schema must be one of/i.test(error.message || '')) {
     throw new Error(`Supabase isn't exposing the "${DB_SCHEMA}" schema yet. Add it under Project Settings → API → Exposed schemas.`);
   }
+  if (/invalid path specified in request url/i.test(error.message || '')) {
+    throw new Error('Supabase rejected the request path. Check VITE_SUPABASE_URL is the project URL (https://<id>.supabase.co) with nothing after it.');
+  }
   if (error.code === 'PGRST205' || error.code === '42P01' || /could not find the table|does not exist/i.test(error.message || '')) {
     throw new Error(`InviteMe tables were not found in the "${DB_SCHEMA}" schema. Run supabase/schema.sql in the SQL editor.`);
   }

@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Globe } from 'lucide-react';
 import Modal from '../ui/Modal';
-import { invitations } from '../../services';
+import DemoNotice from '../ui/DemoNotice';
+import { invitations, isDemoMode } from '../../services';
 import { randomSuffix, siteUrl, slugify } from '../../lib/utils';
 
 /** Choose the public URL (slug), verify it's free, then publish. Also used to change the slug later. */
@@ -25,9 +26,10 @@ export default function PublishModal({ open, onClose, invitation, suggestion, on
       </>}
     >
       <form id="publish-form" onSubmit={handleSubmit(submit)} noValidate className="space-y-4">
+        {isDemoMode && <DemoNotice compact />}
         <div className="flex items-start gap-3 rounded-xl bg-brand-50 p-4 text-sm text-ink-soft">
           <Globe size={18} className="mt-0.5 shrink-0 text-brand" />
-          <p>{published ? 'Changing the link breaks the old one — update anywhere you have shared it.' : 'Your invitation will be visible to anyone who has the link. You can unpublish at any time.'}</p>
+          <p>{published ? 'Changing the link breaks the old one — update anywhere you have shared it.' : isDemoMode ? 'Your invitation will be saved in this browser only. You can unpublish at any time.' : 'Your invitation will be visible to anyone who has the link. You can unpublish at any time.'}</p>
         </div>
         <div>
           <label className="label" htmlFor="slug">Invitation link</label>
