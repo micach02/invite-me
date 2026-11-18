@@ -7,7 +7,7 @@ import TemplateThumb from '../invitation/TemplateThumb';
 import Pagination from '../ui/Pagination';
 import { TEMPLATES } from '../../data/templates';
 import { occasionById } from '../../data/constants';
-import { getPath, publicUrl } from '../../lib/utils';
+import { appPath, getPath, publicUrl } from '../../lib/utils';
 
 function Block({ icon: Icon, title, children }) {
   return (
@@ -83,7 +83,7 @@ export default function SettingsPanel({ invitation, config, set, onTemplate, aut
             <div className="flex items-center gap-2 rounded-xl bg-canvas px-3 py-2.5 text-xs"><Link2 size={14} className="shrink-0 text-brand" /><span className="truncate">{publicUrl(invitation.slug)}</span></div>
             <div className="grid grid-cols-2 gap-2">
               <button className="btn-primary btn-sm" onClick={onShare}><Share2 size={13} /> Share & QR</button>
-              <a className="btn-secondary btn-sm" href={`/invitation/${invitation.slug}`} target="_blank" rel="noreferrer"><ExternalLink size={13} /> Open</a>
+              <a className="btn-secondary btn-sm" href={appPath(`/invitation/${invitation.slug}`)} target="_blank" rel="noreferrer"><ExternalLink size={13} /> Open</a>
             </div>
           </>
         ) : <p className="text-xs text-ink-mute">Publish to unlock the link, QR code and Facebook, Messenger and WhatsApp sharing.</p>}

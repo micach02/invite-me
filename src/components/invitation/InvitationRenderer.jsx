@@ -9,7 +9,7 @@ import { Decor, Divider } from './Decor';
 import Countdown from './Countdown';
 import RsvpForm from './RsvpForm';
 import { initials, themeStyle } from './theme';
-import { buildIcs, downloadFile, eventMoment, formatDate, mapsEmbedUrl, mapsLink, timeRange } from '../../lib/utils';
+import { appPath, buildIcs, downloadFile, eventMoment, formatDate, mapsEmbedUrl, mapsLink, timeRange } from '../../lib/utils';
 import dayjs from 'dayjs';
 
 /* ------------------------------------------------------------------ helpers */
@@ -582,7 +582,7 @@ export default function InvitationRenderer({ config, mode = 'public', onRsvp, vi
         <Section key={b.id} id={b.id} alt={i % 2 === 1} mode={mode} bg={images.background} reveal={theme.reveal} {...b.props}>{b.content}</Section>
       ))}
       <footer className="inv-footer">
-        {event.names || event.title} · Made with <a href="/" target="_blank" rel="noopener noreferrer">InviteMe</a>
+        {event.names || event.title} · Made with <a href={appPath('/')} target="_blank" rel="noopener noreferrer">InviteMe</a>
       </footer>
       <Lightbox src={lightbox} onClose={() => setLightbox(null)} />
     </div>

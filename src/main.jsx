@@ -8,7 +8,7 @@ import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || undefined} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
         <App />
         <Toaster position="top-center" toastOptions={{ style: { borderRadius: '999px', background: '#252923', color: '#fff', fontSize: '14px' }, success: { iconTheme: { primary: '#C49B72', secondary: '#fff' } } }} />

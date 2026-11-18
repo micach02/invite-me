@@ -36,6 +36,33 @@ To remove it again: [`supabase/uninstall.sql`](supabase/uninstall.sql).
 > Check the trigger is yours to remove before dropping it, and check any `public.profiles` you already had wasn't given
 > the policy named "profile self".
 
+## Deploy to GitHub Pages
+
+A workflow ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)) builds and publishes the site on every push to `main`.
+It will be served at `https://<owner>.github.io/<repo>/` (for this repo: `https://micach02.github.io/invite-me/`).
+
+**One-time setup**
+1. Repo → **Settings → Pages → Build and deployment → Source: GitHub Actions.**
+2. *(Optional, for a live backend)* Repo → **Settings → Secrets and variables → Actions → Variables** → add
+   `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. The anon key is public by design (it ships in the bundle);
+   row level security protects the data. **If you skip this, the site deploys in browser-storage demo mode**
+   — fine for a showcase, but accounts and published links then exist only in each visitor's own browser.
+3. If you use Supabase: Authentication → URL Configuration → set **Site URL** to the Pages URL and add
+   `https://<owner>.github.io/<repo>/reset-password` and `.../dashboard` to the redirect URLs.
+
+**How it handles a sub-path and refreshes**
+- The workflow builds with `VITE_BASE=/<repo>/`, which sets Vite's `base` and the router `basename`;
+  in-app links use `appPath()` / `siteUrl()` so share URLs, "Preview as guest" and the footer link include it.
+- GitHub Pages cannot rewrite URLs, so the build also emits `404.html` (a copy of `index.html`). Opening or
+  refreshing a deep link such as `/<repo>/templates?page=2` is answered with that file and the router takes over.
+  (Pages sends it with a 404 status — fine for people, but search engines and link-preview crawlers will treat
+  deep links as not found. See the Open Graph note below.)
+- Local development is unchanged (`base` defaults to `/`).
+
+> Your local `.env` is git-ignored and is **not** used by the workflow — CI only sees the repository variables above.
+> Running tests or demos while `.env` has Supabase keys talks to the real project; blank
+> `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` in the shell to force demo mode.
+
 ## Architecture
 
 ```

@@ -7,7 +7,7 @@ import { invitations } from '../services';
 import { useConfig } from '../hooks/useConfig';
 import { useAutosave } from '../hooks/useAutosave';
 import { createDefaultConfig, suggestSlug } from '../data/defaultConfig';
-import { deepMerge, slugify } from '../lib/utils';
+import { appPath, deepMerge, slugify } from '../lib/utils';
 import InvitationRenderer from '../components/invitation/InvitationRenderer';
 import OpeningOverlay from '../components/invitation/OpeningOverlay';
 import PreviewFrame from '../components/invitation/PreviewFrame';
@@ -123,7 +123,7 @@ function EditorWorkspace({ initial }) {
 
   const previewAsGuest = async () => {
     await autosave.saveNow();
-    window.open(`/preview/${inv.id}`, '_blank', 'noopener');
+    window.open(appPath(`/preview/${inv.id}`), '_blank', 'noopener');
   };
 
   const published = inv.status === 'published';

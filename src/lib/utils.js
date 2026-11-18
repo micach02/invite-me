@@ -41,7 +41,11 @@ export function deepMerge(base, extra) {
   return out;
 }
 
-export const siteUrl = () => (import.meta.env.VITE_SITE_URL || window.location.origin).replace(/\/$/, '');
+// The app may be served from a sub-path (GitHub Pages: /invite-me/). Vite exposes it as BASE_URL.
+const BASE = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+/** Prefix an in-app path with the deployment base, for places the router can't (window.open, plain <a>). */
+export const appPath = (p = '/') => `${BASE}${p.startsWith('/') ? p : `/${p}`}`;
+export const siteUrl = () => (import.meta.env.VITE_SITE_URL || `${window.location.origin}${BASE}`).replace(/\/$/, '');
 export const publicUrl = (slug) => `${siteUrl()}/invitation/${slug}`;
 
 export function eventMoment(event = {}) {
