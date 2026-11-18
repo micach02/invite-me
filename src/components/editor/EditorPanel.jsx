@@ -1,0 +1,255 @@
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  AlignCenter, AlignLeft, AlignRight, CalendarClock, ChevronDown, Image as ImageIcon, LayoutList, MailCheck, MapPin, PartyPopper, Palette, Plus, Type, Users, X, Layers, Wand2,
+} from 'lucide-react';
+import {
+  ColorField, GalleryField, ImageField, ListEditor, SelectField, Segmented, Slider, TextArea, TextField, Toggle,
+} from '../ui/fields';
+import { BODY_FONTS, COVER_EFFECTS, COVER_LAYOUTS, DECOR_OPTIONS, HEADING_FONTS, OCCASIONS, REVEALS, TITLE_ANIMS, occasionById } from '../../data/constants';
+import { getPath } from '../../lib/utils';
+
+/** Maps a panel to the preview section that should scroll into view when it opens. */
+const FOCUS = {
+  event: 'cover', host: 'hosts', datetime: 'details', venue: 'location', images: 'story', background: 'cover',
+  typography: 'cover', colors: 'cover', animation: 'cover', rsvp: 'rsvp', sections: 'program',
+};
+
+function Accordion({ id, title, icon: Icon, open, onToggle, children }) {
+  return (
+    <section className="border-b border-black/5">
+      <h3>
+        <button
+          type="button" onClick={() => onToggle(id)} aria-expanded={open} aria-controls={`panel-${id}`}
+          className={`flex w-full items-center gap-3 px-5 py-4 text-left transition hover:bg-sand-light/60 ${open ? 'bg-sand-light/40' : ''}`}
+        >
+          <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg ${open ? 'bg-brand text-white' : 'bg-brand-50 text-brand'}`}><Icon size={16} strokeWidth={1.8} /></span>
+          <span className="flex-1 text-sm font-semibold">{title}</span>
+          <ChevronDown size={16} className={`text-ink-mute transition-transform ${open ? 'rotate-180' : ''}`} />
+        </button>
+      </h3>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            id={`panel-${id}`} initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22 }} className="overflow-hidden"
+          >
+            <div className="space-y-4 px-5 pb-6 pt-3">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+}
+
+function Addon({ label, enabled, onToggle, children }) {
+  return (
+    <div className="rounded-xl border border-sand bg-white">
+      <div className="px-3.5 py-2.5"><Toggle checked={enabled} onChange={onToggle} label={label} /></div>
+      {enabled && children && <div className="space-y-3 border-t border-sand/70 px-3.5 pb-4 pt-3">{children}</div>}
+    </div>
+  );
+}
+
+function ColorList({ value = [], onChange }) {
+  return (
+    <div>
+      <span className="label">Suggested colours</span>
+      <div className="flex flex-wrap items-center gap-2">
+        {value.map((c, i) => (
+          <span key={i} className="relative">
+            <input type="color" value={c} onChange={(e) => onChange(value.map((v, j) => (j === i ? e.target.value : v)))} className="h-9 w-9 cursor-pointer rounded-full border-0 p-0" aria-label={`Colour ${i + 1}`} />
+            <button type="button" onClick={() => onChange(value.filter((_, j) => j !== i))} aria-label="Remove colour" className="absolute -right-1 -top-1 rounded-full bg-ink p-0.5 text-white"><X size={10} /></button>
+          </span>
+        ))}
+        {value.length < 6 && (
+          <button type="button" onClick={() => onChange([...value, '#C49B72'])} className="grid h-9 w-9 place-items-center rounded-full border border-dashed border-sand text-ink-mute hover:border-brand hover:text-brand" aria-label="Add colour"><Plus size={14} /></button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function EditorPanel({ config, set, update, onFocusSection }) {
+  const [open, setOpen] = useState('event');
+  const b = (path, fallback = '') => ({ value: getPath(config, path, fallback), onChange: (v) => set(path, v) });
+  const occ = occasionById(config.meta?.occasion);
+  const s = config.sections;
+
+  const toggle = (id) => {
+    const next = open === id ? null : id;
+    setOpen(next);
+    if (next && FOCUS[next]) onFocusSection?.(FOCUS[next]);
+  };
+  const toggleSection = (key, v) => { set(`sections.${key}.enabled`, v); if (v) onFocusSection?.(key); };
+
+  return (
+    <div>
+      <Accordion id="event" title="Event details" icon={PartyPopper} open={open === 'event'} onToggle={toggle}>
+        <SelectField label="Occasion" value={config.meta?.occasion ?? 'wedding'} onChange={(v) => set('meta.occasion', v)} options={OCCASIONS.map((o) => ({ value: o.id, label: o.label }))} />
+        <TextField label="Event title" {...b('event.title')} placeholder="The Wedding of Jane & John" hint="Used for the page title, search and link previews." />
+        <TextField label={occ.namesLabel} {...b('event.names')} placeholder={occ.namesPlaceholder} hint="Shown large on the cover." />
+        <TextField label="Tagline" {...b('event.tagline')} placeholder="Together with their families" />
+        <TextArea label="Description / invitation message" rows={4} {...b('event.description')} />
+      </Accordion>
+
+      <Accordion id="host" title="Host information" icon={Users} open={open === 'host'} onToggle={toggle}>
+        <TextArea label="Parents' names" rows={3} {...b('host.parents')} placeholder={'Mr. & Mrs. Santos\nMr. & Mrs. Reyes'} hint="One line per family." />
+        <TextArea label="Hosts" rows={2} {...b('host.hosts')} />
+        <TextArea label="Sponsors" rows={3} {...b('host.sponsors')} hint="One name per line." />
+        <TextArea label="Special acknowledgments" rows={3} {...b('host.acknowledgments')} />
+      </Accordion>
+
+      <Accordion id="datetime" title="Date & time" icon={CalendarClock} open={open === 'datetime'} onToggle={toggle}>
+        <TextField label="Event date" type="date" {...b('event.date')} />
+        <div className="grid grid-cols-2 gap-3">
+          <TextField label="Starts" type="time" {...b('event.startTime')} />
+          <TextField label="Ends" type="time" {...b('event.endTime')} />
+        </div>
+      </Accordion>
+
+      <Accordion id="venue" title="Venue & location" icon={MapPin} open={open === 'venue'} onToggle={toggle}>
+        <TextField label="Venue name" {...b('venue.name')} />
+        <TextArea label="Complete address" rows={2} {...b('venue.address')} />
+        <TextField label="Google Maps link" type="url" {...b('venue.mapUrl')} placeholder="https://maps.app.goo.gl/…" hint="Optional. If empty we link to a search for the address." />
+      </Accordion>
+
+      <Accordion id="images" title="Images & gallery" icon={ImageIcon} open={open === 'images'} onToggle={toggle}>
+        <div className="grid grid-cols-2 gap-3">
+          <ImageField label="Couple / celebrant photo" {...b('images.primary')} />
+          <ImageField label="Second photo" {...b('images.secondary')} />
+        </div>
+        <GalleryField label="Photo gallery" {...b('images.gallery', [])} />
+      </Accordion>
+
+      <Accordion id="typography" title="Typography" icon={Type} open={open === 'typography'} onToggle={toggle}>
+        <SelectField label="Heading font" {...b('theme.fontHeading')} options={HEADING_FONTS} />
+        <SelectField label="Body font" {...b('theme.fontBody')} options={BODY_FONTS} />
+        <Slider label="Font size" min={0.85} max={1.3} step={0.05} {...b('theme.fontScale', 1)} format={(v) => `${Math.round(v * 100)}%`} />
+        <Segmented label="Text alignment" {...b('theme.align', 'center')} options={[
+          { value: 'left', label: 'Left', icon: <AlignLeft size={14} /> },
+          { value: 'center', label: 'Center', icon: <AlignCenter size={14} /> },
+          { value: 'right', label: 'Right', icon: <AlignRight size={14} /> },
+        ]} />
+      </Accordion>
+
+      <Accordion id="colors" title="Colors & theme" icon={Palette} open={open === 'colors'} onToggle={toggle}>
+        <div className="grid grid-cols-2 gap-3">
+          <ColorField label="Text colour" {...b('theme.textColor')} />
+          <ColorField label="Background" {...b('theme.bgColor')} />
+          <ColorField label="Accent" {...b('theme.accentColor')} />
+          <ColorField label="Cover text" {...b('theme.coverText')} />
+          <ColorField label="Cover from" {...b('theme.coverFrom')} />
+          <ColorField label="Cover to" {...b('theme.coverTo')} />
+        </div>
+        <SelectField label="Decorative elements" {...b('theme.decor', 'none')} options={DECOR_OPTIONS} />
+        <SelectField label="Cover layout" {...b('theme.layout', 'classic')} options={COVER_LAYOUTS} />
+      </Accordion>
+
+      <Accordion id="animation" title="Animation & effects" icon={Wand2} open={open === 'animation'} onToggle={toggle}>
+        <SelectField label="Cover effect" {...b('theme.coverEffect', 'none')} options={COVER_EFFECTS} />
+        {(config.theme.coverEffect === 'aurora' || config.theme.coverEffect === 'gradient' || config.theme.coverEffect === 'waves') && (
+          <ColorField label="Effect colour" value={config.theme.fxColor || config.theme.accentColor} onChange={(v) => set('theme.fxColor', v)} />
+        )}
+        <SelectField label="Title animation" {...b('theme.titleAnim', 'rise')} options={TITLE_ANIMS}
+          hint={config.theme.coverEffect === 'shimmer' ? 'Shimmering titles use blur-in.' : 'Plays when the cover appears.'} />
+        <SelectField label="Section reveal" {...b('theme.reveal', 'fade-up')} options={REVEALS} hint="How each section appears as guests scroll." />
+        <p className="rounded-xl bg-brand-50 p-3 text-xs text-ink-soft">Floating hearts, snow, bubbles and balloons are under <b>Colors &amp; theme → Decorative elements</b>. Use “Replay opening” above the preview to see the intro again.</p>
+      </Accordion>
+
+      <Accordion id="background" title="Background" icon={Layers} open={open === 'background'} onToggle={toggle}>
+        <ImageField label="Cover background image" {...b('images.cover')} hint="Full-bleed photo behind the cover title." />
+        <Slider label="Cover tint" min={0} max={0.9} step={0.05} {...b('theme.overlay', 0.3)} format={(v) => `${Math.round(v * 100)}%`} />
+        <ImageField label="Page texture / pattern" {...b('images.background')} hint="Shown faintly behind every section." />
+      </Accordion>
+
+      <Accordion id="rsvp" title="RSVP settings" icon={MailCheck} open={open === 'rsvp'} onToggle={toggle}>
+        <Toggle label="Collect RSVPs" checked={s.rsvp.enabled} onChange={(v) => set('sections.rsvp.enabled', v)} />
+        {s.rsvp.enabled && (
+          <>
+            <TextField label="Section title" {...b('sections.rsvp.title')} />
+            <TextArea label="Message to guests" rows={2} {...b('sections.rsvp.message')} />
+            <TextField label="Reply by" type="date" {...b('sections.rsvp.deadline')} hint="The form closes after this date." />
+            <Toggle label="Allow additional guests" checked={s.rsvp.allowPlusOnes} onChange={(v) => set('sections.rsvp.allowPlusOnes', v)} />
+            {s.rsvp.allowPlusOnes && <TextField label="Max guests per response" type="number" min={1} max={20} value={s.rsvp.maxGuests} onChange={(v) => set('sections.rsvp.maxGuests', Math.max(1, Math.min(20, Number(v) || 1)))} />}
+            <TextField label="Meal options" {...b('sections.rsvp.mealOptions')} placeholder="Chicken, Fish, Vegetarian" hint="Comma-separated. Leave blank to hide." />
+            <Toggle label="Allow a message to the host" checked={s.rsvp.collectNote !== false} onChange={(v) => set('sections.rsvp.collectNote', v)} />
+          </>
+        )}
+      </Accordion>
+
+      <Accordion id="sections" title="Additional sections" icon={LayoutList} open={open === 'sections'} onToggle={toggle}>
+        <p className="-mt-1 text-xs text-ink-mute">Turn sections on or off — the preview updates instantly.</p>
+
+        <Addon label="Countdown timer" enabled={s.countdown.enabled} onToggle={(v) => toggleSection('countdown', v)}>
+          <TextField label="Title" {...b('sections.countdown.title')} />
+        </Addon>
+
+        <Addon label="Our story / about" enabled={s.story.enabled} onToggle={(v) => toggleSection('story', v)}>
+          <TextField label="Title" {...b('sections.story.title')} />
+          <TextArea label="Story" rows={5} {...b('sections.story.text')} />
+        </Addon>
+
+        <Addon label="Event program" enabled={s.program.enabled} onToggle={(v) => toggleSection('program', v)}>
+          <TextField label="Title" {...b('sections.program.title')} />
+          <ListEditor itemLabel="Item" items={s.program.items} addLabel="Add program item" makeItem={() => ({ time: '', title: '', description: '' })}
+            onChange={(items) => set('sections.program.items', items)}
+            renderItem={(it, patch) => (
+              <>
+                <div className="grid grid-cols-[6.5rem_1fr] gap-2">
+                  <input className="input" placeholder="3:00 PM" value={it.time} onChange={(e) => patch({ time: e.target.value })} aria-label="Time" />
+                  <input className="input" placeholder="Ceremony" value={it.title} onChange={(e) => patch({ title: e.target.value })} aria-label="Title" />
+                </div>
+                <input className="input" placeholder="Optional details" value={it.description} onChange={(e) => patch({ description: e.target.value })} aria-label="Details" />
+              </>
+            )} />
+        </Addon>
+
+        <Addon label="Entourage" enabled={s.entourage.enabled} onToggle={(v) => toggleSection('entourage', v)}>
+          <TextField label="Title" {...b('sections.entourage.title')} />
+          <ListEditor itemLabel="Group" items={s.entourage.groups} addLabel="Add group" makeItem={() => ({ title: '', members: '' })}
+            onChange={(groups) => set('sections.entourage.groups', groups)}
+            renderItem={(g, patch) => (
+              <>
+                <input className="input" placeholder="Group (e.g. Bridesmaids)" value={g.title} onChange={(e) => patch({ title: e.target.value })} aria-label="Group title" />
+                <textarea className="input" rows={3} placeholder="One name per line" value={g.members} onChange={(e) => patch({ members: e.target.value })} aria-label="Members" />
+              </>
+            )} />
+        </Addon>
+
+        <Addon label="Photo gallery" enabled={s.gallery.enabled} onToggle={(v) => toggleSection('gallery', v)}>
+          <TextField label="Title" {...b('sections.gallery.title')} />
+          <p className="text-xs text-ink-mute">Add photos under “Images &amp; gallery”.</p>
+        </Addon>
+
+        <Addon label="Dress code" enabled={s.dressCode.enabled} onToggle={(v) => toggleSection('dressCode', v)}>
+          <TextField label="Title" {...b('sections.dressCode.title')} />
+          <TextArea label="Details" rows={3} {...b('sections.dressCode.text')} />
+          <ColorList value={s.dressCode.colors} onChange={(v) => set('sections.dressCode.colors', v)} />
+        </Addon>
+
+        <Addon label="Gift preferences" enabled={s.gifts.enabled} onToggle={(v) => toggleSection('gifts', v)}>
+          <TextField label="Title" {...b('sections.gifts.title')} />
+          <TextArea label="Message" rows={4} {...b('sections.gifts.text')} />
+        </Addon>
+
+        <Addon label="Frequently asked questions" enabled={s.faq.enabled} onToggle={(v) => toggleSection('faq', v)}>
+          <TextField label="Title" {...b('sections.faq.title')} />
+          <ListEditor itemLabel="Question" items={s.faq.items} addLabel="Add question" makeItem={() => ({ q: '', a: '' })}
+            onChange={(items) => set('sections.faq.items', items)}
+            renderItem={(f, patch) => (
+              <>
+                <input className="input" placeholder="Question" value={f.q} onChange={(e) => patch({ q: e.target.value })} aria-label="Question" />
+                <textarea className="input" rows={2} placeholder="Answer" value={f.a} onChange={(e) => patch({ a: e.target.value })} aria-label="Answer" />
+              </>
+            )} />
+        </Addon>
+
+        <Addon label="Location & map" enabled={s.location.enabled} onToggle={(v) => toggleSection('location', v)}>
+          <TextField label="Title" {...b('sections.location.title')} />
+          <Toggle label="Show embedded map" checked={s.location.showMap} onChange={(v) => set('sections.location.showMap', v)} />
+        </Addon>
+      </Accordion>
+    </div>
+  );
+}

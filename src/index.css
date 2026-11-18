@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { scroll-behavior: smooth; }
+body { @apply bg-canvas text-ink font-sans antialiased; }
+h1, h2, h3 { text-wrap: balance; }
+.font-serif { font-variant-numeric: lining-nums; }
+
+@layer components {
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand; }
+  .btn-primary { @apply btn bg-brand text-white hover:bg-brand-dark shadow-sm; }
+  .btn-secondary { @apply btn bg-white text-ink border border-sand hover:bg-sand-light; }
+  .btn-ghost { @apply btn text-ink-soft hover:bg-sand-light; }
+  .btn-accent { @apply btn bg-accent text-white hover:bg-accent-dark; }
+  .btn-danger { @apply btn bg-red-600 text-white hover:bg-red-700; }
+  .btn-sm { @apply px-3.5 py-1.5 text-xs; }
+  .card { @apply rounded-2xl bg-white shadow-card border border-black/5; }
+  .input { @apply w-full rounded-xl border border-sand bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-mute focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 transition; }
+  .label { @apply mb-1.5 block text-xs font-medium uppercase tracking-wide text-ink-soft; }
+  .chip { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }
+  .container-x { @apply mx-auto w-full max-w-7xl px-5 sm:px-8; }
+}
+
+.scroll-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: #D8C9B2; border-radius: 99px; }
