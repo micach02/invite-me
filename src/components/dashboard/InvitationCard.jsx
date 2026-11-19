@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -10,32 +11,66 @@ import { formatDate } from '../../lib/utils';
 
 dayjs.extend(relativeTime);
 
+const MENU_W = 208; // w-52
+
+/**
+ * The menu is portalled to <body> and positioned from the button's rect: cards use overflow-hidden (for their
+ * rounded corners), which would otherwise clip an absolutely-positioned dropdown.
+ */
 function ActionMenu({ inv, onDuplicate, onDelete }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+  const [pos, setPos] = useState(null); // null = closed
+  const btnRef = useRef(null);
+  const menuRef = useRef(null);
+  const open = pos !== null;
+  const close = () => setPos(null);
+
+  const toggle = () => {
+    if (open) { close(); return; }
+    const r = btnRef.current.getBoundingClientRect();
+    const left = Math.min(Math.max(8, r.right - MENU_W), window.innerWidth - MENU_W - 8);
+    setPos({ left, top: r.bottom + 6, bottom: window.innerHeight - r.top + 6, up: false });
+  };
+
+  // Once rendered, flip above the button if the menu would run off the bottom of the viewport.
+  useLayoutEffect(() => {
+    if (!open || pos.up || !menuRef.current) return;
+    if (pos.top + menuRef.current.offsetHeight > window.innerHeight - 8) setPos((p) => ({ ...p, up: true }));
+  }, [open, pos]);
+
   useEffect(() => {
     if (!open) return undefined;
-    const close = (e) => { if (!ref.current?.contains(e.target)) setOpen(false); };
-    const esc = (e) => e.key === 'Escape' && setOpen(false);
-    document.addEventListener('mousedown', close);
+    const away = (e) => { if (!menuRef.current?.contains(e.target) && !btnRef.current?.contains(e.target)) close(); };
+    const esc = (e) => { if (e.key === 'Escape') { close(); btnRef.current?.focus(); } };
+    document.addEventListener('mousedown', away);
     document.addEventListener('keydown', esc);
-    return () => { document.removeEventListener('mousedown', close); document.removeEventListener('keydown', esc); };
+    window.addEventListener('resize', close);
+    window.addEventListener('scroll', close, true);
+    return () => {
+      document.removeEventListener('mousedown', away); document.removeEventListener('keydown', esc);
+      window.removeEventListener('resize', close); window.removeEventListener('scroll', close, true);
+    };
   }, [open]);
+
   const item = 'flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-ink-soft hover:bg-canvas hover:text-ink';
 
   return (
-    <div className="relative" ref={ref}>
-      <button className="btn-ghost btn-icon" onClick={() => setOpen((o) => !o)} aria-label={`More actions for ${inv.title}`} aria-haspopup="menu" aria-expanded={open}><MoreHorizontal size={18} /></button>
-      {open && (
-        <div className="absolute right-0 top-10 z-20 w-52 animate-fade-in rounded-xl border border-line bg-surface p-1.5 shadow-pop" role="menu">
+    <>
+      <button ref={btnRef} className="btn-ghost btn-icon" onClick={toggle} aria-label={`More actions for ${inv.title}`} aria-haspopup="menu" aria-expanded={open}><MoreHorizontal size={18} /></button>
+      {open && createPortal(
+        <div
+          ref={menuRef} role="menu" data-action-menu
+          style={{ position: 'fixed', left: pos.left, width: MENU_W, ...(pos.up ? { bottom: pos.bottom } : { top: pos.top }) }}
+          className="z-[90] animate-fade-in rounded-xl border border-line bg-surface p-1.5 shadow-pop"
+        >
           <Link className={item} to={`/preview/${inv.id}`} role="menuitem"><Eye size={15} /> Preview as guest</Link>
           <Link className={item} to={`/dashboard/invitations/${inv.id}/analytics`} role="menuitem"><BarChart3 size={15} /> Guests & analytics</Link>
-          <button className={item} onClick={() => { setOpen(false); onDuplicate(inv); }} role="menuitem"><Copy size={15} /> Duplicate</button>
+          <button className={item} onClick={() => { close(); onDuplicate(inv); }} role="menuitem"><Copy size={15} /> Duplicate</button>
           <div className="my-1 h-px bg-line" />
-          <button className={`${item} !text-red-600 hover:!bg-red-50`} onClick={() => { setOpen(false); onDelete(inv); }} role="menuitem"><Trash2 size={15} /> Delete…</button>
-        </div>
+          <button className={`${item} !text-red-600 hover:!bg-red-50`} onClick={() => { close(); onDelete(inv); }} role="menuitem"><Trash2 size={15} /> Delete…</button>
+        </div>,
+        document.body,
       )}
-    </div>
+    </>
   );
 }
 
