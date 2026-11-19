@@ -31,6 +31,10 @@ InviteMe with the same login. InviteMe only reads and writes its own rows (enfor
 
 To remove it again: [`supabase/uninstall.sql`](supabase/uninstall.sql).
 
+> **Updating an existing install:** `schema.sql` is safe to run again. Re-run it after pulling a version that adds tables —
+> for example **Favorites** and **My templates** (saved designs) need `inviteme.favorite_templates` and
+> `inviteme.saved_templates`. Until then the rest of the app works and those two features show a "run schema.sql" message.
+
 > **If you ran an earlier version of `schema.sql`:** it created tables in `public` (`profiles`, `invitations`, `rsvps`,
 > `invitation_views`), a function `record_view`/`handle_new_user`, and a trigger `on_auth_user_created` on `auth.users`.
 > Check the trigger is yours to remove before dropping it, and check any `public.profiles` you already had wasn't given

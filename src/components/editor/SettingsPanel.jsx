@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
-import { Check, ChevronDown, CloudOff, ExternalLink, Eye, EyeOff, Globe, Loader2, Palette, Save, Search, Share2, Link2 } from 'lucide-react';
+import { Bookmark, BookmarkPlus, Check, ChevronDown, CloudOff, ExternalLink, Eye, EyeOff, Globe, Heart, Loader2, Palette, Save, Search, Share2, Link2 } from 'lucide-react';
 import { ImageField, TextArea, TextField, Toggle } from '../ui/fields';
 import { StatusBadge } from '../ui/misc';
 import TemplateThumb from '../invitation/TemplateThumb';
 import Pagination from '../ui/Pagination';
+import FavoriteButton from '../ui/FavoriteButton';
+import { useLibrary } from '../../context/LibraryContext';
 import { TEMPLATES } from '../../data/templates';
 import { occasionById } from '../../data/constants';
 import { appPath, getPath, publicUrl } from '../../lib/utils';
@@ -46,7 +48,8 @@ export function SaveStatus({ status, compact }) {
   );
 }
 
-export default function SettingsPanel({ invitation, config, set, onTemplate, autosave, onPublish, onUnpublish, onShare, onEditSlug }) {
+export default function SettingsPanel({ invitation, config, set, onTemplate, onSaveTemplate, autosave, onPublish, onUnpublish, onShare, onEditSlug }) {
+  const { saved, favoriteTemplates } = useLibrary();
   const published = invitation.status === 'published';
   const b = (path, fallback = '') => ({ value: getPath(config, path, fallback), onChange: (v) => set(path, v) });
   const current = config.theme.templateId;
@@ -56,10 +59,11 @@ export default function SettingsPanel({ invitation, config, set, onTemplate, aut
   const [scope, setScope] = useState('occasion');
   const [tplPage, setTplPage] = useState(1);
   const category = occasionById(config.meta?.occasion).category;
-  const pool = useMemo(
-    () => TEMPLATES.filter((t) => scope === 'all' || occasionById(t.occasion).category === category || t.id === current),
-    [scope, category, current],
-  );
+  const pool = useMemo(() => {
+    if (scope === 'mine') return saved;
+    if (scope === 'favorites') return favoriteTemplates;
+    return TEMPLATES.filter((t) => scope === 'all' || occasionById(t.occasion).category === category || t.id === current);
+  }, [scope, category, current, saved, favoriteTemplates]);
   const tplPages = Math.max(1, Math.ceil(pool.length / PAGE));
   const safePage = Math.min(tplPage, tplPages);
   const shown = pool.slice((safePage - 1) * PAGE, safePage * PAGE);
@@ -94,23 +98,32 @@ export default function SettingsPanel({ invitation, config, set, onTemplate, aut
         <p className="-mt-1 text-xs text-ink-mute">Switching keeps all your content and photos — only colours, fonts and layout change.</p>
         <div className="flex items-center justify-between gap-2">
           <div className="flex rounded-full bg-sand-light p-1 text-xs font-medium" role="group" aria-label="Template scope">
-            {[['occasion', 'This occasion'], ['all', 'All']].map(([k, label]) => (
-              <button key={k} type="button" aria-pressed={scope === k} onClick={() => { setScope(k); setTplPage(1); }}
-                className={`rounded-full px-3 py-1 transition ${scope === k ? 'bg-surface text-brand shadow-sm' : 'text-ink-soft'}`}>{label}</button>
+            {[['occasion', 'Occasion', null], ['all', 'All', null], ['favorites', 'Favorites', Heart], ['mine', 'My templates', Bookmark]].map(([k, label, Icon]) => (
+              <button key={k} type="button" aria-pressed={scope === k} onClick={() => { setScope(k); setTplPage(1); }} aria-label={Icon ? label : undefined} title={Icon ? label : undefined}
+                className={`rounded-full px-3 py-1 transition ${scope === k ? 'bg-surface text-brand shadow-sm' : 'text-ink-soft'}`}>{Icon ? <Icon size={13} className="my-0.5" /> : label}</button>
             ))}
           </div>
-          <span className="text-xs text-ink-mute">{pool.length} designs</span>
+          <span className="shrink-0 whitespace-nowrap text-xs text-ink-mute">{pool.length} design{pool.length === 1 ? '' : 's'}</span>
         </div>
+        {pool.length === 0 && (
+          <p className="rounded-xl bg-canvas px-3 py-4 text-center text-xs leading-relaxed text-ink-mute">
+            {scope === 'mine' ? 'Nothing saved yet. Style this invitation, then use “Save current design” below.' : 'No favorites yet. Tap the heart on any template to keep it here.'}
+          </p>
+        )}
         <div className="grid grid-cols-2 gap-3">
           {shown.map((t) => (
-            <button key={t.id} type="button" onClick={() => onTemplate(t)} aria-pressed={current === t.id} aria-label={t.name}
-              className={`group rounded-xl p-1.5 text-left transition ${current === t.id ? 'bg-brand-50 ring-2 ring-brand' : 'hover:bg-sand-light'}`}>
-              <TemplateThumb templateId={t.id} rounded="rounded-lg" />
-              <span className="mt-1.5 block truncate px-0.5 text-xs font-medium">{t.name}</span>
-            </button>
+            <div key={t.id} className="relative">
+              <button type="button" onClick={() => onTemplate(t)} aria-pressed={current === t.id} aria-label={t.name}
+                className={`group block w-full rounded-xl p-1.5 text-left transition ${current === t.id ? 'bg-brand-50 ring-2 ring-brand' : 'hover:bg-sand-light'}`}>
+                <TemplateThumb template={t} rounded="rounded-lg" />
+                <span className="mt-1.5 block truncate px-0.5 text-xs font-medium">{t.name}</span>
+              </button>
+              <FavoriteButton id={t.id} name={t.name} className="absolute right-3 top-3 !h-7 !w-7" />
+            </div>
           ))}
         </div>
         <Pagination compact page={safePage} pageCount={tplPages} onChange={setTplPage} />
+        <button type="button" className="btn-secondary btn-sm w-full" onClick={onSaveTemplate}><BookmarkPlus size={14} /> Save current design as template</button>
       </Block>
 
       <Block icon={Search} title="Page & SEO settings" collapsible>

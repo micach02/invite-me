@@ -9,6 +9,7 @@ import { compressImage, blobToDataUrl } from '../lib/image';
 const K = {
   users: 'inviteme:users', session: 'inviteme:session', invitations: 'inviteme:invitations',
   rsvps: 'inviteme:rsvps', views: 'inviteme:views', resets: 'inviteme:resets',
+  saved: 'inviteme:saved-templates', favs: 'inviteme:favorites',
 };
 
 const read = (key, fallback) => {
@@ -174,6 +175,33 @@ export const rsvps = {
     write(K.rsvps, read(K.rsvps, []).map((r) => (r.id === id ? { ...r, ...patch } : r)));
   },
   async remove(id) { write(K.rsvps, read(K.rsvps, []).filter((r) => r.id !== id)); },
+};
+
+/** "My templates" (saved designs) and favourites, per user. */
+export const library = {
+  async listSaved(userId) {
+    return read(K.saved, []).filter((t) => t.userId === userId).sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1));
+  },
+  async save(userId, input) {
+    const row = { id: `my-${uid()}`, userId, createdAt: new Date().toISOString(), ...input };
+    write(K.saved, [...read(K.saved, []), row]);
+    return row;
+  },
+  async rename(id, name) {
+    write(K.saved, read(K.saved, []).map((t) => (t.id === id ? { ...t, name } : t)));
+  },
+  async remove(id) {
+    write(K.saved, read(K.saved, []).filter((t) => t.id !== id));
+    const favs = read(K.favs, {});
+    Object.keys(favs).forEach((u) => { favs[u] = favs[u].filter((f) => f !== id); });
+    write(K.favs, favs);
+  },
+  async listFavorites(userId) { return read(K.favs, {})[userId] ?? []; },
+  async setFavorite(userId, templateId, on) {
+    const favs = read(K.favs, {});
+    const rest = (favs[userId] ?? []).filter((f) => f !== templateId);
+    write(K.favs, { ...favs, [userId]: on ? [...rest, templateId] : rest });
+  },
 };
 
 export const storage = {

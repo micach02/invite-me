@@ -15,6 +15,7 @@ import EditorPanel from '../components/editor/EditorPanel';
 import SettingsPanel, { SaveStatus } from '../components/editor/SettingsPanel';
 import PublishModal from '../components/editor/PublishModal';
 import ShareModal from '../components/editor/ShareModal';
+import SaveTemplateModal from '../components/editor/SaveTemplateModal';
 import { ConfirmDialog, PageLoader, EmptyState } from '../components/ui/misc';
 import Logo from '../components/ui/Logo';
 import ThemeToggle from '../components/ui/ThemeToggle';
@@ -55,6 +56,7 @@ function EditorWorkspace({ initial }) {
   const [showOpening, setShowOpening] = useState(false);
   const [publishOpen, setPublishOpen] = useState(params.get('publish') === '1');
   const [shareOpen, setShareOpen] = useState(false);
+  const [saveTplOpen, setSaveTplOpen] = useState(false);
   const [unpublishOpen, setUnpublishOpen] = useState(false);
   const scrollRef = useRef(null);
 
@@ -196,7 +198,7 @@ function EditorWorkspace({ initial }) {
 
         <aside className={`${tab === 'settings' ? 'block' : 'hidden'} scroll-thin min-h-0 overflow-y-auto border-l border-line bg-surface lg:block`} aria-label="Invitation settings">
           <SettingsPanel
-            invitation={inv} config={config} set={set} onTemplate={applyTemplate} autosave={autosave}
+            invitation={inv} config={config} set={set} onTemplate={applyTemplate} onSaveTemplate={() => setSaveTplOpen(true)} autosave={autosave}
             onPublish={() => setPublishOpen(true)} onUnpublish={() => setUnpublishOpen(true)} onShare={() => setShareOpen(true)} onEditSlug={() => setPublishOpen(true)}
           />
         </aside>
@@ -212,6 +214,7 @@ function EditorWorkspace({ initial }) {
       </nav>
 
       <PublishModal open={publishOpen} onClose={() => setPublishOpen(false)} invitation={inv} suggestion={suggestion} onConfirm={doPublish} />
+      <SaveTemplateModal open={saveTplOpen} onClose={() => setSaveTplOpen(false)} config={config} />
       <ShareModal open={shareOpen} onClose={() => setShareOpen(false)} invitation={inv} onPublish={() => { setShareOpen(false); setPublishOpen(true); }} />
       <ConfirmDialog open={unpublishOpen} onClose={() => setUnpublishOpen(false)} onConfirm={doUnpublish} confirmLabel="Unpublish"
         title="Unpublish this invitation?" text="The link will stop working for guests until you publish again. Your content and RSVPs are kept." />

@@ -1,21 +1,22 @@
 import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import InvitationRenderer from './InvitationRenderer';
-import { createDefaultConfig } from '../../data/defaultConfig';
+import { createDefaultConfig, templateConfig } from '../../data/defaultConfig';
 import { templateById } from '../../data/templates';
 
 const W = 390;
 const H = 640;
 
 /** Scales a real, rendered invitation cover down into a card thumbnail (so thumbnails never go stale). */
-function Thumb({ config, templateId, className = '', rounded = 'rounded-2xl' }) {
+function Thumb({ config, templateId, template, className = '', rounded = 'rounded-2xl' }) {
   const ref = useRef(null);
   const [scale, setScale] = useState(0.5);
 
   const cfg = useMemo(() => {
     if (config) return config;
+    if (template) return templateConfig(template);
     const tpl = templateById(templateId);
     return createDefaultConfig(tpl.occasion, tpl.id);
-  }, [config, templateId]);
+  }, [config, templateId, template]);
 
   useLayoutEffect(() => {
     const el = ref.current;

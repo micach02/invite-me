@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { invitations } from '../services';
-import { createDefaultConfig } from '../data/defaultConfig';
+import { templateConfig } from '../data/defaultConfig';
 
 /** Creates a draft invitation from a template and opens it in the editor (or sends guests to sign up first). */
 export function useStartInvitation() {
@@ -18,7 +18,7 @@ export function useStartInvitation() {
     }
     setBusyId(tpl.id);
     try {
-      const config = createDefaultConfig(tpl.occasion, tpl.id);
+      const config = templateConfig(tpl);
       const inv = await invitations.create(user.id, { title: config.event.title, occasion: tpl.occasion, templateId: tpl.id, config });
       navigate(`/editor/${inv.id}`);
     } catch (e) {

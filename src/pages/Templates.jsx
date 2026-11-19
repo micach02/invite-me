@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Eye, Search, SearchX, SlidersHorizontal, Sparkles, X } from 'lucide-react';
+import { Bookmark, Check, Eye, Heart, Pencil, Search, SearchX, SlidersHorizontal, Sparkles, Trash2, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 import PublicNav from '../components/layout/PublicNav';
 import Footer from '../components/layout/Footer';
 import TemplateThumb from '../components/invitation/TemplateThumb';
@@ -9,10 +10,12 @@ import PreviewFrame from '../components/invitation/PreviewFrame';
 import InvitationRenderer from '../components/invitation/InvitationRenderer';
 import Modal from '../components/ui/Modal';
 import Pagination from '../components/ui/Pagination';
-import { EmptyState } from '../components/ui/misc';
+import { ConfirmDialog, EmptyState } from '../components/ui/misc';
+import FavoriteButton from '../components/ui/FavoriteButton';
+import { useLibrary } from '../context/LibraryContext';
 import { TEMPLATES } from '../data/templates';
 import { COLOR_FAMILIES, DESIGN_STYLES, LIBRARY_CATEGORIES, MOODS, occasionById } from '../data/constants';
-import { createDefaultConfig } from '../data/defaultConfig';
+import { templateConfig } from '../data/defaultConfig';
 import { useStartInvitation } from '../hooks/useStartInvitation';
 import { useAuth } from '../context/AuthContext';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
@@ -72,6 +75,10 @@ export default function Templates() {
   const [params, setParams] = useSearchParams();
   const { user, loading } = useAuth();
   const { start, busyId } = useStartInvitation();
+  const { saved, favoriteTemplates, favorites, renameTemplate, deleteTemplate } = useLibrary();
+  const [renaming, setRenaming] = useState(null);
+  const [renameValue, setRenameValue] = useState('');
+  const [deleting, setDeleting] = useState(null);
   const [preview, setPreview] = useState(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const autoStarted = useRef(false);
@@ -80,6 +87,7 @@ export default function Templates() {
 
   useDocumentMeta({ title: 'Invitation Templates — InviteMe', description: 'Browse elegant invitation templates for weddings, birthdays, baptisms, debuts and more.' });
 
+  const view = ['favorites', 'mine'].includes(params.get('view')) ? params.get('view') : 'all';
   const category = params.get('category') || 'all';
   const mood = params.get('mood') || 'all';
   const color = params.get('color') || 'all';
@@ -91,6 +99,7 @@ export default function Templates() {
   const setFilter = (key, value) => {
     const next = new URLSearchParams(params);
     if (value === 'all' || value === '') next.delete(key); else next.set(key, value);
+    if (key === 'category' && value !== 'all') next.delete('view'); // the Favorites / My templates tabs and the occasion tabs are one choice
     next.delete('page');
     setParams(next, { replace: true });
   };
@@ -104,16 +113,24 @@ export default function Templates() {
     if (tpl) { autoStarted.current = true; start(tpl); }
   }, [params, user, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const setView = (v) => {
+    const next = new URLSearchParams(params);
+    next.delete('page'); next.delete('category');
+    if (v === 'all') next.delete('view'); else next.set('view', v);
+    setParams(next, { replace: true });
+  };
+
   const list = useMemo(() => {
     const needle = q.toLowerCase();
-    return TEMPLATES.filter((t) => {
+    const source = view === 'mine' ? saved : view === 'favorites' ? favoriteTemplates : TEMPLATES;
+    return source.filter((t) => {
       const cat = occasionById(t.occasion).category;
       const haystack = `${t.name} ${t.style} ${t.mood} ${t.blurb} ${occasionById(t.occasion).label}`.toLowerCase();
       return (category === 'all' || cat === category) && (mood === 'all' || t.mood === mood)
         && (color === 'all' || t.colorFamily === color) && (style === 'all' || t.style === style)
         && (!needle || haystack.includes(needle));
     });
-  }, [category, mood, color, style, q]);
+  }, [view, saved, favoriteTemplates, category, mood, color, style, q]);
 
   // Library-wide counts so people can see what each style / theme contains before choosing it.
   const counts = useMemo(() => {
@@ -122,6 +139,7 @@ export default function Templates() {
   }, []);
 
   const activeChips = [
+    view !== 'all' && { key: 'view', label: view === 'mine' ? 'My templates' : 'Favorites' },
     category !== 'all' && { key: 'category', label: LIBRARY_CATEGORIES.find((c) => c.id === category)?.label ?? category },
     style !== 'all' && { key: 'style', label: style },
     mood !== 'all' && { key: 'mood', label: mood },
@@ -143,7 +161,7 @@ export default function Templates() {
     gridTop.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const previewConfig = useMemo(() => (preview ? createDefaultConfig(preview.occasion, preview.id) : null), [preview]);
+  const previewConfig = useMemo(() => (preview ? templateConfig(preview) : null), [preview]);
   const fieldProps = { style, mood, color, counts, setFilter };
 
   return (
@@ -173,12 +191,15 @@ export default function Templates() {
           </div>
 
           <div className="scroll-none -mx-5 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:px-0" role="tablist" aria-label="Occasion">
-            {[{ id: 'all', label: 'All' }, ...LIBRARY_CATEGORIES].map((c) => (
-              <button key={c.id} role="tab" aria-selected={category === c.id} onClick={() => setFilter('category', c.id)}
-                className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition ${category === c.id ? 'bg-brand text-white shadow-sm' : 'bg-surface text-ink-soft ring-1 ring-inset ring-line-strong hover:bg-ink/[.03] hover:text-ink'}`}>
-                {c.icon && <c.icon size={14} />}{c.label}
-              </button>
-            ))}
+            {[{ id: 'all', label: 'All' }, ...(user ? [{ id: 'favorites', label: 'Favorites', icon: Heart, count: favorites.size, view: true }, { id: 'mine', label: 'My templates', icon: Bookmark, count: saved.length, view: true }] : []), ...LIBRARY_CATEGORIES].map((c) => {
+              const active = c.view ? view === c.id : (category === c.id && view === 'all');
+              return (
+                <button key={c.id} role="tab" aria-selected={active} onClick={() => (c.view ? setView(c.id) : (c.id === 'all' ? setParams(perPage === 12 ? {} : { perPage: String(perPage) }, { replace: true }) : setFilter('category', c.id)))}
+                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition ${active ? 'bg-brand text-white shadow-sm' : 'bg-surface text-ink-soft ring-1 ring-inset ring-line-strong hover:bg-ink/[.03] hover:text-ink'}`}>
+                  {c.icon && <c.icon size={14} />}{c.label}{c.view && <span className={`rounded-full px-1.5 text-[11px] ${active ? 'bg-white/20' : 'bg-ink/[.06] text-ink-mute'}`}>{c.count}</span>}
+                </button>
+              );
+            })}
           </div>
 
           {/* Desktop: inline panel. Phones use the bottom sheet below. */}
@@ -215,7 +236,17 @@ export default function Templates() {
         </div>
 
         {list.length === 0 ? (
-          <div className="mt-6"><EmptyState icon={SearchX} title="No templates match" text="Try removing a filter to see more designs." action={<button className="btn-secondary" onClick={clearAll}>Clear filters</button>} /></div>
+          <div className="mt-6">
+            {view === 'mine' && !q && hiddenFilterCount === 0 ? (
+              <EmptyState icon={Bookmark} title="No saved templates yet" text="Open any invitation in the editor, restyle it, then choose “Save current design as template” in the Settings panel. It will live here, ready for your next event."
+                action={<Link to="/dashboard" className="btn-primary">Go to my invitations</Link>} />
+            ) : view === 'favorites' && !q && hiddenFilterCount === 0 ? (
+              <EmptyState icon={Heart} title="No favorites yet" text="Tap the heart on any template to keep it here for later."
+                action={<button className="btn-primary" onClick={() => setView('all')}>Browse templates</button>} />
+            ) : (
+              <EmptyState icon={SearchX} title="No templates match" text="Try removing a filter to see more designs." action={<button className="btn-secondary" onClick={clearAll}>Clear filters</button>} />
+            )}
+          </div>
         ) : (
           <motion.div layout className="mt-5 grid grid-cols-1 gap-5 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <AnimatePresence mode="popLayout">
@@ -223,10 +254,11 @@ export default function Templates() {
                 <motion.article key={t.id} layout initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.97 }} transition={{ duration: 0.22 }}
                   className="group card card-hover overflow-hidden p-2.5">
                   <div className="relative overflow-hidden rounded-xl">
-                    <TemplateThumb templateId={t.id} rounded="rounded-xl" />
+                    <TemplateThumb template={t} rounded="rounded-xl" />
                     <div className="absolute inset-0 hidden items-end justify-center bg-gradient-to-t from-ink/50 via-transparent to-transparent p-3 opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100 md:flex">
                       <button className="btn-secondary btn-sm" onClick={() => setPreview(t)} aria-label={`Quick preview of ${t.name}`}><Eye size={14} /> Quick preview</button>
                     </div>
+                    <FavoriteButton id={t.id} name={t.name} className="absolute right-2 top-2" />
                     {isAnimated(t) && <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-surface/90 px-2 py-0.5 text-[11px] font-semibold text-accent-dark shadow-sm backdrop-blur"><Sparkles size={11} /> Animated</span>}
                   </div>
                   <div className="px-1.5 pb-1 pt-3.5">
@@ -236,7 +268,13 @@ export default function Templates() {
                         {[t.theme.coverFrom, t.theme.accentColor, t.theme.bgColor].map((c, i) => <i key={i} className="h-3.5 w-3.5 rounded-full ring-2 ring-surface" style={{ background: c }} />)}
                       </span>
                     </div>
-                    <p className="mt-0.5 text-xs text-ink-mute">{occasionById(t.occasion).label} · {t.style}</p>
+                    <p className="mt-0.5 text-xs text-ink-mute">{occasionById(t.occasion).label} · {t.custom ? 'Saved by you' : t.style}</p>
+                    {t.custom && (
+                      <div className="mt-2 flex gap-1.5">
+                        <button className="btn-ghost btn-sm !h-8 flex-1" onClick={() => { setRenaming(t); setRenameValue(t.name); }}><Pencil size={13} /> Rename</button>
+                        <button className="btn-ghost btn-sm !h-8 flex-1 !text-red-600 hover:!bg-red-50" onClick={() => setDeleting(t)}><Trash2 size={13} /> Delete</button>
+                      </div>
+                    )}
                     <div className="mt-3.5 grid grid-cols-[auto_1fr] gap-2">
                       <button className="btn-secondary btn-sm !h-9" onClick={() => setPreview(t)}><Eye size={14} /> Preview</button>
                       <button className="btn-primary btn-sm !h-9" disabled={busyId === t.id} onClick={() => start(t)}>{busyId === t.id ? 'Creating…' : 'Use this template'}</button>
@@ -262,7 +300,7 @@ export default function Templates() {
       </Modal>
 
       <Modal
-        open={Boolean(preview)} onClose={() => setPreview(null)} size="lg" title={preview ? `${preview.name} · ${preview.style}` : ''}
+        open={Boolean(preview)} onClose={() => setPreview(null)} size="lg" title={preview ? `${preview.name} · ${preview.custom ? 'Saved by you' : preview.style}` : ''}
         footer={preview && <>
           <button className="btn-secondary" onClick={() => setPreview(null)}>Close</button>
           <button className="btn-primary" onClick={() => start(preview)} disabled={busyId === preview.id}>Use this template</button>
@@ -285,6 +323,26 @@ export default function Templates() {
           </div>
         )}
       </Modal>
+      <Modal open={Boolean(renaming)} onClose={() => setRenaming(null)} title="Rename template" size="sm"
+        footer={<>
+          <button className="btn-secondary" onClick={() => setRenaming(null)}>Cancel</button>
+          <button className="btn-primary" disabled={!renameValue.trim()} form="rename-form" type="submit">Save</button>
+        </>}>
+        <form id="rename-form" onSubmit={async (e) => {
+          e.preventDefault();
+          try { await renameTemplate(renaming.id, renameValue.trim().slice(0, 40)); setRenaming(null); toast.success('Renamed'); } catch (err) { toast.error(err.message); }
+        }}>
+          <label className="label" htmlFor="rename-tpl">Template name</label>
+          <input id="rename-tpl" className="input" value={renameValue} onChange={(e) => setRenameValue(e.target.value)} maxLength={40} autoFocus />
+        </form>
+      </Modal>
+
+      <ConfirmDialog open={Boolean(deleting)} onClose={() => setDeleting(null)} danger confirmLabel="Delete template" title="Delete this template?"
+        text={deleting ? `“${deleting.name}” will be removed from My templates and your favorites. Invitations you already made with it are not affected.` : ''}
+        onConfirm={async () => {
+          try { await deleteTemplate(deleting.id); toast.success('Template deleted'); } catch (err) { toast.error(err.message); }
+          setDeleting(null);
+        }} />
     </div>
   );
 }

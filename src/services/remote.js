@@ -180,6 +180,46 @@ const toRsvp = (r) => ({
   createdAt: r.created_at,
 });
 
+const MY = 'my-';
+const toTemplate = (r) => ({
+  id: `${MY}${r.id}`, userId: r.user_id, name: r.name, occasion: r.occasion, baseId: r.base_id,
+  style: r.style, mood: r.mood, colorFamily: r.color_family, theme: r.theme, createdAt: r.created_at,
+});
+const rawId = (id) => id.replace(/^my-/, '');
+
+/** "My templates" (saved designs) and favourites, per user. Needs the saved_templates / favorite_templates tables. */
+export const library = {
+  async listSaved(userId) {
+    const { data, error } = await supabase.from('saved_templates').select('*').eq('user_id', userId).order('created_at', { ascending: false });
+    fail(error);
+    return data.map(toTemplate);
+  },
+  async save(userId, t) {
+    const { data, error } = await supabase.from('saved_templates').insert({
+      user_id: userId, name: t.name, occasion: t.occasion, base_id: t.baseId ?? null, style: t.style ?? null,
+      mood: t.mood ?? null, color_family: t.colorFamily ?? null, theme: t.theme,
+    }).select().single();
+    fail(error);
+    return toTemplate(data);
+  },
+  async rename(id, name) { fail((await supabase.from('saved_templates').update({ name }).eq('id', rawId(id))).error); },
+  async remove(id) {
+    fail((await supabase.from('saved_templates').delete().eq('id', rawId(id))).error);
+    fail((await supabase.from('favorite_templates').delete().eq('template_id', id)).error);
+  },
+  async listFavorites(userId) {
+    const { data, error } = await supabase.from('favorite_templates').select('template_id').eq('user_id', userId).order('created_at');
+    fail(error);
+    return data.map((r) => r.template_id);
+  },
+  async setFavorite(userId, templateId, on) {
+    const q = supabase.from('favorite_templates');
+    fail((on
+      ? await q.upsert({ user_id: userId, template_id: templateId }, { onConflict: 'user_id,template_id', ignoreDuplicates: true })
+      : await q.delete().eq('user_id', userId).eq('template_id', templateId)).error);
+  },
+};
+
 export const rsvps = {
   async submit(invitationId, d) {
     // Client-generated id: anonymous guests cannot SELECT, so we cannot read the row back.

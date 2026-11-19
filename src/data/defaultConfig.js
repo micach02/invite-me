@@ -169,4 +169,10 @@ export function createDefaultConfig(occasionId = 'wedding', templateId) {
   };
 }
 
+/** Default config for any template object: a built-in one, or a user's saved design (which carries its own theme). */
+export function templateConfig(tpl) {
+  const cfg = createDefaultConfig(tpl.occasion, tpl.custom ? tpl.baseId || undefined : tpl.id);
+  return tpl.custom ? { ...cfg, theme: { ...cfg.theme, ...tpl.theme, templateId: tpl.id } } : cfg;
+}
+
 export const suggestSlug = (config) => slugify(config?.event?.title || config?.event?.names || 'invitation');

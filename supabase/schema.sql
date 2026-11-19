@@ -72,11 +72,35 @@ create table if not exists inviteme.invitation_views (
 );
 create index if not exists views_inv_idx on inviteme.invitation_views (invitation_id);
 
+-- A person's own saved designs ("My templates") and their favourite templates (built-in ids or their own `my-<id>`).
+create table if not exists inviteme.saved_templates (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  name text not null,
+  occasion text not null default 'wedding',
+  base_id text,
+  style text,
+  mood text,
+  color_family text,
+  theme jsonb not null default '{}'::jsonb,
+  created_at timestamptz default now()
+);
+create index if not exists saved_templates_user_idx on inviteme.saved_templates (user_id);
+
+create table if not exists inviteme.favorite_templates (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  template_id text not null,
+  created_at timestamptz default now(),
+  primary key (user_id, template_id)
+);
+
 -- ---------------------------------------------------------------------------- row level security
 alter table inviteme.profiles enable row level security;
 alter table inviteme.invitations enable row level security;
 alter table inviteme.rsvps enable row level security;
 alter table inviteme.invitation_views enable row level security;
+alter table inviteme.saved_templates enable row level security;
+alter table inviteme.favorite_templates enable row level security;
 
 -- (drop + create keeps this script re-runnable; these only ever touch our own tables)
 drop policy if exists "profile self" on inviteme.profiles;
@@ -89,6 +113,13 @@ create policy "owner manages invitations" on inviteme.invitations for all
 drop policy if exists "public reads published" on inviteme.invitations;
 create policy "public reads published" on inviteme.invitations for select
   using (status = 'published');
+
+drop policy if exists "owner manages saved templates" on inviteme.saved_templates;
+create policy "owner manages saved templates" on inviteme.saved_templates for all
+  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists "owner manages favorites" on inviteme.favorite_templates;
+create policy "owner manages favorites" on inviteme.favorite_templates for all
+  using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 drop policy if exists "owner reads rsvps" on inviteme.rsvps;
 create policy "owner reads rsvps" on inviteme.rsvps for select
@@ -131,7 +162,8 @@ grant usage on schema inviteme to anon, authenticated, service_role;
 grant select on inviteme.invitations to anon;             -- published invitations only (policy)
 grant insert on inviteme.rsvps to anon;                   -- RSVPs to published invitations only (policy)
 
-grant select, insert, update, delete on inviteme.profiles, inviteme.invitations, inviteme.rsvps to authenticated;
+grant select, insert, update, delete on inviteme.profiles, inviteme.invitations, inviteme.rsvps,
+  inviteme.saved_templates, inviteme.favorite_templates to authenticated;
 grant select on inviteme.invitation_views to authenticated;
 
 grant all on all tables in schema inviteme to service_role;   -- used by the optional RSVP-email Edge Function

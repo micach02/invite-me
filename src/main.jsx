@@ -4,12 +4,14 @@ import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
+import { LibraryProvider } from './context/LibraryContext';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || undefined} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
+        <LibraryProvider>
         <App />
         <Toaster
           position="top-center" gutter={10}
@@ -20,6 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             error: { iconTheme: { primary: '#FF8A8A', secondary: '#252923' } },
           }}
         />
+        </LibraryProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,

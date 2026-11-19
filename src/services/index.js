@@ -4,6 +4,6 @@ import * as remote from './remote';
 
 const backend = isSupabaseConfigured ? remote : local;
 
-export const { auth, invitations, rsvps, storage } = backend;
+export const { auth, invitations, rsvps, storage, library } = backend;
 export const isDemoMode = !isSupabaseConfigured;
 export { notifyHostOfRsvp } from './notifications';
