@@ -5,13 +5,14 @@ import AuthLayout, { FieldError } from '../components/layout/AuthLayout';
 import { PageLoader } from '../components/ui/misc';
 import { auth, isDemoMode } from '../services';
 import { useAuth } from '../context/AuthContext';
+import PasswordInput, { StrengthMeter } from '../components/ui/PasswordInput';
 
 export default function ResetPassword() {
   const [params] = useSearchParams();
   const token = params.get('token');
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { register, handleSubmit, getValues, formState: { errors, isSubmitting } } = useForm();
+  const { register, handleSubmit, getValues, watch, formState: { errors, isSubmitting } } = useForm();
 
   // Supabase recovery links sign the user in temporarily; demo mode uses a token.
   const allowed = isDemoMode ? Boolean(token) : Boolean(user);
@@ -38,17 +39,18 @@ export default function ResetPassword() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
           <div>
             <label className="label" htmlFor="password">New password</label>
-            <input id="password" type="password" autoComplete="new-password" className="input"
+            <PasswordInput id="password" autoComplete="new-password"
               {...register('password', { required: 'Choose a password.', minLength: { value: 8, message: 'Use at least 8 characters.' } })} />
+            <StrengthMeter value={watch('password')} />
             <FieldError error={errors.password} />
           </div>
           <div>
             <label className="label" htmlFor="confirm">Confirm password</label>
-            <input id="confirm" type="password" autoComplete="new-password" className="input"
+            <PasswordInput id="confirm" autoComplete="new-password"
               {...register('confirm', { validate: (v) => v === getValues('password') || 'Passwords do not match.' })} />
             <FieldError error={errors.confirm} />
           </div>
-          <button className="btn-primary w-full" disabled={isSubmitting}>{isSubmitting ? 'Saving…' : 'Update password'}</button>
+          <button className="btn-primary btn-lg w-full" disabled={isSubmitting}>{isSubmitting ? 'Saving…' : 'Update password'}</button>
         </form>
       )}
     </AuthLayout>

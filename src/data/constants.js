@@ -4,16 +4,16 @@ import {
 
 /** Occasions the product supports. `category` groups them in the template library. */
 export const OCCASIONS = [
-  { id: 'wedding', label: 'Wedding', category: 'wedding', icon: Heart, namesLabel: 'Couple names', namesPlaceholder: 'Jane & John' },
-  { id: 'birthday', label: 'Birthday', category: 'birthday', icon: Cake, namesLabel: 'Celebrant', namesPlaceholder: 'Mia turns 30' },
-  { id: 'baptism', label: 'Baptism / Christening', category: 'baptism', icon: Church, namesLabel: 'Child name', namesPlaceholder: 'Noah James' },
-  { id: 'debut', label: 'Debut', category: 'debut', icon: Sparkles, namesLabel: 'Celebrant', namesPlaceholder: 'Isabella' },
-  { id: 'anniversary', label: 'Anniversary', category: 'anniversary', icon: HeartHandshake, namesLabel: 'Couple names', namesPlaceholder: 'Maria & Jose' },
-  { id: 'engagement', label: 'Engagement', category: 'wedding', icon: Gem, namesLabel: 'Couple names', namesPlaceholder: 'Jane & John' },
-  { id: 'baby-shower', label: 'Baby Shower', category: 'baby-shower', icon: Baby, namesLabel: 'Parents / Baby', namesPlaceholder: 'Baby Santos' },
-  { id: 'graduation', label: 'Graduation', category: 'other', icon: GraduationCap, namesLabel: 'Graduate', namesPlaceholder: 'Alex Reyes' },
+  { id: 'wedding', label: 'Wedding', category: 'wedding', icon: Heart, namesLabel: 'Couple names', namesPlaceholder: 'Michael & Cha' },
+  { id: 'birthday', label: 'Birthday', category: 'birthday', icon: Cake, namesLabel: 'Celebrant', namesPlaceholder: 'Cha turns 30' },
+  { id: 'baptism', label: 'Baptism / Christening', category: 'baptism', icon: Church, namesLabel: 'Child name', namesPlaceholder: 'Baby Michael' },
+  { id: 'debut', label: 'Debut', category: 'debut', icon: Sparkles, namesLabel: 'Celebrant', namesPlaceholder: 'Cha' },
+  { id: 'anniversary', label: 'Anniversary', category: 'anniversary', icon: HeartHandshake, namesLabel: 'Couple names', namesPlaceholder: 'Michael & Cha' },
+  { id: 'engagement', label: 'Engagement', category: 'wedding', icon: Gem, namesLabel: 'Couple names', namesPlaceholder: 'Michael & Cha' },
+  { id: 'baby-shower', label: 'Baby Shower', category: 'baby-shower', icon: Baby, namesLabel: 'Parents / Baby', namesPlaceholder: 'Baby Cha' },
+  { id: 'graduation', label: 'Graduation', category: 'other', icon: GraduationCap, namesLabel: 'Graduate', namesPlaceholder: 'Michael' },
   { id: 'corporate', label: 'Corporate Event', category: 'corporate', icon: Briefcase, namesLabel: 'Event / Company', namesPlaceholder: 'Northwind Annual Summit' },
-  { id: 'holiday', label: 'Holiday Party', category: 'other', icon: TreePine, namesLabel: 'Host / Theme', namesPlaceholder: 'The Reyes Family' },
+  { id: 'holiday', label: 'Holiday Party', category: 'other', icon: TreePine, namesLabel: 'Host / Theme', namesPlaceholder: 'Michael & Cha' },
   { id: 'other', label: 'Other Special Occasion', category: 'other', icon: PartyPopper, namesLabel: 'Names / Theme', namesPlaceholder: 'Our Celebration' },
 ];
 
@@ -33,10 +33,12 @@ export const LIBRARY_CATEGORIES = [
 export const DESIGN_STYLES = [
   'Minimalist', 'Elegant', 'Floral', 'Modern', 'Luxury', 'Rustic', 'Playful', 'Traditional',
   'Vintage', 'Art Deco', 'Bohemian', 'Botanical', 'Tropical', 'Futuristic', 'Retro', 'Coastal', 'Gothic', 'Editorial',
+  'Neo-Brutalist', 'Watercolor', 'Scandinavian', 'Cottagecore', 'Mid-Century', 'Maximalist', 'Industrial', 'Zen',
 ];
 export const MOODS = [
   'Romantic', 'Festive', 'Whimsical', 'Professional', 'Serene', 'Glamorous',
   'Nostalgic', 'Cozy', 'Dreamy', 'Bold', 'Magical', 'Spiritual', 'Energetic', 'Chic', 'Adventurous',
+  'Joyful', 'Sophisticated', 'Cinematic', 'Intimate', 'Mysterious', 'Regal', 'Tender', 'Rebellious',
 ];
 export const COLOR_FAMILIES = [
   { id: 'green', label: 'Green', hex: '#455C50' },
@@ -63,8 +65,13 @@ export const HEADING_FONTS = [
   { value: 'Cinzel', label: 'Cinzel — Roman capitals' },
   { value: 'Bebas Neue', label: 'Bebas Neue — Poster condensed' },
   { value: 'Syne', label: 'Syne — Bold modern' },
+  { value: 'Space Grotesk', label: 'Space Grotesk — Techy sans' },
   { value: 'Abril Fatface', label: 'Abril Fatface — Fashion display' },
   { value: 'Pacifico', label: 'Pacifico — Retro script' },
+  { value: 'Fraunces', label: 'Fraunces — Soft storybook serif' },
+  { value: 'DM Serif Display', label: 'DM Serif Display — Mid-century serif' },
+  { value: 'Josefin Sans', label: 'Josefin Sans — Geometric Scandinavian' },
+  { value: 'Space Mono', label: 'Space Mono — Industrial monospace' },
 ];
 
 export const BODY_FONTS = [
@@ -74,6 +81,8 @@ export const BODY_FONTS = [
   { value: 'Poppins', label: 'Poppins' },
   { value: 'Cormorant Garamond', label: 'Cormorant Garamond' },
   { value: 'Space Grotesk', label: 'Space Grotesk' },
+  { value: 'Josefin Sans', label: 'Josefin Sans' },
+  { value: 'Space Mono', label: 'Space Mono' },
 ];
 
 export const DECOR_OPTIONS = [
@@ -112,6 +121,7 @@ export const COVER_LAYOUTS = [
   { value: 'medallion', label: 'Medallion' },
   { value: 'glass', label: 'Frosted glass' },
   { value: 'diagonal', label: 'Diagonal split' },
+  { value: 'brutal', label: 'Neo-brutalist' },
 ];
 
 export const COVER_EFFECTS = [
@@ -122,6 +132,8 @@ export const COVER_EFFECTS = [
   { value: 'spotlight', label: 'Roaming spotlight' },
   { value: 'waves', label: 'Rolling waves' },
   { value: 'shimmer', label: 'Shimmering title' },
+  { value: 'watercolor', label: 'Watercolor wash' },
+  { value: 'grain', label: 'Film grain' },
   { value: 'kenburns', label: 'Slow photo zoom (needs cover photo)' },
 ];
 

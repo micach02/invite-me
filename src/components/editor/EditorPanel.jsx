@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlignCenter, AlignLeft, AlignRight, CalendarClock, ChevronDown, Image as ImageIcon, LayoutList, MailCheck, MapPin, PartyPopper, Palette, Plus, Type, Users, X, Layers, Wand2,
@@ -15,9 +15,24 @@ const FOCUS = {
   typography: 'cover', colors: 'cover', animation: 'cover', rsvp: 'rsvp', sections: 'program',
 };
 
+/** Panels are grouped into three tabs so nobody has to scroll past ten accordions. */
+const TABS = [
+  { id: 'details', label: 'Details', first: 'event' },
+  { id: 'sections', label: 'Sections', first: 'sections' },
+  { id: 'design', label: 'Design', first: 'images' },
+];
+const TAB_OF = {
+  event: 'details', host: 'details', datetime: 'details', venue: 'details',
+  sections: 'sections', rsvp: 'sections',
+  images: 'design', typography: 'design', colors: 'design', animation: 'design', background: 'design',
+};
+const TabContext = createContext('details');
+
 function Accordion({ id, title, icon: Icon, open, onToggle, children }) {
+  const activeTab = useContext(TabContext);
+  if (TAB_OF[id] !== activeTab) return null;
   return (
-    <section className="border-b border-black/5">
+    <section className="border-b border-line">
       <h3>
         <button
           type="button" onClick={() => onToggle(id)} aria-expanded={open} aria-controls={`panel-${id}`}
@@ -44,9 +59,9 @@ function Accordion({ id, title, icon: Icon, open, onToggle, children }) {
 
 function Addon({ label, enabled, onToggle, children }) {
   return (
-    <div className="rounded-xl border border-sand bg-white">
+    <div className="rounded-xl border border-line-strong bg-white">
       <div className="px-3.5 py-2.5"><Toggle checked={enabled} onChange={onToggle} label={label} /></div>
-      {enabled && children && <div className="space-y-3 border-t border-sand/70 px-3.5 pb-4 pt-3">{children}</div>}
+      {enabled && children && <div className="space-y-3 border-t border-line px-3.5 pb-4 pt-3">{children}</div>}
     </div>
   );
 }
@@ -63,7 +78,7 @@ function ColorList({ value = [], onChange }) {
           </span>
         ))}
         {value.length < 6 && (
-          <button type="button" onClick={() => onChange([...value, '#C49B72'])} className="grid h-9 w-9 place-items-center rounded-full border border-dashed border-sand text-ink-mute hover:border-brand hover:text-brand" aria-label="Add colour"><Plus size={14} /></button>
+          <button type="button" onClick={() => onChange([...value, '#C49B72'])} className="grid h-9 w-9 place-items-center rounded-full border border-dashed border-line-strong text-ink-mute hover:border-brand hover:text-brand" aria-label="Add colour"><Plus size={14} /></button>
         )}
       </div>
     </div>
@@ -72,6 +87,13 @@ function ColorList({ value = [], onChange }) {
 
 export default function EditorPanel({ config, set, update, onFocusSection }) {
   const [open, setOpen] = useState('event');
+  const [tab, setTab] = useState('details');
+
+  const switchTab = (next) => {
+    setTab(next.id);
+    setOpen(next.first);
+    onFocusSection?.(FOCUS[next.first] ?? 'cover');
+  };
   const b = (path, fallback = '') => ({ value: getPath(config, path, fallback), onChange: (v) => set(path, v) });
   const occ = occasionById(config.meta?.occasion);
   const s = config.sections;
@@ -84,17 +106,26 @@ export default function EditorPanel({ config, set, update, onFocusSection }) {
   const toggleSection = (key, v) => { set(`sections.${key}.enabled`, v); if (v) onFocusSection?.(key); };
 
   return (
+    <TabContext.Provider value={tab}>
     <div>
+      <div className="sticky top-0 z-10 border-b border-line bg-white/95 px-4 py-3 backdrop-blur" role="tablist" aria-label="Editor sections">
+        <div className="flex rounded-xl bg-black/[.045] p-1">
+          {TABS.map((t) => (
+            <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => switchTab(t)}
+              className={`flex-1 rounded-lg px-3 py-1.5 text-[13px] font-semibold transition ${tab === t.id ? 'bg-white text-ink shadow-sm' : 'text-ink-soft hover:text-ink'}`}>{t.label}</button>
+          ))}
+        </div>
+      </div>
       <Accordion id="event" title="Event details" icon={PartyPopper} open={open === 'event'} onToggle={toggle}>
         <SelectField label="Occasion" value={config.meta?.occasion ?? 'wedding'} onChange={(v) => set('meta.occasion', v)} options={OCCASIONS.map((o) => ({ value: o.id, label: o.label }))} />
-        <TextField label="Event title" {...b('event.title')} placeholder="The Wedding of Jane & John" hint="Used for the page title, search and link previews." />
+        <TextField label="Event title" {...b('event.title')} placeholder="The Wedding of Michael & Cha" hint="Used for the page title, search and link previews." />
         <TextField label={occ.namesLabel} {...b('event.names')} placeholder={occ.namesPlaceholder} hint="Shown large on the cover." />
         <TextField label="Tagline" {...b('event.tagline')} placeholder="Together with their families" />
         <TextArea label="Description / invitation message" rows={4} {...b('event.description')} />
       </Accordion>
 
       <Accordion id="host" title="Host information" icon={Users} open={open === 'host'} onToggle={toggle}>
-        <TextArea label="Parents' names" rows={3} {...b('host.parents')} placeholder={'Mr. & Mrs. Santos\nMr. & Mrs. Reyes'} hint="One line per family." />
+        <TextArea label="Parents' names" rows={3} {...b('host.parents')} placeholder={'Michael’s parents\nCha’s parents'} hint="One line per family." />
         <TextArea label="Hosts" rows={2} {...b('host.hosts')} />
         <TextArea label="Sponsors" rows={3} {...b('host.sponsors')} hint="One name per line." />
         <TextArea label="Special acknowledgments" rows={3} {...b('host.acknowledgments')} />
@@ -251,5 +282,6 @@ export default function EditorPanel({ config, set, update, onFocusSection }) {
         </Addon>
       </Accordion>
     </div>
+    </TabContext.Provider>
   );
 }

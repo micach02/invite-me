@@ -5,7 +5,7 @@ import { templateById } from './templates';
 /** Occasion-specific sample copy so a fresh invitation already looks complete. */
 const SAMPLES = {
   wedding: {
-    title: 'The Wedding of Jane & John', names: 'Jane & John', tagline: 'Together with their families',
+    title: 'The Wedding of Michael & Cha', names: 'Michael & Cha', tagline: 'Together with their families',
     description: 'We are getting married! Join us as we celebrate love, laughter and the beginning of our forever.',
     story: 'We met on a rainy Tuesday over a shared umbrella. Six years, two cities and one very patient dog later, we are ready to say “I do” — and we would love for you to be there.',
     program: [['3:00 PM', 'Guest arrival'], ['3:30 PM', 'Ceremony'], ['5:00 PM', 'Cocktail hour'], ['6:30 PM', 'Dinner & toasts'], ['8:00 PM', 'Dancing']],
@@ -13,49 +13,49 @@ const SAMPLES = {
     gift: 'Your presence is the greatest gift. If you wish to give, a contribution to our honeymoon fund is warmly appreciated.',
   },
   engagement: {
-    title: 'Jane & John Are Engaged', names: 'Jane & John', tagline: 'Please join us to celebrate',
+    title: 'Michael & Cha Are Engaged', names: 'Michael & Cha', tagline: 'Please join us to celebrate',
     description: 'She said yes! Come toast to our engagement with food, music and good company.',
     story: 'After a surprise proposal at sunrise, we are over the moon and want to celebrate with the people we love most.',
     program: [['6:00 PM', 'Welcome drinks'], ['7:00 PM', 'Dinner'], ['8:30 PM', 'Toasts & dessert']],
     dress: 'Cocktail attire.', dressColors: ['#455C50', '#D8C9B2'], gift: 'No gifts, please — just bring your love and appetite.',
   },
   birthday: {
-    title: 'Mia’s 30th Birthday', names: 'Mia turns 30', tagline: 'You are invited to celebrate',
+    title: 'Cha’s 30th Birthday', names: 'Cha turns 30', tagline: 'You are invited to celebrate',
     description: 'Thirty, flirty and thriving! Come eat cake, dance and make memories with me.',
     story: 'Another trip around the sun — and I want to spend it with my favourite people.',
     program: [['6:00 PM', 'Arrival & drinks'], ['7:00 PM', 'Dinner'], ['8:00 PM', 'Cake & games'], ['9:00 PM', 'Dance party']],
     dress: 'Come dressed to party!', dressColors: ['#FF6B8B', '#FFD36B', '#2D2A4A'], gift: 'Your company is my gift. If you insist, I would love books or plants.',
   },
   baptism: {
-    title: 'The Baptism of Noah James', names: 'Noah James', tagline: 'With grateful hearts, we invite you to the christening of',
-    description: 'Join our family as we welcome Noah into the church community and celebrate with a luncheon afterwards.',
+    title: 'The Baptism of Baby Michael', names: 'Baby Michael', tagline: 'With grateful hearts, we invite you to the christening of',
+    description: 'Join our family as we welcome Michael into the church community and celebrate with a luncheon afterwards.',
     story: 'Born in spring, our little blessing is ready to begin his journey of faith.',
     program: [['10:00 AM', 'Holy Mass & baptism'], ['12:00 NN', 'Photos with family'], ['12:30 PM', 'Luncheon']],
     dress: 'Smart casual. Light colours are welcome.', dressColors: ['#DCE9F5', '#FFFFFF', '#8FB0D0'], gift: 'Your prayers and presence are our greatest gifts.',
   },
   debut: {
-    title: 'Isabella’s 18th Birthday', names: 'Isabella', tagline: 'Join us for a night of roses and memories',
+    title: 'Cha’s 18th Birthday', names: 'Cha', tagline: 'Join us for a night of roses and memories',
     description: 'A once-in-a-lifetime celebration of my debut. Come dance the night away with family and friends.',
     story: 'Eighteen years of love, laughter and learning. Thank you to everyone who has been part of my journey.',
     program: [['5:00 PM', 'Reception'], ['6:00 PM', '18 Roses'], ['7:00 PM', 'Dinner'], ['8:30 PM', '18 Candles & 18 Treasures'], ['9:30 PM', 'Party']],
     dress: 'Formal. Ladies in rose or champagne gowns; gentlemen in dark suits.', dressColors: ['#C0807F', '#E9C9C4', '#4A2E33'], gift: 'Your presence is enough. Monetary gifts are welcome.',
   },
   anniversary: {
-    title: 'Maria & Jose · 25 Years', names: 'Maria & Jose', tagline: 'Celebrating twenty-five years of love',
+    title: 'Michael & Cha · 25 Years', names: 'Michael & Cha', tagline: 'Celebrating twenty-five years of love',
     description: 'Twenty-five years, three kids and countless adventures. Celebrate our silver anniversary with us.',
     story: 'We said “I do” in a tiny chapel in 1999. Today we would like to say it again — with all of you beside us.',
     program: [['5:00 PM', 'Renewal of vows'], ['6:00 PM', 'Dinner'], ['7:30 PM', 'Slideshow & toasts'], ['8:30 PM', 'Dancing']],
     dress: 'Semi-formal. Silver accents encouraged.', dressColors: ['#8A6A4B', '#D8C9B2', '#F7EFE3'], gift: 'Your presence is our gift.',
   },
   'baby-shower': {
-    title: 'Baby Santos Is Coming!', names: 'Baby Santos', tagline: 'Please shower us with your company',
+    title: 'Baby Cha Is Coming!', names: 'Baby Cha', tagline: 'Please shower us with your company',
     description: 'We are expecting! Join us for games, treats and sweet wishes for our little one.',
     story: 'Our family is growing and we cannot wait to share the joy with you.',
     program: [['2:00 PM', 'Welcome'], ['2:30 PM', 'Games'], ['3:30 PM', 'Lunch'], ['4:30 PM', 'Gift opening']],
     dress: 'Comfortable and cheerful. Pastels encouraged.', dressColors: ['#CDE8E0', '#F9E3B4', '#F2A65A'], gift: 'Diapers, wipes and books for the baby are welcome. Registry linked on the day.',
   },
   graduation: {
-    title: 'Alex Is Graduating!', names: 'Alex Reyes', tagline: 'Please celebrate the graduation of',
+    title: 'Michael Is Graduating!', names: 'Michael', tagline: 'Please celebrate the graduation of',
     description: 'After years of hard work, it is finally time to celebrate. Join us for a party in honour of the Class of 2027.',
     story: 'Four years, countless late nights and one very large coffee budget. I could not have done it without you.',
     program: [['4:00 PM', 'Welcome'], ['5:00 PM', 'Dinner'], ['6:30 PM', 'Speeches'], ['7:30 PM', 'Party']],
@@ -69,7 +69,7 @@ const SAMPLES = {
     dress: 'Business casual.', dressColors: ['#14213D', '#2D6CDF'], gift: '',
   },
   holiday: {
-    title: 'The Reyes Family Christmas Party', names: 'The Reyes Family', tagline: 'Join us for an evening of cheer',
+    title: 'Michael & Cha’s Christmas Party', names: 'Michael & Cha', tagline: 'Join us for an evening of cheer',
     description: 'Eat, drink and be merry! Bring your appetite and your best holiday sweater.',
     story: 'It is our favourite night of the year and we cannot wait to celebrate with you.',
     program: [['6:00 PM', 'Open house'], ['7:00 PM', 'Dinner'], ['8:00 PM', 'Gift exchange'], ['9:00 PM', 'Carols & dessert']],
@@ -102,7 +102,7 @@ export function createDefaultConfig(occasionId = 'wedding', templateId) {
     },
     host: {
       parents: occasionId === 'wedding' || occasionId === 'engagement'
-        ? 'Mr. & Mrs. Santos\nMr. & Mrs. Reyes' : '',
+        ? 'Michael’s parents\nCha’s parents' : '',
       hosts: '',
       sponsors: '',
       acknowledgments: 'With love and gratitude to our families and friends.',
@@ -152,7 +152,7 @@ export function createDefaultConfig(occasionId = 'wedding', templateId) {
     },
     page: {
       seoTitle: '', seoDescription: '', ogImage: '',
-      opening: true, openingText: 'Tap to open', noindex: false,
+      opening: true, openingText: 'Tap to open', noindex: false, hideBranding: false,
     },
     meta: { occasion: occasionId },
   };

@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import Logo from '../ui/Logo';
+import { SHOW_PRICING } from '../../config/site';
 
 const COLS = [
-  { title: 'Product', links: [['Templates', '/templates'], ['Features', '/#features'], ['Pricing', '/#pricing'], ['FAQ', '/#faq']] },
+  { title: 'Product', links: [['Templates', '/templates'], ['Features', '/#features'], ...(SHOW_PRICING ? [['Pricing', '/#pricing']] : []), ['FAQ', '/#faq']] },
   { title: 'Occasions', links: [['Weddings', '/templates?category=wedding'], ['Birthdays', '/templates?category=birthday'], ['Baptisms', '/templates?category=baptism'], ['Debuts', '/templates?category=debut']] },
   { title: 'Account', links: [['Login', '/login'], ['Create account', '/register'], ['Dashboard', '/dashboard']] },
 ];

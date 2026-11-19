@@ -14,7 +14,7 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
             <TemplateThumb templateId="blush-garden" className="-translate-y-4 shadow-lift" />
           </div>
           <blockquote>
-            <p className="font-serif text-3xl leading-snug">“Our guests thought we hired a designer. It took us twenty minutes.”</p>
+            <p className="font-serif text-3xl font-medium leading-snug">“Our guests thought we hired a designer. It took us twenty minutes.”</p>
             <footer className="mt-3 text-sm text-white/70">— Camille & Rafael, married in March</footer>
           </blockquote>
         </div>
@@ -23,11 +23,11 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
       <main className="flex flex-col px-6 py-8 sm:px-12">
         <div className="lg:hidden"><Logo /></div>
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-10">
-          <h1 className="font-serif text-4xl font-semibold">{title}</h1>
-          {subtitle && <p className="mt-2 text-ink-soft">{subtitle}</p>}
+          <h1 className="font-display text-3xl font-extrabold">{title}</h1>
+          {subtitle && <p className="mt-2 text-[15px] text-ink-soft">{subtitle}</p>}
           {isDemoMode && (
-            <p className="mt-5 rounded-xl bg-sand-light px-4 py-3 text-xs text-ink-soft">
-              <b className="text-ink">Demo mode</b> — no Supabase keys found, so accounts and invitations are saved in this browser only.
+            <p className="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900">
+              <b>Demo mode</b> — no Supabase keys found, so accounts and invitations are saved in this browser only.
             </p>
           )}
           <div className="mt-7">{children}</div>
@@ -39,5 +39,5 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
 }
 
 export function FieldError({ error }) {
-  return error ? <p className="mt-1 text-xs text-red-600" role="alert">{error.message}</p> : null;
+  return error ? <p className="mt-1.5 text-xs font-medium text-red-600" role="alert">{error.message}</p> : null;
 }

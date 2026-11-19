@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import AuthLayout, { FieldError } from '../components/layout/AuthLayout';
 import { useAuth } from '../context/AuthContext';
+import PasswordInput from '../components/ui/PasswordInput';
 
 export default function Login() {
   const { user, signIn } = useAuth();
@@ -32,7 +33,7 @@ export default function Login() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div>
           <label className="label" htmlFor="email">Email</label>
-          <input id="email" type="email" autoComplete="email" className="input" placeholder="you@email.com"
+          <input id="email" type="email" inputMode="email" autoComplete="email" className="input" placeholder="you@email.com"
             {...register('email', { required: 'Enter your email.', pattern: { value: /^\S+@\S+\.\S+$/, message: 'That email does not look right.' } })} />
           <FieldError error={errors.email} />
         </div>
@@ -41,11 +42,11 @@ export default function Login() {
             <label className="label" htmlFor="password">Password</label>
             <Link to="/forgot-password" className="mb-1.5 text-xs font-medium text-brand hover:underline">Forgot password?</Link>
           </div>
-          <input id="password" type="password" autoComplete="current-password" className="input" placeholder="••••••••"
+          <PasswordInput id="password" autoComplete="current-password" placeholder="••••••••"
             {...register('password', { required: 'Enter your password.' })} />
           <FieldError error={errors.password} />
         </div>
-        <button className="btn-primary w-full" disabled={isSubmitting}>{isSubmitting ? 'Logging in…' : 'Log in'}</button>
+        <button className="btn-primary btn-lg w-full" disabled={isSubmitting}>{isSubmitting ? 'Logging in…' : 'Log in'}</button>
       </form>
     </AuthLayout>
   );

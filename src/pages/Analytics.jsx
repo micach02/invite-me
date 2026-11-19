@@ -26,8 +26,7 @@ export default function Analytics() {
 
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-[.25em] text-accent">Insights</p>
-      <h1 className="mt-1 font-serif text-4xl font-semibold sm:text-5xl">RSVPs & analytics</h1>
+      <h1 className="mt-1 font-display text-2xl font-extrabold sm:text-3xl">RSVPs & analytics</h1>
       <p className="mt-1 max-w-xl text-ink-soft">Open an invitation to see its guest list, attendance and daily views.</p>
 
       <div className="mt-8">
@@ -42,12 +41,12 @@ export default function Analytics() {
                 <li key={r.id}>
                   <Link to={`/dashboard/invitations/${r.id}/analytics`} className="card flex flex-wrap items-center gap-x-8 gap-y-3 p-5 transition hover:shadow-lift">
                     <div className="min-w-0 flex-1 basis-56">
-                      <div className="flex items-center gap-2"><h2 className="truncate font-serif text-xl font-semibold">{r.title}</h2><StatusBadge status={r.status} /></div>
+                      <div className="flex items-center gap-2"><h2 className="truncate font-display text-base font-bold">{r.title}</h2><StatusBadge status={r.status} /></div>
                       <p className="mt-0.5 flex items-center gap-1.5 text-xs text-ink-mute"><occ.icon size={13} />{occ.label}{r.eventDate ? ` · ${formatDate(r.eventDate)}` : ''}</p>
                     </div>
                     <dl className="grid grid-cols-5 gap-5 text-center text-sm">
                       {[['Views', r.viewCount || 0], ['Yes', r.yes], ['Maybe', r.maybe], ['No', r.no], ['Guests', r.guests]].map(([k, v]) => (
-                        <div key={k}><dd className="font-serif text-2xl font-semibold leading-none">{v}</dd><dt className="mt-1 text-[11px] uppercase tracking-wide text-ink-mute">{k}</dt></div>
+                        <div key={k}><dd className="font-display text-xl font-extrabold leading-none">{v}</dd><dt className="mt-1 text-[11px] uppercase tracking-wide text-ink-mute">{k}</dt></div>
                       ))}
                     </dl>
                     <ChevronRight className="text-ink-mute" />

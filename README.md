@@ -85,7 +85,8 @@ all content. There is no per-template editor.
 - **Link-preview crawlers (Facebook, WhatsApp, Messenger) don't execute JavaScript**, so the Open Graph tags set by
   `useDocumentMeta` only help browsers. For rich previews, serve `/invitation/:slug` through a prerender step or an edge
   function that injects OG tags from the `invitations` row. Not included.
-- Payments: the pricing section is marketing copy only — no billing is wired up.
+- Pricing: hidden while every feature is free. Flip `SHOW_PRICING` in `src/config/site.js` to bring back the pricing section
+  and its nav/footer links. It is marketing copy only — no billing is wired up and nothing enforces plan limits.
 - Landing-page testimonials and prices are placeholders.
 - Views are counted once per browser session and never for the invitation's owner.
 - `Messenger` desktop sharing needs `VITE_FB_APP_ID`; otherwise it copies the link.

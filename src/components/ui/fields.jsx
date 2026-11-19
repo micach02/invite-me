@@ -67,7 +67,7 @@ export function ColorField({ label, value, onChange }) {
   const id = useId();
   return (
     <Field label={label} htmlFor={id}>
-      <div className="flex items-center gap-2 rounded-xl border border-sand bg-white p-1.5">
+      <div className="flex items-center gap-2 rounded-xl border border-line-strong bg-white p-1.5">
         <input
           id={id} type="color" value={value || '#000000'} onChange={(e) => onChange(e.target.value)}
           className="h-8 w-9 cursor-pointer rounded-lg border-0 bg-transparent p-0"
@@ -135,7 +135,7 @@ export function ImageField({ label, value, onChange, hint }) {
     <Field label={label} hint={hint}>
       <input ref={ref} type="file" accept="image/*" hidden onChange={pick} />
       {value ? (
-        <div className="group relative overflow-hidden rounded-xl border border-sand">
+        <div className="group relative overflow-hidden rounded-xl border border-line-strong">
           <img src={value} alt="" className="h-28 w-full object-cover" />
           <div className="absolute inset-0 flex items-center justify-center gap-2 bg-ink/50 opacity-0 transition group-hover:opacity-100 focus-within:opacity-100">
             <button type="button" className="btn-secondary btn-sm" onClick={() => ref.current.click()}>Replace</button>
@@ -145,7 +145,7 @@ export function ImageField({ label, value, onChange, hint }) {
       ) : (
         <button
           type="button" onClick={() => ref.current.click()} disabled={busy}
-          className="flex h-24 w-full flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-sand bg-white text-ink-soft transition hover:border-brand hover:text-brand"
+          className="flex h-24 w-full flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-line-strong bg-white text-ink-soft transition hover:border-brand hover:text-brand"
         >
           {busy ? <Loader2 className="animate-spin" size={20} /> : <ImagePlus size={20} />}
           <span className="text-xs">{busy ? 'Uploading…' : 'Upload image'}</span>
@@ -170,7 +170,7 @@ export function GalleryField({ label, value = [], onChange }) {
       <input ref={ref} type="file" accept="image/*" multiple hidden onChange={add} />
       <div className="grid grid-cols-3 gap-2">
         {value.map((src, i) => (
-          <div key={src.slice(-40) + i} className="group relative aspect-square overflow-hidden rounded-lg border border-sand">
+          <div key={src.slice(-40) + i} className="group relative aspect-square overflow-hidden rounded-lg border border-line-strong">
             <img src={src} alt="" className="h-full w-full object-cover" />
             <button
               type="button" onClick={() => onChange(value.filter((_, idx) => idx !== i))} aria-label="Remove photo"
@@ -180,7 +180,7 @@ export function GalleryField({ label, value = [], onChange }) {
         ))}
         <button
           type="button" onClick={() => ref.current.click()} disabled={busy}
-          className="flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-sand text-ink-soft hover:border-brand hover:text-brand"
+          className="flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-line-strong text-ink-soft hover:border-brand hover:text-brand"
         >
           {busy ? <Loader2 className="animate-spin" size={18} /> : <Plus size={18} />}
           <span className="text-[11px]">Add</span>
@@ -202,7 +202,7 @@ export function ListEditor({ items = [], onChange, makeItem, renderItem, addLabe
   return (
     <div className="space-y-3">
       {items.map((item, i) => (
-        <div key={item.id ?? i} className="rounded-xl border border-sand bg-canvas p-3">
+        <div key={item.id ?? i} className="rounded-xl border border-line-strong bg-canvas p-3">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-medium text-ink-mute">{itemLabel ? `${itemLabel} ${i + 1}` : `#${i + 1}`}</span>
             <div className="flex">

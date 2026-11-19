@@ -1,0 +1,65 @@
+/* ------------------------------------------------------------------
+   Batch 4: neo-brutalist layout, watercolor wash and film grain.
+------------------------------------------------------------------- */
+
+/* ---------- NEO-BRUTALIST ---------- */
+.inv-cover.brutal {
+  background-color: var(--inv-cover-from);
+  background-image: radial-gradient(color-mix(in srgb, var(--inv-cover-text) 22%, transparent) 1.6px, transparent 1.6px);
+  background-size: 1.3em 1.3em;
+  color: var(--inv-text);
+}
+.inv-brutal-card {
+  position: relative; z-index: 2; width: min(100%, 34em); padding: 2.2em 1.4em 1.6em; text-align: left;
+  color: var(--inv-text); background: var(--inv-bg);
+  border: .2em solid var(--inv-text); border-radius: .35em; box-shadow: .55em .55em 0 var(--inv-text);
+  animation: inv-brutal-in .7s cubic-bezier(.3, 1.5, .5, 1) both;
+}
+.inv-brutal-tag {
+  position: absolute; top: -1.05em; left: 1em; transform: rotate(-2.5deg); padding: .35em .8em;
+  font: 700 .66em var(--inv-body); letter-spacing: .14em; text-transform: uppercase;
+  background: var(--inv-accent); color: var(--inv-on-accent); border: .2em solid var(--inv-text); border-radius: .3em;
+}
+.inv-cover .inv-brutal-card .inv-cover-title {
+  color: var(--inv-text); text-transform: uppercase; letter-spacing: -.01em; line-height: .92; margin: .15em 0 .5em; text-align: left;
+  font-size: calc(clamp(2.3rem, 13cqw, 4.4rem) * var(--inv-hscale) * var(--inv-fit, 1));
+}
+.inv-brutal-row { display: flex; flex-wrap: wrap; align-items: stretch; gap: .8em; }
+.inv-brutal-date {
+  display: flex; align-items: center; gap: .6em; padding: .5em .8em; transform: rotate(-1.5deg);
+  background: var(--inv-text); color: var(--inv-bg); border-radius: .3em; box-shadow: .25em .25em 0 var(--inv-accent);
+}
+.inv-brutal-date b { font: 700 2.4em/1 var(--inv-heading); color: var(--inv-accent); }
+.inv-brutal-date span { font-size: .7em; letter-spacing: .16em; text-transform: uppercase; line-height: 1.4; }
+.inv-brutal-where { display: flex; flex-direction: column; justify-content: center; min-width: 0; font-size: .85em; line-height: 1.35; }
+.inv-brutal-where b { text-transform: uppercase; letter-spacing: .04em; }
+.inv-brutal-where span { opacity: .7; }
+.inv-cover.brutal .inv-scroll-cue { color: var(--inv-text); }
+@keyframes inv-brutal-in { from { opacity: 0; transform: translate(.7em, .7em) rotate(1.5deg); box-shadow: 0 0 0 var(--inv-text); } }
+
+/* ---------- WATERCOLOR WASH (for light covers) ---------- */
+.inv-fx.wash i {
+  position: absolute; width: 70%; aspect-ratio: 1; mix-blend-mode: multiply; opacity: .55;
+  filter: blur(clamp(22px, 8cqw, 44px)); border-radius: 42% 58% 52% 48% / 55% 45% 55% 45%;
+  animation: inv-wash 18s ease-in-out infinite alternate;
+}
+.inv-fx.wash i:nth-child(1) { background: var(--inv-accent); top: -22%; left: -18%; }
+.inv-fx.wash i:nth-child(2) { background: var(--inv-fx); top: 18%; right: -28%; width: 62%; animation-duration: 23s; animation-delay: -7s; }
+.inv-fx.wash i:nth-child(3) { background: color-mix(in srgb, var(--inv-accent) 55%, var(--inv-fx)); bottom: -26%; left: 6%; width: 78%; animation-duration: 27s; animation-delay: -12s; }
+.inv-fx.wash i:nth-child(4) { background: var(--inv-cover-to); bottom: 6%; right: -16%; width: 44%; opacity: .7; animation-duration: 21s; animation-delay: -4s; }
+@keyframes inv-wash {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); border-radius: 42% 58% 52% 48% / 55% 45% 55% 45%; }
+  50% { transform: translate(8%, 6%) rotate(40deg) scale(1.12); border-radius: 58% 42% 46% 54% / 44% 58% 42% 56%; }
+  100% { transform: translate(-6%, 10%) rotate(-25deg) scale(.94); border-radius: 48% 52% 60% 40% / 52% 40% 60% 48%; }
+}
+
+/* ---------- FILM GRAIN ---------- */
+.inv-cover.fx-grain::before {
+  content: ''; position: absolute; inset: -50%; z-index: 1; pointer-events: none; opacity: .2; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: inv-grain .9s steps(6) infinite;
+}
+@keyframes inv-grain {
+  0% { transform: translate(0, 0); } 20% { transform: translate(-3%, 2%); } 40% { transform: translate(2%, -3%); }
+  60% { transform: translate(-2%, -1%); } 80% { transform: translate(3%, 3%); } 100% { transform: translate(0, 0); }
+}

@@ -3,6 +3,7 @@
  * <InvitationRenderer /> and edit the same JSON config.
  */
 import buildExtra from './templates-extra.js';
+import buildExtra2 from './templates-extra2.js';
 
 const t = (id, name, occasion, style, mood, colorFamily, theme, blurb) => ({
   id, name, occasion, style, mood, colorFamily, blurb,
@@ -152,14 +153,14 @@ const BASE = [
     coverFrom: '#2F3B66', coverTo: '#1B2344', coverText: '#FFF8E1',
   }, 'A scrapbook polaroid pinned with tape. Add a photo to make it yours.'),
 
-  t('main-character', 'Main Character', 'birthday', 'Editorial', 'Bold', 'orange', {
+  t('main-character', 'Main Character', 'birthday', 'Editorial', 'Rebellious', 'orange', {
     fontHeading: 'Bebas Neue', fontBody: 'Space Grotesk', layout: 'poster', decor: 'none', align: 'left',
     coverEffect: 'gradient', titleAnim: 'rise', reveal: 'slide', fxColor: '#FF3D77',
     bgColor: '#FFF4EA', textColor: '#1C1C1C', accentColor: '#FF4A1C',
     coverFrom: '#161616', coverTo: '#2B1B1B', coverText: '#FFFFFF',
   }, 'Giant condensed type, a slanted colour band and a scrolling marquee.'),
 
-  t('royal-shimmer', 'Royal Shimmer', 'debut', 'Gothic', 'Magical', 'red', {
+  t('royal-shimmer', 'Royal Shimmer', 'debut', 'Gothic', 'Regal', 'red', {
     fontHeading: 'Cinzel', fontBody: 'Cormorant Garamond', layout: 'frame', decor: 'ornament',
     coverEffect: 'shimmer', titleAnim: 'blur', reveal: 'blur',
     bgColor: '#FBF3EA', textColor: '#3E1620', accentColor: '#C9A24A',
@@ -187,7 +188,7 @@ const BASE = [
     coverFrom: '#2C2415', coverTo: '#14100A', coverText: '#F6E7BE',
   }, 'Sparkling gold on dark, with a light that glides across the cover.'),
 
-  t('cinematic', 'Cinematic', 'wedding', 'Minimalist', 'Chic', 'black', {
+  t('cinematic', 'Cinematic', 'wedding', 'Minimalist', 'Cinematic', 'black', {
     fontHeading: 'Montserrat', fontBody: 'Inter', layout: 'minimal', decor: 'none', align: 'center',
     coverEffect: 'kenburns', titleAnim: 'letters', reveal: 'blur', overlay: 0.45,
     bgColor: '#111111', textColor: '#EDEDED', accentColor: '#D8C9B2',
@@ -218,7 +219,7 @@ const BASE = [
     coverFrom: '#7A6A55', coverTo: '#4C4034', coverText: '#F6EFE2',
   }, 'A tilted keepsake postcard with a stamp, postmark and typewriter title.'),
 
-  t('medallion-gold', 'Gilded Medallion', 'wedding', 'Art Deco', 'Glamorous', 'gold', {
+  t('medallion-gold', 'Gilded Medallion', 'wedding', 'Art Deco', 'Regal', 'gold', {
     fontHeading: 'Cinzel', fontBody: 'Cormorant Garamond', layout: 'medallion', decor: 'geometric',
     coverEffect: 'shine', titleAnim: 'blur', reveal: 'zoom',
     bgColor: '#12100C', textColor: '#F1E7CF', accentColor: '#D8B35A',
@@ -316,7 +317,7 @@ const BASE = [
     coverFrom: '#0B2A2E', coverTo: '#040A0B', coverText: '#EFFFFD',
   }, 'A terminal-green tech event cover with a typed-out title.'),
 
-  t('black-tie', 'Black Tie Gala', 'corporate', 'Vintage', 'Glamorous', 'black', {
+  t('black-tie', 'Black Tie Gala', 'corporate', 'Vintage', 'Sophisticated', 'black', {
     fontHeading: 'Playfair Display', fontBody: 'Montserrat', layout: 'vintage', decor: 'none',
     titleAnim: 'blur', reveal: 'fade-up',
     bgColor: '#101010', textColor: '#EDE7DA', accentColor: '#C8A55B',
@@ -338,6 +339,6 @@ const BASE = [
   }, 'A cheerful red gradient with snow tumbling down.'),
 ];
 
-export const TEMPLATES = [...BASE, ...buildExtra(t)];
+export const TEMPLATES = [...BASE, ...buildExtra(t), ...buildExtra2(t)];
 
 export const templateById = (id) => TEMPLATES.find((tpl) => tpl.id === id) ?? TEMPLATES[0];

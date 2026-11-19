@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
-import { Check, CloudOff, ExternalLink, Eye, EyeOff, Globe, Loader2, Palette, Save, Search, Share2, Link2 } from 'lucide-react';
+import { Check, ChevronDown, CloudOff, ExternalLink, Eye, EyeOff, Globe, Loader2, Palette, Save, Search, Share2, Link2 } from 'lucide-react';
 import { ImageField, TextArea, TextField, Toggle } from '../ui/fields';
 import { StatusBadge } from '../ui/misc';
 import TemplateThumb from '../invitation/TemplateThumb';
@@ -9,10 +9,21 @@ import { TEMPLATES } from '../../data/templates';
 import { occasionById } from '../../data/constants';
 import { appPath, getPath, publicUrl } from '../../lib/utils';
 
-function Block({ icon: Icon, title, children }) {
+function Block({ icon: Icon, title, children, collapsible = false }) {
+  if (collapsible) {
+    return (
+      <details className="group border-b border-line">
+        <summary className="flex cursor-pointer list-none items-center gap-2 px-5 py-4 text-sm font-bold [&::-webkit-details-marker]:hidden">
+          <Icon size={15} className="text-brand" /> {title}
+          <ChevronDown size={16} className="ml-auto text-ink-mute transition group-open:rotate-180" aria-hidden="true" />
+        </summary>
+        <div className="space-y-4 px-5 pb-5">{children}</div>
+      </details>
+    );
+  }
   return (
-    <section className="border-b border-black/5 px-5 py-5">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold"><Icon size={15} className="text-brand" /> {title}</h3>
+    <section className="border-b border-line px-5 py-5">
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-bold"><Icon size={15} className="text-brand" /> {title}</h3>
       <div className="space-y-4">{children}</div>
     </section>
   );
@@ -55,17 +66,7 @@ export default function SettingsPanel({ invitation, config, set, onTemplate, aut
 
   return (
     <div>
-      <Block icon={Save} title="Save status">
-        <div className="flex items-center justify-between gap-3">
-          <SaveStatus status={autosave.status} />
-          <button className="btn-secondary btn-sm" onClick={autosave.saveNow} disabled={autosave.status === 'saving' || autosave.status === 'saved'}>Save now</button>
-        </div>
-        <p className="text-xs text-ink-mute">
-          Changes save automatically{autosave.savedAt ? ` · last saved ${dayjs(autosave.savedAt).format('h:mm:ss A')}` : ''}.
-        </p>
-      </Block>
-
-      <Block icon={Globe} title="Visibility">
+      <Block icon={Globe} title="Publishing">
         <div className="flex items-center justify-between"><StatusBadge status={invitation.status} />
           {published
             ? <button className="btn-secondary btn-sm" onClick={onUnpublish}><EyeOff size={13} /> Unpublish</button>
@@ -112,10 +113,10 @@ export default function SettingsPanel({ invitation, config, set, onTemplate, aut
         <Pagination compact page={safePage} pageCount={tplPages} onChange={setTplPage} />
       </Block>
 
-      <Block icon={Search} title="Page settings">
+      <Block icon={Search} title="Page & SEO settings" collapsible>
         <div>
           <span className="label">Page address</span>
-          <div className="flex items-center justify-between gap-2 rounded-xl border border-sand bg-white px-3 py-2 text-sm">
+          <div className="flex items-center justify-between gap-2 rounded-xl border border-line-strong bg-white px-3 py-2 text-sm">
             <span className="truncate text-ink-soft">/invitation/<b className="text-ink">{invitation.slug || 'your-link'}</b></span>
             <button className="shrink-0 text-xs font-medium text-brand hover:underline" onClick={onEditSlug}>{published ? 'Change' : 'Set'}</button>
           </div>
@@ -123,6 +124,7 @@ export default function SettingsPanel({ invitation, config, set, onTemplate, aut
         <TextField label="Search & share title" {...b('page.seoTitle')} placeholder={config.event.title} maxLength={70} />
         <TextArea label="Search & share description" rows={3} {...b('page.seoDescription')} placeholder={config.event.description?.slice(0, 120)} maxLength={200} />
         <ImageField label="Share preview image" {...b('page.ogImage')} hint="Shown on Facebook, Messenger & WhatsApp. Defaults to the cover photo." />
+        <Toggle label="Show “Made with InviteMe” footer" description="Turn off for a fully white-labelled invitation." checked={!config.page.hideBranding} onChange={(v) => set('page.hideBranding', !v)} />
         <Toggle label="Animated opening" description="Guests tap an envelope to reveal the invitation." checked={config.page.opening} onChange={(v) => set('page.opening', v)} />
         {config.page.opening && <TextField label="Opening prompt" {...b('page.openingText')} maxLength={30} />}
       </Block>

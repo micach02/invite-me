@@ -42,7 +42,7 @@ export default function ForgotPassword() {
               {...register('email', { required: 'Enter your email.', pattern: { value: /^\S+@\S+\.\S+$/, message: 'That email does not look right.' } })} />
             <FieldError error={errors.email} />
           </div>
-          <button className="btn-primary w-full" disabled={isSubmitting}>{isSubmitting ? 'Sending…' : 'Send reset link'}</button>
+          <button className="btn-primary btn-lg w-full" disabled={isSubmitting}>{isSubmitting ? 'Sending…' : 'Send reset link'}</button>
         </form>
       )}
     </AuthLayout>

@@ -58,7 +58,7 @@ export default function ShareModal({ open, onClose, invitation, onPublish }) {
       {!published ? (
         <div className="py-4 text-center">
           <Share2 className="mx-auto text-brand" size={36} strokeWidth={1.3} />
-          <h3 className="mt-3 font-serif text-2xl font-semibold">Publish to get a link</h3>
+          <h3 className="mt-3 font-display text-lg font-bold">Publish to get a link</h3>
           <p className="mx-auto mt-1 max-w-xs text-sm text-ink-soft">Your invitation is still a draft. Publish it to create a shareable URL and QR code.</p>
           {onPublish && <button className="btn-primary mt-5" onClick={onPublish}>Publish invitation</button>}
         </div>
@@ -75,7 +75,7 @@ export default function ShareModal({ open, onClose, invitation, onPublish }) {
 
           <div className="grid grid-cols-3 gap-3">
             {channels.map(({ label, icon: Icon, color, run }) => (
-              <button key={label} onClick={run} className="flex flex-col items-center gap-2 rounded-2xl border border-sand p-4 transition hover:-translate-y-0.5 hover:shadow-card">
+              <button key={label} onClick={run} className="flex flex-col items-center gap-2 rounded-2xl border border-line-strong p-4 transition hover:-translate-y-0.5 hover:shadow-card">
                 <span className="grid h-11 w-11 place-items-center rounded-full text-white" style={{ background: color }}><Icon size={20} /></span>
                 <span className="text-sm font-medium">{label}</span>
               </button>
@@ -88,7 +88,7 @@ export default function ShareModal({ open, onClose, invitation, onPublish }) {
           <div className="flex flex-col items-center gap-4 rounded-2xl bg-canvas p-5 sm:flex-row">
             <div ref={qrRef} className="rounded-xl bg-white p-3 shadow-card"><QRCodeCanvas value={url} size={132} level="M" marginSize={0} fgColor="#252923" /></div>
             <div className="text-center sm:text-left">
-              <h4 className="font-serif text-xl font-semibold">QR code</h4>
+              <h4 className="font-display text-base font-bold">QR code</h4>
               <p className="mt-1 text-sm text-ink-soft">Print it on tables, programs or save-the-dates. Guests scan and open your invitation instantly.</p>
               <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
                 <button className="btn-secondary btn-sm" onClick={downloadQr}><Download size={14} /> Download PNG</button>

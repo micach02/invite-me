@@ -5,12 +5,16 @@ import { Menu, X } from 'lucide-react';
 import Logo from '../ui/Logo';
 import { useAuth } from '../../context/AuthContext';
 
-const LINKS = [
+import { SHOW_PRICING } from '../../config/site';
+
+const ALL_LINKS = [
   { to: '/', label: 'Home', end: true },
   { to: '/templates', label: 'Templates' },
   { to: '/#features', label: 'Features', hash: true },
   { to: '/#pricing', label: 'Pricing', hash: true },
 ];
+
+const LINKS = ALL_LINKS.filter((l) => SHOW_PRICING || l.to !== '/#pricing');
 
 export default function PublicNav() {
   const { user } = useAuth();
@@ -57,7 +61,7 @@ export default function PublicNav() {
         {open && (
           <motion.div
             initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden border-t border-black/5 bg-canvas md:hidden"
+            className="overflow-hidden border-t border-line bg-canvas md:hidden"
           >
             <div className="container-x flex flex-col gap-1 py-4">
               {LINKS.map((l) => <Link key={l.to} to={l.to} className="rounded-xl px-3 py-3 text-base font-medium hover:bg-sand-light">{l.label}</Link>)}

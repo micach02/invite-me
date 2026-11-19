@@ -45,8 +45,7 @@ export default function Profile() {
   return (
     <div className="max-w-2xl space-y-8">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[.25em] text-accent">Account</p>
-        <h1 className="mt-1 font-serif text-4xl font-semibold sm:text-5xl">Your profile</h1>
+        <h1 className="mt-1 font-display text-2xl font-extrabold sm:text-3xl">Your profile</h1>
       </div>
 
       <section className="card p-6 sm:p-8">
@@ -56,7 +55,7 @@ export default function Profile() {
             <span className="absolute inset-0 grid place-items-center bg-ink/50 opacity-0 transition group-hover:opacity-100">{uploading ? <Loader2 className="animate-spin" size={20} /> : <Camera size={20} />}</span>
           </button>
           <input ref={fileRef} type="file" accept="image/*" hidden onChange={pickAvatar} />
-          <div><p className="font-serif text-2xl font-semibold">{user.fullName || 'Your name'}</p><p className="text-sm text-ink-soft">{user.email}</p></div>
+          <div><p className="font-display text-lg font-bold">{user.fullName || 'Your name'}</p><p className="text-sm text-ink-soft">{user.email}</p></div>
         </div>
 
         <form onSubmit={profile.handleSubmit(saveProfile)} className="mt-8 space-y-4" noValidate>
@@ -78,7 +77,7 @@ export default function Profile() {
       </section>
 
       <section className="card p-6 sm:p-8">
-        <h2 className="font-serif text-2xl font-semibold">Change password</h2>
+        <h2 className="font-display text-lg font-bold">Change password</h2>
         <form onSubmit={pw.handleSubmit(changePassword)} className="mt-5 space-y-4" noValidate>
           <div>
             <label className="label" htmlFor="newpw">New password</label>

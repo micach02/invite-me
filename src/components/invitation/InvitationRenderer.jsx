@@ -5,10 +5,11 @@ import { CalendarDays, CalendarPlus, ChevronDown, Clock, Gift, ImageIcon, MapPin
 import './invitation.css';
 import './invitation-fx.css';
 import './invitation-fx2.css';
+import './invitation-fx3.css';
 import { Decor, Divider } from './Decor';
 import Countdown from './Countdown';
 import RsvpForm from './RsvpForm';
-import { initials, themeStyle } from './theme';
+import { fontMeta, initials, themeStyle } from './theme';
 import { appPath, buildIcs, downloadFile, eventMoment, formatDate, mapsEmbedUrl, mapsLink, timeRange } from '../../lib/utils';
 import dayjs from 'dayjs';
 
@@ -56,11 +57,14 @@ const lines = (text = '') => text.split('\n').map((l) => l.trim()).filter(Boolea
 
 /** Heading with optional entrance animation. Gradient (shimmer) text can't contain transformed children. */
 /** How many characters of the longest word fit comfortably across each layout's title box. */
-const FIT_CAP = { magazine: 7, poster: 7, medallion: 7.5, ticket: 9.5, glass: 8, neon: 9.5, polaroid: 10, vintage: 11, split: 9, bold: 12, arch: 12 };
+const FIT_CAP = { brutal: 8, magazine: 7, poster: 7, medallion: 7.5, ticket: 9.5, glass: 8, neon: 9.5, polaroid: 10, vintage: 11, split: 9, bold: 12, arch: 12 };
 
 function CoverTitle({ text, theme }) {
   const longest = Math.max(1, ...text.split(/\s+/).map((w) => w.length));
-  const fit = Math.max(0.5, Math.min(1, (FIT_CAP[theme.layout] ?? 14) / longest));
+  // Uppercase and letter-spaced faces (Josefin Sans, Cinzel, Space Mono…) are much wider than their character count suggests.
+  const meta = fontMeta(theme.fontHeading);
+  const effLen = longest * (meta.transform === 'uppercase' ? 1.2 : 1) * (1 + (parseFloat(meta.spacing) || 0));
+  const fit = Math.max(0.5, Math.min(1, (FIT_CAP[theme.layout] ?? 11) / effLen));
   const shimmer = theme.coverEffect === 'shimmer';
   let anim = theme.titleAnim || 'rise';
   if (shimmer && ['letters', 'rise', 'typewriter', 'flip'].includes(anim)) anim = 'blur';
@@ -93,6 +97,7 @@ const WAVE = 'M0 60 Q300 0 600 60 T1200 60 T1800 60 T2400 60 V120 H0Z';
 function CoverFx({ effect }) {
   if (effect === 'aurora') return <div className="inv-fx aurora" aria-hidden="true"><i /><i /><i /></div>;
   if (effect === 'shine') return <div className="inv-fx shine" aria-hidden="true"><i /><i /></div>;
+  if (effect === 'watercolor') return <div className="inv-fx wash" aria-hidden="true"><i /><i /><i /><i /></div>;
   if (effect === 'spotlight') return <div className="inv-fx spot" aria-hidden="true"><i /><i /></div>;
   if (effect === 'waves') {
     return (
@@ -230,6 +235,23 @@ export function InvitationCover({ config }) {
               {divider}
               {d && <p className="inv-cover-meta inv-in" style={{ '--d': '1s', marginTop: 0 }}><span>{d.format('MMMM D, YYYY')}</span></p>}
             </div>
+          </div>
+        </div>
+        {cue}
+      </header>
+    );
+  }
+
+  if (layout === 'brutal') {
+    return (
+      <header data-sec="cover" className={cls}>
+        {bg}{fx}{decor}
+        <div className="inv-brutal-card">
+          {event.tagline && <span className="inv-brutal-tag">{event.tagline}</span>}
+          {title}
+          <div className="inv-brutal-row">
+            {d && <div className="inv-brutal-date"><b>{d.format('D')}</b><span>{d.format('MMM')}<br />{d.format('YYYY')}</span></div>}
+            <div className="inv-brutal-where">{venue.name && <b>{venue.name}</b>}{timeRange(event) && <span>{timeRange(event)}</span>}</div>
           </div>
         </div>
         {cue}
@@ -582,7 +604,7 @@ export default function InvitationRenderer({ config, mode = 'public', onRsvp, vi
         <Section key={b.id} id={b.id} alt={i % 2 === 1} mode={mode} bg={images.background} reveal={theme.reveal} {...b.props}>{b.content}</Section>
       ))}
       <footer className="inv-footer">
-        {event.names || event.title} · Made with <a href={appPath('/')} target="_blank" rel="noopener noreferrer">InviteMe</a>
+        {event.names || event.title}{!config.page?.hideBranding && <> · Made with <a href={appPath('/')} target="_blank" rel="noopener noreferrer">InviteMe</a></>}
       </footer>
       <Lightbox src={lightbox} onClose={() => setLightbox(null)} />
     </div>

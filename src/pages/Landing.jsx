@@ -11,6 +11,7 @@ import { TEMPLATES } from '../data/templates';
 import { LIBRARY_CATEGORIES } from '../data/constants';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { useAuth } from '../context/AuthContext';
+import { SHOW_PRICING } from '../config/site';
 
 const fade = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: '-60px' }, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } };
 
@@ -54,6 +55,7 @@ const QUOTES = [
   ['Priya S.', 'Event planner', 'I run six events a month. Duplicating an invitation and swapping the details is a game changer.'],
 ];
 
+// NOTE: marketing copy only — review before setting SHOW_PRICING = true (nothing enforces these limits).
 const PLANS = [
   { name: 'Free', price: '$0', note: 'forever', features: ['1 published invitation', 'All templates', 'RSVP collection', 'Shareable link'], cta: 'Start free' },
   { name: 'Celebrate', price: '$12', note: 'per event', features: ['Unlimited guests', 'QR code downloads', 'Remove InviteMe footer', 'Custom link', 'Priority support'], cta: 'Choose Celebrate', featured: true },
@@ -61,6 +63,7 @@ const PLANS = [
 ];
 
 const FAQ = [
+  ['Is InviteMe really free?', 'Yes. During our launch every feature is free — unlimited invitations, guests and RSVPs, QR codes, CSV exports and removing the InviteMe footer. No card needed.'],
   ['Do my guests need an account or app?', 'No. Guests just tap your link — it opens in their browser and they can RSVP right there.'],
   ['Can I edit my invitation after publishing?', 'Yes. Changes save automatically and go live immediately at the same link.'],
   ['Can I share through Messenger and WhatsApp?', 'Yes. One tap sends your link to Facebook, Messenger or WhatsApp, and you can download a QR code too.'],
@@ -75,7 +78,7 @@ export default function Landing() {
     title: 'InviteMe — Beautiful Digital Invitations for Every Occasion',
     description: 'Design, publish and share digital invitations with RSVP tracking. Weddings, birthdays, baptisms, debuts and more.',
   });
-  const FEATURED = ['aurora-nights', 'evergreen-vows', 'neon-glow', 'royal-shimmer', 'balloon-bash', 'sunset-soiree'];
+  const FEATURED = ['aurora-nights', 'evergreen-vows', 'neon-glow', 'cherry-blossom', 'royal-shimmer', 'balloon-bash', 'vintage-postcard', 'sunset-soiree', 'main-character', 'admit-one', 'midnight-garden', 'floating-hearts'];
   const featured = FEATURED.map((id) => TEMPLATES.find((t) => t.id === id)).filter(Boolean);
 
   return (
@@ -87,17 +90,17 @@ export default function Landing() {
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[780px] bg-[radial-gradient(60%_60%_at_80%_10%,rgba(216,201,178,.5),transparent),radial-gradient(40%_50%_at_0%_30%,rgba(69,92,80,.10),transparent)]" />
         <div className="container-x relative grid items-center gap-14 pb-20 pt-10 lg:grid-cols-[1.05fr_1fr] lg:pb-28 lg:pt-16">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <p className="inline-flex items-center gap-2 rounded-full border border-sand bg-white px-4 py-1.5 text-xs font-medium text-ink-soft"><Heart size={13} className="text-accent" /> Digital invitations, made personal</p>
+            <p className="inline-flex items-center gap-2 rounded-full border border-line-strong bg-white px-4 py-1.5 text-xs font-medium text-ink-soft"><Heart size={13} className="text-accent" /> Digital invitations, made personal</p>
             <h1 className="mt-6 font-serif text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-[4.4rem]">Every Special Moment Deserves a Beautiful Invitation.</h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-soft">
               Design a stunning invitation in minutes, share it with a single link, and watch the RSVPs roll in. No design skills, no printing, no stress.
             </p>
-            <div className="mt-9 flex flex-wrap gap-3">
-              <Link to={user ? '/templates?start=1' : '/register'} className="btn-primary !px-7 !py-3.5 !text-base">Create Your Invitation <ArrowRight size={18} /></Link>
-              <Link to="/templates" className="btn-secondary !px-7 !py-3.5 !text-base">Explore Templates</Link>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Link to={user ? '/templates?start=1' : '/register'} className="btn-primary btn-lg w-full !rounded-full sm:w-auto">Create Your Invitation <ArrowRight size={18} /></Link>
+              <Link to="/templates" className="btn-secondary btn-lg w-full !rounded-full sm:w-auto">Explore Templates</Link>
             </div>
             <ul className="mt-9 flex flex-wrap gap-x-7 gap-y-2 text-sm text-ink-soft">
-              {['Free to start', 'No app for guests', 'RSVP tracking built in'].map((t) => <li key={t} className="flex items-center gap-2"><Check size={15} className="text-brand" />{t}</li>)}
+              {['Every feature free', 'No app for guests', 'RSVP tracking built in'].map((t) => <li key={t} className="flex items-center gap-2"><Check size={15} className="text-brand" />{t}</li>)}
             </ul>
           </motion.div>
 
@@ -136,7 +139,7 @@ export default function Landing() {
           <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {LIBRARY_CATEGORIES.map((c, i) => (
               <motion.div key={c.id} {...fade} transition={{ ...fade.transition, delay: i * 0.05 }}>
-                <Link to={`/templates?category=${c.id}`} className="group flex flex-col items-center gap-3 rounded-3xl border border-sand bg-canvas px-4 py-8 text-center transition hover:-translate-y-1 hover:border-brand hover:bg-brand-50 hover:shadow-card">
+                <Link to={`/templates?category=${c.id}`} className="group flex flex-col items-center gap-3 rounded-3xl border border-line-strong bg-canvas px-4 py-8 text-center transition hover:-translate-y-1 hover:border-brand hover:bg-brand-50 hover:shadow-card">
                   <span className="grid h-14 w-14 place-items-center rounded-full bg-white text-brand shadow-card transition group-hover:bg-brand group-hover:text-white"><c.icon size={24} strokeWidth={1.5} /></span>
                   <span className="font-serif text-xl font-semibold">{c.label}</span>
                 </Link>
@@ -146,22 +149,22 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Featured templates */}
-      <section className="container-x py-20">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <Heading center={false} eyebrow="Featured templates" title="Designs guests will remember" />
-          <Link to="/templates" className="btn-secondary">View all templates <ArrowRight size={16} /></Link>
+      {/* Featured templates: slow auto-scrolling gallery of live covers (pauses on hover, static for reduced motion) */}
+      <section className="overflow-hidden py-20" aria-label="Featured templates">
+        <div className="container-x flex flex-wrap items-end justify-between gap-4">
+          <Heading center={false} eyebrow="Templates" title="Designs guests will remember" />
+          <Link to="/templates" className="btn-secondary">Browse all {TEMPLATES.length} templates <ArrowRight size={16} /></Link>
         </div>
-        <div className="mt-12 grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-6">
-          {featured.map((t, i) => (
-            <motion.div key={t.id} {...fade} transition={{ ...fade.transition, delay: i * 0.06 }}>
-              <Link to={`/templates?category=${t.occasion === 'holiday' ? 'other' : t.occasion}`} className="group block">
-                <div className="overflow-hidden rounded-2xl shadow-card transition duration-300 group-hover:-translate-y-1 group-hover:shadow-lift"><TemplateThumb templateId={t.id} rounded="rounded-none" /></div>
-                <p className="mt-3 font-serif text-lg font-semibold">{t.name}</p>
+        <div className="relative mt-12 [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)]">
+          <div className="flex w-max animate-marquee gap-5 px-2.5 hover:[animation-play-state:paused]">
+            {[...featured, ...featured].map((t, i) => (
+              <Link key={`${t.id}-${i}`} to={`/templates?q=${encodeURIComponent(t.name)}`} aria-hidden={i >= featured.length ? 'true' : undefined} tabIndex={i >= featured.length ? -1 : undefined} className="group block w-44 shrink-0 sm:w-52">
+                <div className="overflow-hidden rounded-2xl shadow-card ring-1 ring-black/5 transition duration-300 group-hover:-translate-y-1.5 group-hover:shadow-lift"><TemplateThumb templateId={t.id} rounded="rounded-none" /></div>
+                <p className="mt-3 font-display text-sm font-bold">{t.name}</p>
                 <p className="text-xs text-ink-mute">{t.style}</p>
               </Link>
-            </motion.div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
@@ -203,13 +206,14 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* Pricing — hidden while every feature is free (see src/config/site.js) */}
+      {SHOW_PRICING && (
       <section id="pricing" className="scroll-mt-20 bg-white py-24">
         <div className="container-x">
           <Heading eyebrow="Pricing" title="Simple pricing for every celebration" text="Start free. Upgrade only when you need more." />
           <div className="mx-auto mt-14 grid max-w-5xl gap-6 md:grid-cols-3">
             {PLANS.map((p) => (
-              <motion.div key={p.name} {...fade} className={`relative flex flex-col rounded-3xl p-8 ${p.featured ? 'bg-brand text-white shadow-lift md:-my-4 md:py-12' : 'border border-sand bg-canvas'}`}>
+              <motion.div key={p.name} {...fade} className={`relative flex flex-col rounded-3xl p-8 ${p.featured ? 'bg-brand text-white shadow-lift md:-my-4 md:py-12' : 'border border-line-strong bg-canvas'}`}>
                 {p.featured && <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent px-4 py-1 text-xs font-semibold text-white">Most popular</span>}
                 <h3 className="font-serif text-2xl font-semibold">{p.name}</h3>
                 <p className="mt-4"><span className="font-serif text-5xl font-semibold">{p.price}</span> <span className={p.featured ? 'text-white/70' : 'text-ink-mute'}>/ {p.note}</span></p>
@@ -222,11 +226,12 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      )}
 
       {/* FAQ */}
       <section id="faq" className="container-x scroll-mt-20 py-24">
         <Heading eyebrow="FAQ" title="Questions, answered" />
-        <div className="mx-auto mt-12 max-w-3xl divide-y divide-sand rounded-3xl border border-sand bg-white">
+        <div className="mx-auto mt-12 max-w-3xl divide-y divide-sand rounded-3xl border border-line-strong bg-white">
           {FAQ.map(([q, a], i) => (
             <div key={q}>
               <button className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)}>
@@ -244,8 +249,8 @@ export default function Landing() {
         <motion.div {...fade} className="relative overflow-hidden rounded-[2rem] bg-ink px-8 py-16 text-center text-white sm:py-20">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_80%_at_50%_0%,rgba(196,155,114,.35),transparent)]" />
           <h2 className="relative mx-auto max-w-2xl font-serif text-4xl font-semibold leading-tight sm:text-5xl">Ready to invite the people who matter most?</h2>
-          <p className="relative mx-auto mt-4 max-w-lg text-white/70">Create your first invitation in minutes — it’s free to start.</p>
-          <Link to={user ? '/templates?start=1' : '/register'} className="btn-accent relative mt-9 !px-8 !py-3.5 !text-base">Create Your Invitation <ArrowRight size={18} /></Link>
+          <p className="relative mx-auto mt-4 max-w-lg text-white/70">Create your first invitation in minutes — every feature is free during our launch.</p>
+          <Link to={user ? '/templates?start=1' : '/register'} className="btn-accent btn-lg relative mt-9 !rounded-full !px-8">Create Your Invitation <ArrowRight size={18} /></Link>
         </motion.div>
       </section>
 

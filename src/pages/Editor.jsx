@@ -129,34 +129,39 @@ function EditorWorkspace({ initial }) {
   const published = inv.status === 'published';
   const suggestion = slugify(suggestSlug(config));
 
-  const iconBtn = 'rounded-full p-2 text-ink-soft transition hover:bg-sand-light disabled:opacity-30 disabled:hover:bg-transparent';
+  const iconBtn = 'grid h-9 w-9 place-items-center rounded-lg text-ink-soft transition hover:bg-black/[.05] hover:text-ink disabled:opacity-30 disabled:hover:bg-transparent';
 
   return (
     <div className="flex h-[100dvh] flex-col bg-canvas">
       {/* Top bar */}
-      <header className="flex h-14 shrink-0 items-center gap-2 border-b border-black/5 bg-white px-3 sm:px-4">
+      <header className="flex h-14 shrink-0 items-center gap-1.5 border-b border-line bg-white px-2 sm:gap-2 sm:px-4">
         <button className={iconBtn} onClick={() => navigate('/dashboard')} aria-label="Back to dashboard"><ArrowLeft size={18} /></button>
-        <div className="hidden sm:block"><Logo to="/dashboard" /></div>
-        <div className="mx-2 hidden h-6 w-px bg-black/10 sm:block" />
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium">{config.event.title || 'Untitled invitation'}</p>
+        <div className="hidden lg:block"><Logo to="/dashboard" /></div>
+        <div className="mx-1 hidden h-6 w-px bg-line lg:block" />
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <input
+            value={config.event.title} onChange={(e) => set('event.title', e.target.value)} aria-label="Invitation title" placeholder="Untitled invitation" maxLength={90}
+            className="min-w-0 max-w-md flex-1 truncate rounded-lg border border-transparent bg-transparent px-2 py-1.5 font-display text-sm font-bold transition hover:border-line-strong hover:bg-canvas focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10"
+          />
+          {published && <span className="hidden shrink-0 items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/15 sm:inline-flex"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />Live</span>}
         </div>
-        <SaveStatus status={autosave.status} compact={false} />
+        <div className="hidden sm:block"><SaveStatus status={autosave.status} /></div>
+        <div className="sm:hidden"><SaveStatus status={autosave.status} compact /></div>
         <div className="hidden items-center sm:flex">
           <button className={iconBtn} onClick={undo} disabled={!canUndo} aria-label="Undo" title="Undo (Ctrl+Z)"><Undo2 size={17} /></button>
           <button className={iconBtn} onClick={redo} disabled={!canRedo} aria-label="Redo" title="Redo (Ctrl+Shift+Z)"><Redo2 size={17} /></button>
         </div>
-        <button className="btn-secondary btn-sm hidden md:inline-flex" onClick={previewAsGuest}><Eye size={14} /> Preview as guest</button>
+        <button className="btn-secondary btn-sm !h-9 hidden md:inline-flex" onClick={previewAsGuest}><Eye size={14} /> Preview as guest</button>
         {published ? (
-          <button className="btn-primary btn-sm" onClick={() => setShareOpen(true)}><Share2 size={14} /> Share</button>
+          <button className="btn-primary btn-sm !h-9" onClick={() => setShareOpen(true)}><Share2 size={14} /> Share</button>
         ) : (
-          <button className="btn-primary btn-sm" onClick={() => setPublishOpen(true)}><Globe size={14} /> Publish</button>
+          <button className="btn-primary btn-sm !h-9" onClick={() => setPublishOpen(true)}><Globe size={14} /> Publish</button>
         )}
       </header>
 
       {/* Workspace */}
       <div className="grid min-h-0 flex-1 lg:grid-cols-[22rem_minmax(0,1fr)_20rem]">
-        <aside className={`${tab === 'edit' ? 'block' : 'hidden'} scroll-thin min-h-0 overflow-y-auto border-r border-black/5 bg-white lg:block`} aria-label="Editing controls">
+        <aside className={`${tab === 'edit' ? 'block' : 'hidden'} scroll-thin min-h-0 overflow-y-auto border-r border-line bg-white lg:block`} aria-label="Editing controls">
           <EditorPanel config={config} set={set} update={update} onFocusSection={(s) => { focusSection(s); }} />
         </aside>
 
@@ -187,7 +192,7 @@ function EditorWorkspace({ initial }) {
           </div>
         </main>
 
-        <aside className={`${tab === 'settings' ? 'block' : 'hidden'} scroll-thin min-h-0 overflow-y-auto border-l border-black/5 bg-white lg:block`} aria-label="Invitation settings">
+        <aside className={`${tab === 'settings' ? 'block' : 'hidden'} scroll-thin min-h-0 overflow-y-auto border-l border-line bg-white lg:block`} aria-label="Invitation settings">
           <SettingsPanel
             invitation={inv} config={config} set={set} onTemplate={applyTemplate} autosave={autosave}
             onPublish={() => setPublishOpen(true)} onUnpublish={() => setUnpublishOpen(true)} onShare={() => setShareOpen(true)} onEditSlug={() => setPublishOpen(true)}
@@ -196,7 +201,7 @@ function EditorWorkspace({ initial }) {
       </div>
 
       {/* Mobile tab bar */}
-      <nav className="grid shrink-0 grid-cols-3 border-t border-black/5 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden" aria-label="Editor sections">
+      <nav className="grid shrink-0 grid-cols-3 border-t border-line bg-white pb-[env(safe-area-inset-bottom)] lg:hidden" aria-label="Editor sections">
         {[['edit', PencilLine, 'Edit'], ['preview', Eye, 'Preview'], ['settings', Settings2, 'Settings']].map(([k, Icon, label]) => (
           <button key={k} onClick={() => setTab(k)} aria-current={tab === k} className={`flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium ${tab === k ? 'text-brand' : 'text-ink-mute'}`}>
             <Icon size={20} strokeWidth={1.7} />{label}

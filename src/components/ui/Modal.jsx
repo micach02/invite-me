@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 
+/** Centered dialog on desktop, bottom sheet (with grab handle) on phones. */
 export default function Modal({ open, onClose, title, children, footer, size = 'md' }) {
   useEffect(() => {
     if (!open) return undefined;
@@ -12,30 +13,29 @@ export default function Modal({ open, onClose, title, children, footer, size = '
     return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = prev; };
   }, [open, onClose]);
 
-  const width = { sm: 'max-w-sm', md: 'max-w-lg', lg: 'max-w-3xl', xl: 'max-w-5xl' }[size];
+  const width = { sm: 'sm:max-w-sm', md: 'sm:max-w-lg', lg: 'sm:max-w-3xl', xl: 'sm:max-w-5xl' }[size];
 
   return (
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-end justify-center bg-ink/40 p-0 backdrop-blur-sm sm:items-center sm:p-6"
+          className="fixed inset-0 z-[100] flex items-end justify-center bg-ink/45 backdrop-blur-[3px] sm:items-center sm:p-6"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           onMouseDown={(e) => e.target === e.currentTarget && onClose?.()}
         >
           <motion.div
             role="dialog" aria-modal="true" aria-label={title}
-            className={`flex max-h-[92vh] w-full ${width} flex-col overflow-hidden rounded-t-3xl bg-white shadow-lift sm:rounded-3xl`}
-            initial={{ y: 40, opacity: 0, scale: 0.98 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 24, opacity: 0 }}
-            transition={{ type: 'spring', damping: 28, stiffness: 320 }}
+            className={`flex max-h-[92dvh] w-full ${width} flex-col overflow-hidden rounded-t-3xl bg-white shadow-lift sm:rounded-2xl`}
+            initial={{ y: 48, opacity: 0.6 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 32, opacity: 0 }}
+            transition={{ type: 'spring', damping: 30, stiffness: 340 }}
           >
-            <div className="flex items-center justify-between border-b border-black/5 px-6 py-4">
-              <h2 className="font-serif text-2xl font-semibold">{title}</h2>
-              <button onClick={onClose} className="rounded-full p-2 text-ink-soft hover:bg-sand-light" aria-label="Close">
-                <X size={18} />
-              </button>
+            <div className="mx-auto mt-2.5 h-1 w-10 rounded-full bg-black/10 sm:hidden" aria-hidden="true" />
+            <div className="flex items-center justify-between gap-4 px-6 pb-3 pt-4 sm:pt-5">
+              <h2 className="font-display text-lg font-bold">{title}</h2>
+              <button onClick={onClose} className="btn-ghost btn-icon -mr-2" aria-label="Close"><X size={18} /></button>
             </div>
-            <div className="scroll-thin overflow-y-auto px-6 py-5">{children}</div>
-            {footer && <div className="flex flex-wrap justify-end gap-2 border-t border-black/5 bg-canvas px-6 py-4">{footer}</div>}
+            <div className="scroll-thin overflow-y-auto px-6 pb-6 pt-1">{children}</div>
+            {footer && <div className="flex flex-wrap justify-end gap-2 border-t border-line bg-canvas/70 px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">{footer}</div>}
           </motion.div>
         </motion.div>
       )}

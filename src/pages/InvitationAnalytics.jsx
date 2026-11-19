@@ -79,7 +79,7 @@ export default function InvitationAnalytics() {
         <Link to="/dashboard/analytics" className="inline-flex items-center gap-1.5 text-sm text-ink-soft hover:text-ink"><ArrowLeft size={14} /> All invitations</Link>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <div className="flex flex-wrap items-center gap-3"><h1 className="font-serif text-4xl font-semibold">{inv.title}</h1><StatusBadge status={inv.status} /></div>
+            <div className="flex flex-wrap items-center gap-3"><h1 className="font-display text-2xl font-extrabold sm:text-3xl">{inv.title}</h1><StatusBadge status={inv.status} /></div>
             <p className="mt-1 text-sm text-ink-soft">{inv.eventDate ? formatDate(inv.eventDate, 'dddd, MMMM D, YYYY') : 'No date set'}</p>
           </div>
           <div className="flex gap-2">
@@ -91,17 +91,17 @@ export default function InvitationAnalytics() {
 
       <section className="grid grid-cols-2 gap-4 md:grid-cols-4" aria-label="Summary">
         {[['Views', totalViews, 'text-sky-700'], ['Responses', guests.length, 'text-brand'], ['Confirmed guests', stats.confirmed, 'text-emerald-700'], ['Response rate', `${conversion}%`, 'text-amber-700']].map(([k, v, c]) => (
-          <div key={k} className="card p-5"><p className={`font-serif text-4xl font-semibold ${c}`}>{v}</p><p className="mt-1 text-sm text-ink-soft">{k}</p></div>
+          <div key={k} className="card p-5"><p className={`font-display text-3xl font-extrabold ${c}`}>{v}</p><p className="mt-1 text-sm text-ink-soft">{k}</p></div>
         ))}
       </section>
 
       <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
         <section className="card p-6">
-          <h2 className="font-serif text-2xl font-semibold">Views · last 14 days</h2>
+          <h2 className="font-display text-lg font-bold">Views · last 14 days</h2>
           <div className="mt-4"><BarChart data={series.map((s) => ({ date: s.date, value: s.views }))} /></div>
         </section>
         <section className="card p-6">
-          <h2 className="font-serif text-2xl font-semibold">Attendance</h2>
+          <h2 className="font-display text-lg font-bold">Attendance</h2>
           <div className="mt-6">
             <SplitBar parts={[
               { label: 'Attending', value: stats.yes, color: '#455C50' },
@@ -115,11 +115,11 @@ export default function InvitationAnalytics() {
 
       <section className="card p-6" aria-label="Guest list">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-serif text-2xl font-semibold">Guest list <span className="text-base text-ink-mute">({shown.length})</span></h2>
+          <h2 className="font-display text-lg font-bold">Guest list <span className="text-base text-ink-mute">({shown.length})</span></h2>
           <div className="flex flex-wrap gap-2">
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <Search size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-mute" />
-              <input className="input !w-48 !pl-9" placeholder="Search guests" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Search guests" />
+              <input type="search" className="input !h-10 !w-full !pl-9 sm:!w-56" placeholder="Search guests" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Search guests" />
             </div>
             <select className="input !w-auto" value={filter} onChange={(e) => setFilter(e.target.value)} aria-label="Filter attendance">
               <option value="all">All responses</option><option value="yes">Attending</option><option value="maybe">Maybe</option><option value="no">Declined</option>
@@ -135,15 +135,39 @@ export default function InvitationAnalytics() {
         ) : shown.length === 0 ? (
           <p className="mt-6 text-center text-sm text-ink-soft">No guests match your filters.</p>
         ) : (
-          <div className="mt-5 overflow-x-auto">
+          <>
+          <ul className="mt-4 space-y-2.5 md:hidden" aria-label="Guests">
+            {shown.map((g) => (
+              <li key={g.id} className="rounded-xl border border-line p-3.5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold">{g.guestName}</p>
+                    <p className="text-xs text-ink-mute">{g.guestCount} guest{g.guestCount === 1 ? '' : 's'} · replied {dayjs(g.createdAt).format('MMM D, h:mm A')}</p>
+                  </div>
+                  <button className="btn-ghost btn-icon -mr-1.5 -mt-1 text-ink-mute hover:text-red-600" onClick={() => setRemoveFor(g)} aria-label={`Remove ${g.guestName}`}><Trash2 size={16} /></button>
+                </div>
+                <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <select value={g.attending} onChange={(e) => setAttending(g, e.target.value)} aria-label={`Attendance for ${g.guestName}`}
+                    className={`cursor-pointer rounded-full border-0 py-1 pl-3 pr-7 text-xs font-semibold ${TONE[g.attending]}`}>
+                    <option value="yes">Attending</option><option value="maybe">Maybe</option><option value="no">Declined</option>
+                  </select>
+                  {g.email && <span className="inline-flex min-w-0 items-center gap-1.5 text-xs text-ink-soft"><Mail size={12} className="shrink-0" /><span className="truncate">{g.email}</span></span>}
+                  {g.phone && <span className="inline-flex items-center gap-1.5 text-xs text-ink-soft"><Phone size={12} />{g.phone}</span>}
+                </div>
+                {g.mealPreference && <p className="mt-2 text-xs text-ink-mute">Meal: {g.mealPreference}</p>}
+                {g.message && <p className="mt-2 text-sm italic text-ink-soft">“{g.message}”</p>}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-5 hidden overflow-x-auto md:block">
             <table className="w-full min-w-[640px] text-left text-sm">
-              <thead><tr className="border-b border-sand text-xs uppercase tracking-wide text-ink-mute">
+              <thead><tr className="border-b border-line-strong text-xs uppercase tracking-wide text-ink-mute">
                 <th className="py-3 pr-4 font-medium">Guest</th><th className="py-3 pr-4 font-medium">Contact</th><th className="py-3 pr-4 font-medium">Attendance</th>
                 <th className="py-3 pr-4 text-center font-medium">Guests</th><th className="py-3 pr-4 font-medium">Replied</th><th className="py-3" />
               </tr></thead>
               <tbody>
                 {shown.map((g) => (
-                  <tr key={g.id} className="border-b border-black/5 align-top last:border-0">
+                  <tr key={g.id} className="border-b border-line align-top last:border-0">
                     <td className="py-3.5 pr-4">
                       <p className="font-medium">{g.guestName}</p>
                       {g.mealPreference && <p className="text-xs text-ink-mute">Meal: {g.mealPreference}</p>}
@@ -168,6 +192,7 @@ export default function InvitationAnalytics() {
               </tbody>
             </table>
           </div>
+          </>
         )}
       </section>
 
