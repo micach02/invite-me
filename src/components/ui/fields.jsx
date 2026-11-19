@@ -57,7 +57,7 @@ export function Toggle({ checked, onChange, label, description }) {
         type="button" role="switch" aria-checked={checked} onClick={() => onChange(!checked)}
         className={cn('relative h-6 w-11 shrink-0 rounded-full transition-colors', checked ? 'bg-brand' : 'bg-sand')}
       >
-        <span className={cn('absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform', checked && 'translate-x-5')} />
+        <span className={cn('absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-surface shadow transition-transform', checked && 'translate-x-5')} />
       </button>
     </label>
   );
@@ -67,7 +67,7 @@ export function ColorField({ label, value, onChange }) {
   const id = useId();
   return (
     <Field label={label} htmlFor={id}>
-      <div className="flex items-center gap-2 rounded-xl border border-line-strong bg-white p-1.5">
+      <div className="flex items-center gap-2 rounded-xl border border-line-strong bg-surface p-1.5">
         <input
           id={id} type="color" value={value || '#000000'} onChange={(e) => onChange(e.target.value)}
           className="h-8 w-9 cursor-pointer rounded-lg border-0 bg-transparent p-0"
@@ -90,7 +90,7 @@ export function Segmented({ label, value, onChange, options }) {
           <button
             key={o.value} type="button" onClick={() => onChange(o.value)} aria-pressed={value === o.value}
             className={cn('flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium transition',
-              value === o.value ? 'bg-white text-brand shadow-sm' : 'text-ink-soft hover:text-ink')}
+              value === o.value ? 'bg-surface text-brand shadow-sm' : 'text-ink-soft hover:text-ink')}
           >
             {o.icon}{o.label}
           </button>
@@ -137,7 +137,7 @@ export function ImageField({ label, value, onChange, hint }) {
       {value ? (
         <div className="group relative overflow-hidden rounded-xl border border-line-strong">
           <img src={value} alt="" className="h-28 w-full object-cover" />
-          <div className="absolute inset-0 flex items-center justify-center gap-2 bg-ink/50 opacity-0 transition group-hover:opacity-100 focus-within:opacity-100">
+          <div className="absolute inset-0 flex items-center justify-center gap-2 bg-night/50 opacity-0 transition group-hover:opacity-100 focus-within:opacity-100">
             <button type="button" className="btn-secondary btn-sm" onClick={() => ref.current.click()}>Replace</button>
             <button type="button" className="btn-secondary btn-sm" onClick={() => onChange('')} aria-label="Remove image"><X size={14} /></button>
           </div>
@@ -145,7 +145,7 @@ export function ImageField({ label, value, onChange, hint }) {
       ) : (
         <button
           type="button" onClick={() => ref.current.click()} disabled={busy}
-          className="flex h-24 w-full flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-line-strong bg-white text-ink-soft transition hover:border-brand hover:text-brand"
+          className="flex h-24 w-full flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-line-strong bg-surface text-ink-soft transition hover:border-brand hover:text-brand"
         >
           {busy ? <Loader2 className="animate-spin" size={20} /> : <ImagePlus size={20} />}
           <span className="text-xs">{busy ? 'Uploading…' : 'Upload image'}</span>
@@ -174,7 +174,7 @@ export function GalleryField({ label, value = [], onChange }) {
             <img src={src} alt="" className="h-full w-full object-cover" />
             <button
               type="button" onClick={() => onChange(value.filter((_, idx) => idx !== i))} aria-label="Remove photo"
-              className="absolute right-1 top-1 rounded-full bg-ink/70 p-1 text-white opacity-0 transition group-hover:opacity-100 focus:opacity-100"
+              className="absolute right-1 top-1 rounded-full bg-night/70 p-1 text-white opacity-0 transition group-hover:opacity-100 focus:opacity-100"
             ><X size={12} /></button>
           </div>
         ))}

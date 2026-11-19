@@ -53,13 +53,13 @@ function GetStarted({ stats, onDismiss }) {
         <h2 className="font-display text-base font-bold">Get started</h2>
         <span className="text-xs font-medium text-ink-mute">{doneCount} of {steps.length} done</span>
       </div>
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-black/[.06]" role="progressbar" aria-valuemin={0} aria-valuemax={steps.length} aria-valuenow={doneCount}>
+      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-ink/[.06]" role="progressbar" aria-valuemin={0} aria-valuemax={steps.length} aria-valuenow={doneCount}>
         <div className="h-full rounded-full bg-brand transition-all duration-700" style={{ width: `${(doneCount / steps.length) * 100}%` }} />
       </div>
       <ol className="mt-4 grid gap-3 sm:grid-cols-3">
         {steps.map((s, i) => (
-          <li key={s.title} className={`flex items-start gap-3 rounded-xl border p-3.5 transition ${s.done ? 'border-emerald-200 bg-emerald-50/60' : i === next ? 'border-brand/30 bg-brand-50/60' : 'border-line bg-white'}`}>
-            <span className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-bold ${s.done ? 'bg-emerald-500 text-white' : i === next ? 'bg-brand text-white' : 'bg-black/[.06] text-ink-mute'}`}>
+          <li key={s.title} className={`flex items-start gap-3 rounded-xl border p-3.5 transition ${s.done ? 'border-emerald-200 bg-emerald-50/60' : i === next ? 'border-brand/30 bg-brand-50/60' : 'border-line bg-surface'}`}>
+            <span className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-bold ${s.done ? 'bg-emerald-500 text-white' : i === next ? 'bg-brand text-white' : 'bg-ink/[.06] text-ink-mute'}`}>
               {s.done ? <Check size={14} strokeWidth={3} /> : i + 1}
             </span>
             <div className="min-w-0">
@@ -141,10 +141,10 @@ export default function Dashboard() {
       ) : (
         <section aria-label="Your invitations" className="space-y-4">
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex rounded-xl bg-black/[.045] p-1" role="tablist" aria-label="Status">
+            <div className="flex rounded-xl bg-ink/[.045] p-1" role="tablist" aria-label="Status">
               {[['all', 'All'], ['draft', 'Drafts'], ['published', 'Published']].map(([k, label]) => (
                 <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
-                  className={`rounded-lg px-3.5 py-1.5 text-[13px] font-semibold transition ${tab === k ? 'bg-white text-ink shadow-sm' : 'text-ink-soft hover:text-ink'}`}>
+                  className={`rounded-lg px-3.5 py-1.5 text-[13px] font-semibold transition ${tab === k ? 'bg-surface text-ink shadow-sm' : 'text-ink-soft hover:text-ink'}`}>
                   {label} <span className={`ml-0.5 text-xs ${tab === k ? 'text-brand' : 'text-ink-mute'}`}>{counts[k]}</span>
                 </button>
               ))}
@@ -163,10 +163,10 @@ export default function Dashboard() {
               <select className="input !h-10 min-w-0 flex-1 sm:!w-auto sm:flex-none" value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort">
                 {Object.entries(SORTS).map(([k, [label]]) => <option key={k} value={k}>{label}</option>)}
               </select>
-              <div className="hidden rounded-xl bg-black/[.045] p-1 sm:flex" role="group" aria-label="Layout">
+              <div className="hidden rounded-xl bg-ink/[.045] p-1 sm:flex" role="group" aria-label="Layout">
                 {[['grid', LayoutGrid, 'Grid view'], ['list', List, 'List view']].map(([k, Icon, label]) => (
                   <button key={k} onClick={() => setLayout(k)} aria-pressed={layout === k} aria-label={label}
-                    className={`grid h-8 w-8 place-items-center rounded-lg transition ${layout === k ? 'bg-white text-ink shadow-sm' : 'text-ink-mute hover:text-ink'}`}><Icon size={16} /></button>
+                    className={`grid h-8 w-8 place-items-center rounded-lg transition ${layout === k ? 'bg-surface text-ink shadow-sm' : 'text-ink-mute hover:text-ink'}`}><Icon size={16} /></button>
                 ))}
               </div>
             </div>

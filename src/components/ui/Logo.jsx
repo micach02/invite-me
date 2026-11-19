@@ -8,7 +8,7 @@ export default function Logo({ to = '/', light = false, className = '' }) {
         <MailOpen size={18} strokeWidth={1.8} />
       </span>
       <span className={`font-serif text-2xl font-semibold tracking-tight ${light ? 'text-white' : 'text-ink'}`}>
-        Invite<span className={light ? 'text-sand' : 'text-accent'}>Me</span>
+        Invite<span className={light ? 'text-[#D8C9B2]' : 'text-accent'}>Me</span>
       </span>
     </Link>
   );

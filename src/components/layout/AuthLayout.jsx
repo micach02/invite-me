@@ -1,4 +1,5 @@
 import Logo from '../ui/Logo';
+import ThemeToggle from '../ui/ThemeToggle';
 import TemplateThumb from '../invitation/TemplateThumb';
 import { isDemoMode } from '../../services';
 
@@ -21,7 +22,7 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
       </aside>
 
       <main className="flex flex-col px-6 py-8 sm:px-12">
-        <div className="lg:hidden"><Logo /></div>
+        <div className="flex items-center justify-between"><div className="lg:hidden"><Logo /></div><ThemeToggle className="ml-auto" /></div>
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-10">
           <h1 className="font-display text-3xl font-extrabold">{title}</h1>
           {subtitle && <p className="mt-2 text-[15px] text-ink-soft">{subtitle}</p>}

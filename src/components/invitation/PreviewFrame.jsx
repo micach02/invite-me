@@ -27,10 +27,10 @@ export default function PreviewFrame({ device = 'mobile', scrollRef, overlay, ch
 
   if (device === 'desktop') {
     return (
-      <div className="mx-auto flex h-full w-full max-w-[1100px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-lift">
-        <div className="flex items-center gap-1.5 border-b border-black/5 bg-canvas px-4 py-2.5" aria-hidden="true">
+      <div className="mx-auto flex h-full w-full max-w-[1100px] flex-col overflow-hidden rounded-2xl border border-ink/10 bg-surface shadow-lift">
+        <div className="flex items-center gap-1.5 border-b border-ink/5 bg-canvas px-4 py-2.5" aria-hidden="true">
           <i className="h-2.5 w-2.5 rounded-full bg-red-300" /><i className="h-2.5 w-2.5 rounded-full bg-amber-300" /><i className="h-2.5 w-2.5 rounded-full bg-emerald-300" />
-          <span className="mx-auto rounded-full bg-white px-8 py-1 text-[11px] text-ink-mute">inviteme.com/invitation/your-event</span>
+          <span className="mx-auto rounded-full bg-surface px-8 py-1 text-[11px] text-ink-mute">inviteme.com/invitation/your-event</span>
         </div>
         {body}
       </div>
@@ -38,7 +38,7 @@ export default function PreviewFrame({ device = 'mobile', scrollRef, overlay, ch
   }
 
   return (
-    <div className="mx-auto flex h-full max-h-[840px] w-[390px] max-w-full flex-col rounded-[2.6rem] bg-ink p-2.5 shadow-lift">
+    <div className="mx-auto flex h-full max-h-[840px] w-[390px] max-w-full flex-col rounded-[2.6rem] bg-night p-2.5 shadow-lift">
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2.1rem] bg-white">{body}</div>
     </div>
   );

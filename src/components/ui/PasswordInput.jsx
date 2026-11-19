@@ -9,7 +9,7 @@ const PasswordInput = forwardRef(function PasswordInput({ className = '', ...pro
       <input ref={ref} type={shown ? 'text' : 'password'} className={`input pr-11 ${className}`} {...props} />
       <button
         type="button" onClick={() => setShown((s) => !s)} aria-label={shown ? 'Hide password' : 'Show password'} aria-pressed={shown}
-        className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-ink-mute transition hover:bg-black/[.05] hover:text-ink"
+        className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-ink-mute transition hover:bg-ink/[.05] hover:text-ink"
       >
         {shown ? <EyeOff size={17} /> : <Eye size={17} />}
       </button>
@@ -32,12 +32,12 @@ export function passwordStrength(pw = '') {
 export function StrengthMeter({ value }) {
   const score = passwordStrength(value);
   const label = ['', 'Weak', 'Fair', 'Good', 'Strong'][score];
-  const color = ['bg-black/10', 'bg-red-500', 'bg-amber-500', 'bg-lime-500', 'bg-emerald-500'][score];
+  const color = ['bg-ink/10', 'bg-red-500', 'bg-amber-500', 'bg-lime-500', 'bg-emerald-500'][score];
   if (!value) return null;
   return (
     <div className="mt-2 flex items-center gap-3" aria-live="polite">
       <div className="flex flex-1 gap-1" aria-hidden="true">
-        {[1, 2, 3, 4].map((i) => <span key={i} className={`h-1 flex-1 rounded-full transition-colors ${i <= score ? color : 'bg-black/10'}`} />)}
+        {[1, 2, 3, 4].map((i) => <span key={i} className={`h-1 flex-1 rounded-full transition-colors ${i <= score ? color : 'bg-ink/10'}`} />)}
       </div>
       <span className="w-12 text-right text-xs font-medium text-ink-soft">{label}</span>
     </div>

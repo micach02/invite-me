@@ -10,7 +10,7 @@ const COLS = [
 
 export default function Footer() {
   return (
-    <footer className="mt-24 bg-brand-dark text-white/80">
+    <footer className="mt-24 bg-deep text-white/80">
       <div className="container-x grid gap-10 py-16 md:grid-cols-[1.4fr_repeat(3,1fr)]">
         <div>
           <Logo light />
@@ -20,7 +20,7 @@ export default function Footer() {
         </div>
         {COLS.map((c) => (
           <div key={c.title}>
-            <h4 className="mb-4 text-xs font-semibold uppercase tracking-[.2em] text-sand">{c.title}</h4>
+            <h4 className="mb-4 text-xs font-semibold uppercase tracking-[.2em] text-[#D8C9B2]">{c.title}</h4>
             <ul className="space-y-2.5 text-sm">
               {c.links.map(([label, to]) => <li key={label}><Link to={to} className="transition hover:text-white">{label}</Link></li>)}
             </ul>

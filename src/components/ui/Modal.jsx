@@ -19,17 +19,17 @@ export default function Modal({ open, onClose, title, children, footer, size = '
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-end justify-center bg-ink/45 backdrop-blur-[3px] sm:items-center sm:p-6"
+          className="fixed inset-0 z-[100] flex items-end justify-center bg-night/55 backdrop-blur-[3px] sm:items-center sm:p-6"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           onMouseDown={(e) => e.target === e.currentTarget && onClose?.()}
         >
           <motion.div
             role="dialog" aria-modal="true" aria-label={title}
-            className={`flex max-h-[92dvh] w-full ${width} flex-col overflow-hidden rounded-t-3xl bg-white shadow-lift sm:rounded-2xl`}
+            className={`flex max-h-[92dvh] w-full ${width} flex-col overflow-hidden rounded-t-3xl bg-surface shadow-lift sm:rounded-2xl`}
             initial={{ y: 48, opacity: 0.6 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 32, opacity: 0 }}
             transition={{ type: 'spring', damping: 30, stiffness: 340 }}
           >
-            <div className="mx-auto mt-2.5 h-1 w-10 rounded-full bg-black/10 sm:hidden" aria-hidden="true" />
+            <div className="mx-auto mt-2.5 h-1 w-10 rounded-full bg-ink/10 sm:hidden" aria-hidden="true" />
             <div className="flex items-center justify-between gap-4 px-6 pb-3 pt-4 sm:pt-5">
               <h2 className="font-display text-lg font-bold">{title}</h2>
               <button onClick={onClose} className="btn-ghost btn-icon -mr-2" aria-label="Close"><X size={18} /></button>

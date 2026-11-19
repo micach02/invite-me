@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Logo from '../ui/Logo';
+import ThemeToggle from '../ui/ThemeToggle';
 import { useAuth } from '../../context/AuthContext';
 
 import { SHOW_PRICING } from '../../config/site';
@@ -43,6 +44,7 @@ export default function PublicNav() {
             : <NavLink key={l.to} to={l.to} end={l.end} className={linkCls}>{l.label}</NavLink>)}
         </nav>
         <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
           {user ? (
             <Link to="/dashboard" className="btn-primary">My dashboard</Link>
           ) : (
@@ -52,9 +54,12 @@ export default function PublicNav() {
             </>
           )}
         </div>
-        <button className="rounded-full p-2 md:hidden" onClick={() => setOpen((o) => !o)} aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open}>
+        <div className="flex items-center gap-1 md:hidden">
+        <ThemeToggle />
+        <button className="rounded-full p-2" onClick={() => setOpen((o) => !o)} aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open}>
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
+        </div>
       </div>
 
       <AnimatePresence>

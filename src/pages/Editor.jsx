@@ -17,6 +17,7 @@ import PublishModal from '../components/editor/PublishModal';
 import ShareModal from '../components/editor/ShareModal';
 import { ConfirmDialog, PageLoader, EmptyState } from '../components/ui/misc';
 import Logo from '../components/ui/Logo';
+import ThemeToggle from '../components/ui/ThemeToggle';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 export default function Editor() {
@@ -129,19 +130,19 @@ function EditorWorkspace({ initial }) {
   const published = inv.status === 'published';
   const suggestion = slugify(suggestSlug(config));
 
-  const iconBtn = 'grid h-9 w-9 place-items-center rounded-lg text-ink-soft transition hover:bg-black/[.05] hover:text-ink disabled:opacity-30 disabled:hover:bg-transparent';
+  const iconBtn = 'grid h-9 w-9 place-items-center rounded-lg text-ink-soft transition hover:bg-ink/[.05] hover:text-ink disabled:opacity-30 disabled:hover:bg-transparent';
 
   return (
     <div className="flex h-[100dvh] flex-col bg-canvas">
       {/* Top bar */}
-      <header className="flex h-14 shrink-0 items-center gap-1.5 border-b border-line bg-white px-2 sm:gap-2 sm:px-4">
+      <header className="flex h-14 shrink-0 items-center gap-1.5 border-b border-line bg-surface px-2 sm:gap-2 sm:px-4">
         <button className={iconBtn} onClick={() => navigate('/dashboard')} aria-label="Back to dashboard"><ArrowLeft size={18} /></button>
         <div className="hidden lg:block"><Logo to="/dashboard" /></div>
         <div className="mx-1 hidden h-6 w-px bg-line lg:block" />
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <input
             value={config.event.title} onChange={(e) => set('event.title', e.target.value)} aria-label="Invitation title" placeholder="Untitled invitation" maxLength={90}
-            className="min-w-0 max-w-md flex-1 truncate rounded-lg border border-transparent bg-transparent px-2 py-1.5 font-display text-sm font-bold transition hover:border-line-strong hover:bg-canvas focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10"
+            className="min-w-0 max-w-md flex-1 truncate rounded-lg border border-transparent bg-transparent px-2 py-1.5 font-display text-sm font-bold transition hover:border-line-strong hover:bg-canvas focus:border-brand focus:bg-surface focus:outline-none focus:ring-4 focus:ring-brand/10"
           />
           {published && <span className="hidden shrink-0 items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/15 sm:inline-flex"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />Live</span>}
         </div>
@@ -151,6 +152,7 @@ function EditorWorkspace({ initial }) {
           <button className={iconBtn} onClick={undo} disabled={!canUndo} aria-label="Undo" title="Undo (Ctrl+Z)"><Undo2 size={17} /></button>
           <button className={iconBtn} onClick={redo} disabled={!canRedo} aria-label="Redo" title="Redo (Ctrl+Shift+Z)"><Redo2 size={17} /></button>
         </div>
+        <ThemeToggle className="hidden sm:grid" />
         <button className="btn-secondary btn-sm !h-9 hidden md:inline-flex" onClick={previewAsGuest}><Eye size={14} /> Preview as guest</button>
         {published ? (
           <button className="btn-primary btn-sm !h-9" onClick={() => setShareOpen(true)}><Share2 size={14} /> Share</button>
@@ -161,22 +163,22 @@ function EditorWorkspace({ initial }) {
 
       {/* Workspace */}
       <div className="grid min-h-0 flex-1 lg:grid-cols-[22rem_minmax(0,1fr)_20rem]">
-        <aside className={`${tab === 'edit' ? 'block' : 'hidden'} scroll-thin min-h-0 overflow-y-auto border-r border-line bg-white lg:block`} aria-label="Editing controls">
+        <aside className={`${tab === 'edit' ? 'block' : 'hidden'} scroll-thin min-h-0 overflow-y-auto border-r border-line bg-surface lg:block`} aria-label="Editing controls">
           <EditorPanel config={config} set={set} update={update} onFocusSection={(s) => { focusSection(s); }} />
         </aside>
 
-        <main className={`${tab === 'preview' ? 'flex' : 'hidden'} min-h-0 flex-col bg-[radial-gradient(#D8C9B2_1px,transparent_1px)] [background-size:20px_20px] lg:flex`} aria-label="Live preview">
+        <main className={`${tab === 'preview' ? 'flex' : 'hidden'} min-h-0 flex-col dot-grid lg:flex`} aria-label="Live preview">
           <div className="flex shrink-0 items-center justify-center gap-2 px-4 py-3">
-            <div className="hidden rounded-full bg-white p-1 shadow-card lg:flex" role="group" aria-label="Preview device">
+            <div className="hidden rounded-full bg-surface p-1 shadow-card lg:flex" role="group" aria-label="Preview device">
               {[['mobile', Smartphone, 'Mobile'], ['desktop', Monitor, 'Desktop']].map(([k, Icon, label]) => (
                 <button key={k} onClick={() => setDevice(k)} aria-pressed={device === k}
                   className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition ${device === k ? 'bg-brand text-white' : 'text-ink-soft'}`}><Icon size={14} />{label}</button>
               ))}
             </div>
             {config.page.opening && (
-              <button className="btn-secondary btn-sm !bg-white" onClick={() => { scrollRef.current?.scrollTo({ top: 0 }); setShowOpening(true); }}><RotateCcw size={13} /> Replay opening</button>
+              <button className="btn-secondary btn-sm !bg-surface" onClick={() => { scrollRef.current?.scrollTo({ top: 0 }); setShowOpening(true); }}><RotateCcw size={13} /> Replay opening</button>
             )}
-            <button className="btn-secondary btn-sm !bg-white md:hidden" onClick={previewAsGuest}><Eye size={13} /> Guest view</button>
+            <button className="btn-secondary btn-sm !bg-surface md:hidden" onClick={previewAsGuest}><Eye size={13} /> Guest view</button>
             <div className="flex sm:hidden">
               <button className={iconBtn} onClick={undo} disabled={!canUndo} aria-label="Undo"><Undo2 size={17} /></button>
               <button className={iconBtn} onClick={redo} disabled={!canRedo} aria-label="Redo"><Redo2 size={17} /></button>
@@ -192,7 +194,7 @@ function EditorWorkspace({ initial }) {
           </div>
         </main>
 
-        <aside className={`${tab === 'settings' ? 'block' : 'hidden'} scroll-thin min-h-0 overflow-y-auto border-l border-line bg-white lg:block`} aria-label="Invitation settings">
+        <aside className={`${tab === 'settings' ? 'block' : 'hidden'} scroll-thin min-h-0 overflow-y-auto border-l border-line bg-surface lg:block`} aria-label="Invitation settings">
           <SettingsPanel
             invitation={inv} config={config} set={set} onTemplate={applyTemplate} autosave={autosave}
             onPublish={() => setPublishOpen(true)} onUnpublish={() => setUnpublishOpen(true)} onShare={() => setShareOpen(true)} onEditSlug={() => setPublishOpen(true)}
@@ -201,7 +203,7 @@ function EditorWorkspace({ initial }) {
       </div>
 
       {/* Mobile tab bar */}
-      <nav className="grid shrink-0 grid-cols-3 border-t border-line bg-white pb-[env(safe-area-inset-bottom)] lg:hidden" aria-label="Editor sections">
+      <nav className="grid shrink-0 grid-cols-3 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden" aria-label="Editor sections">
         {[['edit', PencilLine, 'Edit'], ['preview', Eye, 'Preview'], ['settings', Settings2, 'Settings']].map(([k, Icon, label]) => (
           <button key={k} onClick={() => setTab(k)} aria-current={tab === k} className={`flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium ${tab === k ? 'text-brand' : 'text-ink-mute'}`}>
             <Icon size={20} strokeWidth={1.7} />{label}

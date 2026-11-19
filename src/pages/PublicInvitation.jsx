@@ -83,7 +83,7 @@ export default function PublicInvitation({ preview = false }) {
   return (
     <div style={{ background: config.theme.bgColor }}>
       {preview && (
-        <div className="sticky top-0 z-[150] flex items-center justify-between gap-3 bg-ink px-4 py-2.5 text-xs text-white">
+        <div className="sticky top-0 z-[150] flex items-center justify-between gap-3 bg-night px-4 py-2.5 text-xs text-white">
           <span><b>Guest preview</b> — this is exactly what guests see{inv.status !== 'published' ? ' (draft: not public yet)' : ''}.</span>
           <Link to={`/editor/${inv.id}`} className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 font-medium hover:bg-white/25"><ArrowLeft size={12} /> Back to editor</Link>
         </div>

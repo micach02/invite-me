@@ -6,6 +6,7 @@ import './invitation.css';
 import './invitation-fx.css';
 import './invitation-fx2.css';
 import './invitation-fx3.css';
+import './invitation-fx4.css';
 import { Decor, Divider } from './Decor';
 import Countdown from './Countdown';
 import RsvpForm from './RsvpForm';
@@ -57,7 +58,7 @@ const lines = (text = '') => text.split('\n').map((l) => l.trim()).filter(Boolea
 
 /** Heading with optional entrance animation. Gradient (shimmer) text can't contain transformed children. */
 /** How many characters of the longest word fit comfortably across each layout's title box. */
-const FIT_CAP = { brutal: 8, magazine: 7, poster: 7, medallion: 7.5, ticket: 9.5, glass: 8, neon: 9.5, polaroid: 10, vintage: 11, split: 9, bold: 12, arch: 12 };
+const FIT_CAP = { doorway: 9, brutal: 8, magazine: 7, poster: 7, medallion: 7.5, ticket: 9.5, glass: 8, neon: 9.5, polaroid: 10, vintage: 11, split: 9, bold: 12, arch: 12 };
 
 function CoverTitle({ text, theme }) {
   const longest = Math.max(1, ...text.split(/\s+/).map((w) => w.length));
@@ -108,6 +109,41 @@ function CoverFx({ effect }) {
     );
   }
   return null;
+}
+
+/** Line-drawn little house for the `house` layout. Strokes draw in, the windows light up, the heart beats. */
+function HouseArt() {
+  const draw = (delay) => ({ pathLength: 1, className: 'draw', style: { '--dl': `${delay}s` } });
+  return (
+    <svg className="inv-house" viewBox="0 0 200 176" aria-hidden="true">
+      <g className="rays"><path d="M100 3v9M78 8l4 8M122 8l-4 8" /></g>
+      <path d="M12 158H188" {...draw(0)} />
+      <path d="M38 84v74M162 84v74" {...draw(0.3)} />
+      <path className="roof draw" pathLength="1" style={{ '--dl': '0.55s' }} d="M16 92L100 26l84 66" />
+      <path d="M140 58V32h18v42" {...draw(0.9)} />
+      <path d="M88 158v-34a12 12 0 0 1 24 0v34" {...draw(1.1)} />
+      <circle className="knob" cx="106" cy="144" r="2" />
+      <rect className="glow" x="52" y="106" width="24" height="24" rx="2" />
+      <rect className="glow" x="124" y="106" width="24" height="24" rx="2" />
+      <path d="M52 118h24M64 106v24M124 118h24M136 106v24" {...draw(1.3)} />
+      <path className="heart" d="M100 72C90 65 86 60 86 55a7 7 0 0 1 14-2 7 7 0 0 1 14 2c0 5-4 10-14 17z" />
+    </svg>
+  );
+}
+
+/** A wreath of leaves and berries that hangs on the `doorway` layout's door. */
+function Wreath({ mono }) {
+  return (
+    <div className="inv-wreath" aria-hidden="true">
+      <svg viewBox="0 0 100 100">
+        {Array.from({ length: 18 }, (_, i) => (
+          <ellipse key={i} cx="50" cy="11" rx="9" ry="3.6" className={i % 3 === 0 ? 'alt' : ''} transform={`rotate(${i * 20} 50 50) rotate(24 50 11)`} />
+        ))}
+        {[0, 3, 6, 9, 12, 15].map((i) => <circle key={i} className="berry" cx="50" cy="11" r="2.4" transform={`rotate(${i * 20 + 10} 50 50)`} />)}
+      </svg>
+      <span>{mono}</span>
+    </div>
+  );
 }
 
 /** Circular text ring for the medallion layout. Drops items rather than clipping text mid-word. */
@@ -235,6 +271,39 @@ export function InvitationCover({ config }) {
               {divider}
               {d && <p className="inv-cover-meta inv-in" style={{ '--d': '1s', marginTop: 0 }}><span>{d.format('MMMM D, YYYY')}</span></p>}
             </div>
+          </div>
+        </div>
+        {cue}
+      </header>
+    );
+  }
+
+  if (layout === 'house') {
+    return (
+      <header data-sec="cover" className={cls}>
+        {bg}{fx}{decor}
+        <div className="inv-cover-content">
+          <HouseArt />
+          {eyebrow}{title}{divider}{meta}
+        </div>
+        {cue}
+      </header>
+    );
+  }
+
+  if (layout === 'doorway') {
+    return (
+      <header data-sec="cover" className={cls}>
+        {bg}{fx}{decor}
+        <div className="inv-doorway inv-in" style={{ '--d': '.1s' }}>
+          <div className="inv-door">
+            <Wreath mono={initials(heading) || '♥'} />
+            <div className="inv-door-sign">{eyebrow}{title}{divider}</div>
+            <i className="inv-knob" aria-hidden="true" />
+          </div>
+          <div className="inv-mat">
+            {d && <b>{d.format('MMM D, YYYY')}</b>}
+            {venue.name && <span>{venue.name}</span>}
           </div>
         </div>
         {cue}

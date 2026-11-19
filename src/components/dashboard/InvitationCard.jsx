@@ -27,7 +27,7 @@ function ActionMenu({ inv, onDuplicate, onDelete }) {
     <div className="relative" ref={ref}>
       <button className="btn-ghost btn-icon" onClick={() => setOpen((o) => !o)} aria-label={`More actions for ${inv.title}`} aria-haspopup="menu" aria-expanded={open}><MoreHorizontal size={18} /></button>
       {open && (
-        <div className="absolute right-0 top-10 z-20 w-52 animate-fade-in rounded-xl border border-line bg-white p-1.5 shadow-pop" role="menu">
+        <div className="absolute right-0 top-10 z-20 w-52 animate-fade-in rounded-xl border border-line bg-surface p-1.5 shadow-pop" role="menu">
           <Link className={item} to={`/preview/${inv.id}`} role="menuitem"><Eye size={15} /> Preview as guest</Link>
           <Link className={item} to={`/dashboard/invitations/${inv.id}/analytics`} role="menuitem"><BarChart3 size={15} /> Guests & analytics</Link>
           <button className={item} onClick={() => { setOpen(false); onDuplicate(inv); }} role="menuitem"><Copy size={15} /> Duplicate</button>
@@ -40,7 +40,7 @@ function ActionMenu({ inv, onDuplicate, onDelete }) {
 }
 
 /** Soft backdrop tinted with the invitation's own cover colour, so the grid reads as a gallery. */
-const tint = (inv) => ({ background: `color-mix(in srgb, ${inv.config?.theme?.coverFrom || '#455C50'} 8%, #F5F2EC)` });
+const tint = (inv) => ({ background: `color-mix(in srgb, ${inv.config?.theme?.coverFrom || '#455C50'} 8%, rgb(var(--c-canvas)))` });
 
 export default function InvitationCard({ inv, layout = 'grid', onShare, onDuplicate, onDelete }) {
   const occ = occasionById(inv.occasion);

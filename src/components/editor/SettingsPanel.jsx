@@ -96,7 +96,7 @@ export default function SettingsPanel({ invitation, config, set, onTemplate, aut
           <div className="flex rounded-full bg-sand-light p-1 text-xs font-medium" role="group" aria-label="Template scope">
             {[['occasion', 'This occasion'], ['all', 'All']].map(([k, label]) => (
               <button key={k} type="button" aria-pressed={scope === k} onClick={() => { setScope(k); setTplPage(1); }}
-                className={`rounded-full px-3 py-1 transition ${scope === k ? 'bg-white text-brand shadow-sm' : 'text-ink-soft'}`}>{label}</button>
+                className={`rounded-full px-3 py-1 transition ${scope === k ? 'bg-surface text-brand shadow-sm' : 'text-ink-soft'}`}>{label}</button>
             ))}
           </div>
           <span className="text-xs text-ink-mute">{pool.length} designs</span>
@@ -116,7 +116,7 @@ export default function SettingsPanel({ invitation, config, set, onTemplate, aut
       <Block icon={Search} title="Page & SEO settings" collapsible>
         <div>
           <span className="label">Page address</span>
-          <div className="flex items-center justify-between gap-2 rounded-xl border border-line-strong bg-white px-3 py-2 text-sm">
+          <div className="flex items-center justify-between gap-2 rounded-xl border border-line-strong bg-surface px-3 py-2 text-sm">
             <span className="truncate text-ink-soft">/invitation/<b className="text-ink">{invitation.slug || 'your-link'}</b></span>
             <button className="shrink-0 text-xs font-medium text-brand hover:underline" onClick={onEditSlug}>{published ? 'Change' : 'Set'}</button>
           </div>

@@ -52,7 +52,7 @@ export default function Profile() {
         <div className="flex items-center gap-5">
           <button type="button" onClick={() => fileRef.current.click()} className="group relative grid h-20 w-20 place-items-center overflow-hidden rounded-full bg-brand text-3xl font-semibold text-white" aria-label="Change profile photo">
             {user.avatarUrl ? <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" /> : (user.fullName || user.email)[0].toUpperCase()}
-            <span className="absolute inset-0 grid place-items-center bg-ink/50 opacity-0 transition group-hover:opacity-100">{uploading ? <Loader2 className="animate-spin" size={20} /> : <Camera size={20} />}</span>
+            <span className="absolute inset-0 grid place-items-center bg-night/50 opacity-0 transition group-hover:opacity-100">{uploading ? <Loader2 className="animate-spin" size={20} /> : <Camera size={20} />}</span>
           </button>
           <input ref={fileRef} type="file" accept="image/*" hidden onChange={pickAvatar} />
           <div><p className="font-display text-lg font-bold">{user.fullName || 'Your name'}</p><p className="text-sm text-ink-soft">{user.email}</p></div>

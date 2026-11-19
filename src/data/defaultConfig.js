@@ -61,6 +61,17 @@ const SAMPLES = {
     program: [['4:00 PM', 'Welcome'], ['5:00 PM', 'Dinner'], ['6:30 PM', 'Speeches'], ['7:30 PM', 'Party']],
     dress: 'Smart casual.', dressColors: ['#17171A', '#D9A400'], gift: 'Cards and well wishes are plenty.',
   },
+  'house-blessing': {
+    title: 'House Blessing of Michael & Cha', names: 'Michael & Cha', tagline: 'Please join us for the blessing of our home',
+    description: 'After years of dreaming and saving, we finally have a home of our own! Come and ask God’s blessing upon our house, then stay for lunch and good company.',
+    story: 'It started as a floor plan and a lot of hope. Today the keys are in our hands and the walls are painted — all our home needs now is your blessing, your laughter and a full table.',
+    program: [['10:00 AM', 'Guests arrive & house tour'], ['10:30 AM', 'Blessing of the home'], ['11:30 AM', 'Lunch & fellowship'], ['1:00 PM', 'Games & stories']],
+    dress: 'Smart casual. Light, comfortable clothes — there will be a house tour!', dressColors: ['#C9A27A', '#F4EBDD', '#6F8A76'],
+    gift: 'Your presence and your prayers are the best gifts. If you would like to bring something, plants and little things for the kitchen are always welcome.',
+    storyTitle: 'Our New Home', start: '10:00', end: '14:00',
+    venue: { name: 'Our New Home', address: '45 Sampaguita Street, Quezon City, Metro Manila' },
+    faq: [['Should I bring anything?', 'Just yourselves! Lunch is on us.'], ['Where do I park?', 'Street parking is available along the road. Please carpool where you can.'], ['Are children welcome?', 'Absolutely — the more the merrier.']],
+  },
   corporate: {
     title: 'Northwind Annual Summit 2027', names: 'Northwind Annual Summit', tagline: 'You are invited to',
     description: 'A full day of keynotes, workshops and networking with industry leaders. Lunch and refreshments provided.',
@@ -97,8 +108,8 @@ export function createDefaultConfig(occasionId = 'wedding', templateId) {
       tagline: sample.tagline,
       description: sample.description,
       date,
-      startTime: '15:00',
-      endTime: '22:00',
+      startTime: sample.start ?? '15:00',
+      endTime: sample.end ?? '22:00',
     },
     host: {
       parents: occasionId === 'wedding' || occasionId === 'engagement'
@@ -108,14 +119,14 @@ export function createDefaultConfig(occasionId = 'wedding', templateId) {
       acknowledgments: 'With love and gratitude to our families and friends.',
     },
     venue: {
-      name: 'The Garden Pavilion',
-      address: '123 Rosewood Avenue, Quezon City, Metro Manila',
+      name: sample.venue?.name ?? 'The Garden Pavilion',
+      address: sample.venue?.address ?? '123 Rosewood Avenue, Quezon City, Metro Manila',
       mapUrl: '',
     },
     images: { cover: '', background: '', primary: '', secondary: '', gallery: [] },
     theme: { ...tpl.theme, templateId: tpl.id },
     sections: {
-      story: { enabled: true, title: occasionId === 'corporate' ? 'About the Event' : 'Our Story', text: sample.story },
+      story: { enabled: true, title: sample.storyTitle ?? (occasionId === 'corporate' ? 'About the Event' : 'Our Story'), text: sample.story },
       countdown: { enabled: true, title: 'Counting down' },
       program: {
         enabled: true, title: 'Program',
@@ -136,11 +147,11 @@ export function createDefaultConfig(occasionId = 'wedding', templateId) {
       gifts: { enabled: Boolean(sample.gift), title: 'Gift Guide', text: sample.gift },
       faq: {
         enabled: true, title: 'Questions & Answers',
-        items: [
-          { id: uid(), q: 'Can I bring a plus one?', a: 'Please refer to your invitation. Kindly indicate the number of guests when you RSVP.' },
-          { id: uid(), q: 'Is there parking at the venue?', a: 'Yes, free parking is available on-site.' },
-          { id: uid(), q: 'Are children welcome?', a: 'Little ones are welcome to celebrate with us.' },
-        ],
+        items: (sample.faq ?? [
+          ['Can I bring a plus one?', 'Please refer to your invitation. Kindly indicate the number of guests when you RSVP.'],
+          ['Is there parking at the venue?', 'Yes, free parking is available on-site.'],
+          ['Are children welcome?', 'Little ones are welcome to celebrate with us.'],
+        ]).map(([q, a]) => ({ id: uid(), q, a })),
       },
       location: { enabled: true, title: 'Venue & Directions', showMap: true },
       rsvp: {

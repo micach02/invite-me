@@ -36,7 +36,7 @@ export default function PublishModal({ open, onClose, invitation, suggestion, on
           <div className="flex items-stretch overflow-hidden rounded-xl border border-line-strong focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/20">
             <span className="flex items-center bg-canvas px-3 text-xs text-ink-mute">{siteUrl().replace(/^https?:\/\//, '')}/invitation/</span>
             <input
-              id="slug" autoComplete="off" spellCheck="false" className="w-full bg-white px-3 py-2.5 text-sm outline-none"
+              id="slug" autoComplete="off" spellCheck="false" className="w-full bg-surface px-3 py-2.5 text-sm outline-none"
               {...register('slug', {
                 required: 'Choose a link.',
                 minLength: { value: 3, message: 'Use at least 3 characters.' },

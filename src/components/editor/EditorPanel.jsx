@@ -59,7 +59,7 @@ function Accordion({ id, title, icon: Icon, open, onToggle, children }) {
 
 function Addon({ label, enabled, onToggle, children }) {
   return (
-    <div className="rounded-xl border border-line-strong bg-white">
+    <div className="rounded-xl border border-line-strong bg-surface">
       <div className="px-3.5 py-2.5"><Toggle checked={enabled} onChange={onToggle} label={label} /></div>
       {enabled && children && <div className="space-y-3 border-t border-line px-3.5 pb-4 pt-3">{children}</div>}
     </div>
@@ -74,7 +74,7 @@ function ColorList({ value = [], onChange }) {
         {value.map((c, i) => (
           <span key={i} className="relative">
             <input type="color" value={c} onChange={(e) => onChange(value.map((v, j) => (j === i ? e.target.value : v)))} className="h-9 w-9 cursor-pointer rounded-full border-0 p-0" aria-label={`Colour ${i + 1}`} />
-            <button type="button" onClick={() => onChange(value.filter((_, j) => j !== i))} aria-label="Remove colour" className="absolute -right-1 -top-1 rounded-full bg-ink p-0.5 text-white"><X size={10} /></button>
+            <button type="button" onClick={() => onChange(value.filter((_, j) => j !== i))} aria-label="Remove colour" className="absolute -right-1 -top-1 rounded-full bg-night p-0.5 text-white"><X size={10} /></button>
           </span>
         ))}
         {value.length < 6 && (
@@ -108,11 +108,11 @@ export default function EditorPanel({ config, set, update, onFocusSection }) {
   return (
     <TabContext.Provider value={tab}>
     <div>
-      <div className="sticky top-0 z-10 border-b border-line bg-white/95 px-4 py-3 backdrop-blur" role="tablist" aria-label="Editor sections">
-        <div className="flex rounded-xl bg-black/[.045] p-1">
+      <div className="sticky top-0 z-10 border-b border-line bg-surface/95 px-4 py-3 backdrop-blur" role="tablist" aria-label="Editor sections">
+        <div className="flex rounded-xl bg-ink/[.045] p-1">
           {TABS.map((t) => (
             <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => switchTab(t)}
-              className={`flex-1 rounded-lg px-3 py-1.5 text-[13px] font-semibold transition ${tab === t.id ? 'bg-white text-ink shadow-sm' : 'text-ink-soft hover:text-ink'}`}>{t.label}</button>
+              className={`flex-1 rounded-lg px-3 py-1.5 text-[13px] font-semibold transition ${tab === t.id ? 'bg-surface text-ink shadow-sm' : 'text-ink-soft hover:text-ink'}`}>{t.label}</button>
           ))}
         </div>
       </div>

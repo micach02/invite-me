@@ -15,7 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           position="top-center" gutter={10}
           toastOptions={{
             duration: 3500,
-            style: { borderRadius: '12px', background: '#252923', color: '#fff', fontSize: '14px', fontWeight: 500, padding: '10px 14px', boxShadow: '0 12px 24px -6px rgba(37,41,35,.3)' },
+            style: { borderRadius: '12px', background: 'rgb(var(--c-toast))', color: '#fff', border: '1px solid rgb(255 255 255 / .08)', fontSize: '14px', fontWeight: 500, padding: '10px 14px', boxShadow: '0 12px 24px -6px rgba(37,41,35,.3)' },
             success: { iconTheme: { primary: '#7FD1A0', secondary: '#252923' } },
             error: { iconTheme: { primary: '#FF8A8A', secondary: '#252923' } },
           }}

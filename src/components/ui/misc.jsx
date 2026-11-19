@@ -31,7 +31,7 @@ export function DashboardSkeleton() {
 
 export function EmptyState({ icon: Icon, title, text, action }) {
   return (
-    <div className="grid place-items-center rounded-2xl border border-dashed border-line-strong bg-white/60 px-6 py-14 text-center">
+    <div className="grid place-items-center rounded-2xl border border-dashed border-line-strong bg-surface/60 px-6 py-14 text-center">
       {Icon && <span className="mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-brand-50 text-brand ring-8 ring-brand-50/50"><Icon size={26} strokeWidth={1.5} /></span>}
       <h3 className="font-display text-xl font-bold">{title}</h3>
       {text && <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-ink-soft">{text}</p>}

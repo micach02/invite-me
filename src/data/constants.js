@@ -1,5 +1,5 @@
 import {
-  Heart, Cake, Baby, Sparkles, HeartHandshake, Gem, GraduationCap, Briefcase, TreePine, PartyPopper, Church, Droplets,
+  Heart, Cake, Baby, Sparkles, HeartHandshake, Gem, GraduationCap, Briefcase, TreePine, PartyPopper, Church, Droplets, House,
 } from 'lucide-react';
 
 /** Occasions the product supports. `category` groups them in the template library. */
@@ -10,6 +10,7 @@ export const OCCASIONS = [
   { id: 'debut', label: 'Debut', category: 'debut', icon: Sparkles, namesLabel: 'Celebrant', namesPlaceholder: 'Cha' },
   { id: 'anniversary', label: 'Anniversary', category: 'anniversary', icon: HeartHandshake, namesLabel: 'Couple names', namesPlaceholder: 'Michael & Cha' },
   { id: 'engagement', label: 'Engagement', category: 'wedding', icon: Gem, namesLabel: 'Couple names', namesPlaceholder: 'Michael & Cha' },
+  { id: 'house-blessing', label: 'House Blessing', category: 'house-blessing', icon: House, namesLabel: 'Homeowners / Family', namesPlaceholder: 'Michael & Cha' },
   { id: 'baby-shower', label: 'Baby Shower', category: 'baby-shower', icon: Baby, namesLabel: 'Parents / Baby', namesPlaceholder: 'Baby Cha' },
   { id: 'graduation', label: 'Graduation', category: 'other', icon: GraduationCap, namesLabel: 'Graduate', namesPlaceholder: 'Michael' },
   { id: 'corporate', label: 'Corporate Event', category: 'corporate', icon: Briefcase, namesLabel: 'Event / Company', namesPlaceholder: 'Northwind Annual Summit' },
@@ -25,6 +26,7 @@ export const LIBRARY_CATEGORIES = [
   { id: 'baptism', label: 'Baptism', icon: Droplets },
   { id: 'debut', label: 'Debut', icon: Sparkles },
   { id: 'anniversary', label: 'Anniversary', icon: HeartHandshake },
+  { id: 'house-blessing', label: 'House Blessing', icon: House },
   { id: 'baby-shower', label: 'Baby Shower', icon: Baby },
   { id: 'corporate', label: 'Corporate', icon: Briefcase },
   { id: 'other', label: 'Other Events', icon: PartyPopper },
@@ -34,11 +36,13 @@ export const DESIGN_STYLES = [
   'Minimalist', 'Elegant', 'Floral', 'Modern', 'Luxury', 'Rustic', 'Playful', 'Traditional',
   'Vintage', 'Art Deco', 'Bohemian', 'Botanical', 'Tropical', 'Futuristic', 'Retro', 'Coastal', 'Gothic', 'Editorial',
   'Neo-Brutalist', 'Watercolor', 'Scandinavian', 'Cottagecore', 'Mid-Century', 'Maximalist', 'Industrial', 'Zen',
+  'Modern Farmhouse', 'Japandi', 'Mediterranean',
 ];
 export const MOODS = [
   'Romantic', 'Festive', 'Whimsical', 'Professional', 'Serene', 'Glamorous',
   'Nostalgic', 'Cozy', 'Dreamy', 'Bold', 'Magical', 'Spiritual', 'Energetic', 'Chic', 'Adventurous',
   'Joyful', 'Sophisticated', 'Cinematic', 'Intimate', 'Mysterious', 'Regal', 'Tender', 'Rebellious',
+  'Welcoming', 'Grateful',
 ];
 export const COLOR_FAMILIES = [
   { id: 'green', label: 'Green', hex: '#455C50' },
@@ -122,6 +126,8 @@ export const COVER_LAYOUTS = [
   { value: 'glass', label: 'Frosted glass' },
   { value: 'diagonal', label: 'Diagonal split' },
   { value: 'brutal', label: 'Neo-brutalist' },
+  { value: 'house', label: 'Little house' },
+  { value: 'doorway', label: 'Front door' },
 ];
 
 export const COVER_EFFECTS = [

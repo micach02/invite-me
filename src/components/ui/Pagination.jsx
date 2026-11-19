@@ -21,7 +21,7 @@ export default function Pagination({ page, pageCount, onChange, compact = false,
 
   return (
     <nav aria-label="Pagination" className={`flex items-center justify-center gap-1.5 ${className}`}>
-      <button type="button" className={`${base} border border-line-strong bg-white text-ink-soft hover:bg-sand-light disabled:opacity-40 disabled:hover:bg-white`} onClick={() => go(page - 1)} disabled={page === 1} aria-label="Previous page">
+      <button type="button" className={`${base} border border-line-strong bg-surface text-ink-soft hover:bg-sand-light disabled:opacity-40 disabled:hover:bg-surface`} onClick={() => go(page - 1)} disabled={page === 1} aria-label="Previous page">
         <ChevronLeft size={16} />
       </button>
 
@@ -38,7 +38,7 @@ export default function Pagination({ page, pageCount, onChange, compact = false,
         )))
       )}
 
-      <button type="button" className={`${base} border border-line-strong bg-white text-ink-soft hover:bg-sand-light disabled:opacity-40 disabled:hover:bg-white`} onClick={() => go(page + 1)} disabled={page === pageCount} aria-label="Next page">
+      <button type="button" className={`${base} border border-line-strong bg-surface text-ink-soft hover:bg-sand-light disabled:opacity-40 disabled:hover:bg-surface`} onClick={() => go(page + 1)} disabled={page === pageCount} aria-label="Next page">
         <ChevronRight size={16} />
       </button>
     </nav>

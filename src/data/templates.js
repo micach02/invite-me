@@ -4,6 +4,7 @@
  */
 import buildExtra from './templates-extra.js';
 import buildExtra2 from './templates-extra2.js';
+import buildExtra3 from './templates-extra3.js';
 
 const t = (id, name, occasion, style, mood, colorFamily, theme, blurb) => ({
   id, name, occasion, style, mood, colorFamily, blurb,
@@ -339,6 +340,6 @@ const BASE = [
   }, 'A cheerful red gradient with snow tumbling down.'),
 ];
 
-export const TEMPLATES = [...BASE, ...buildExtra(t), ...buildExtra2(t)];
+export const TEMPLATES = [...BASE, ...buildExtra(t), ...buildExtra2(t), ...buildExtra3(t)];
 
 export const templateById = (id) => TEMPLATES.find((tpl) => tpl.id === id) ?? TEMPLATES[0];

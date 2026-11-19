@@ -55,10 +55,10 @@ function FilterFields({ style, mood, color, counts, setFilter }) {
         <span className="label">Colour</span>
         <div className="flex flex-wrap items-center gap-2 pt-0.5" role="group" aria-label="Colour">
           <button type="button" onClick={() => setFilter('color', 'all')} aria-pressed={color === 'all'}
-            className={`h-8 rounded-full px-3.5 text-xs font-semibold transition ${color === 'all' ? 'bg-ink text-white' : 'bg-black/[.05] text-ink-soft hover:bg-black/[.08]'}`}>Any</button>
+            className={`h-8 rounded-full px-3.5 text-xs font-semibold transition ${color === 'all' ? 'bg-ink text-canvas' : 'bg-ink/[.05] text-ink-soft hover:bg-ink/[.08]'}`}>Any</button>
           {COLOR_FAMILIES.map((c) => (
             <button key={c.id} type="button" title={c.label} aria-label={c.label} aria-pressed={color === c.id} onClick={() => setFilter('color', color === c.id ? 'all' : c.id)}
-              className={`grid h-8 w-8 place-items-center rounded-full ring-2 ring-offset-2 transition ${color === c.id ? 'ring-ink' : 'ring-transparent hover:ring-black/15'}`} style={{ background: c.hex }}>
+              className={`grid h-8 w-8 place-items-center rounded-full ring-2 ring-offset-2 transition ${color === c.id ? 'ring-ink' : 'ring-transparent hover:ring-ink/15'}`} style={{ background: c.hex }}>
               {color === c.id && <Check size={14} strokeWidth={3} className={['black', 'green', 'red', 'purple', 'teal', 'blue'].includes(c.id) ? 'text-white' : 'text-ink'} />}
             </button>
           ))}
@@ -175,7 +175,7 @@ export default function Templates() {
           <div className="scroll-none -mx-5 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:px-0" role="tablist" aria-label="Occasion">
             {[{ id: 'all', label: 'All' }, ...LIBRARY_CATEGORIES].map((c) => (
               <button key={c.id} role="tab" aria-selected={category === c.id} onClick={() => setFilter('category', c.id)}
-                className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition ${category === c.id ? 'bg-brand text-white shadow-sm' : 'bg-white text-ink-soft ring-1 ring-inset ring-line-strong hover:bg-black/[.03] hover:text-ink'}`}>
+                className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition ${category === c.id ? 'bg-brand text-white shadow-sm' : 'bg-surface text-ink-soft ring-1 ring-inset ring-line-strong hover:bg-ink/[.03] hover:text-ink'}`}>
                 {c.icon && <c.icon size={14} />}{c.label}
               </button>
             ))}
@@ -185,7 +185,7 @@ export default function Templates() {
           <AnimatePresence initial={false}>
             {filtersOpen && isDesktop && (
               <motion.div id="filters-panel" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
-                <div className="rounded-2xl border border-line bg-white p-5"><FilterFields {...fieldProps} /></div>
+                <div className="rounded-2xl border border-line bg-surface p-5"><FilterFields {...fieldProps} /></div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -200,7 +200,7 @@ export default function Templates() {
             </span>
             {activeChips.map((c) => (
               <span key={c.key} className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 py-1 pl-3 pr-1.5 text-xs font-semibold text-brand">
-                {c.hex && <i className="h-2.5 w-2.5 rounded-full ring-1 ring-black/10" style={{ background: c.hex }} />}{c.label}
+                {c.hex && <i className="h-2.5 w-2.5 rounded-full ring-1 ring-ink/10" style={{ background: c.hex }} />}{c.label}
                 <button onClick={() => setFilter(c.key, 'all')} aria-label={`Remove filter ${c.label}`} className="grid h-5 w-5 place-items-center rounded-full hover:bg-brand/15"><X size={12} strokeWidth={2.5} /></button>
               </span>
             ))}
@@ -227,13 +227,13 @@ export default function Templates() {
                     <div className="absolute inset-0 hidden items-end justify-center bg-gradient-to-t from-ink/50 via-transparent to-transparent p-3 opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100 md:flex">
                       <button className="btn-secondary btn-sm" onClick={() => setPreview(t)} aria-label={`Quick preview of ${t.name}`}><Eye size={14} /> Quick preview</button>
                     </div>
-                    {isAnimated(t) && <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-accent-dark shadow-sm backdrop-blur"><Sparkles size={11} /> Animated</span>}
+                    {isAnimated(t) && <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-surface/90 px-2 py-0.5 text-[11px] font-semibold text-accent-dark shadow-sm backdrop-blur"><Sparkles size={11} /> Animated</span>}
                   </div>
                   <div className="px-1.5 pb-1 pt-3.5">
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="font-display text-[15px] font-bold leading-snug">{t.name}</h3>
                       <span className="mt-1 flex shrink-0 -space-x-1.5" aria-hidden="true">
-                        {[t.theme.coverFrom, t.theme.accentColor, t.theme.bgColor].map((c, i) => <i key={i} className="h-3.5 w-3.5 rounded-full ring-2 ring-white" style={{ background: c }} />)}
+                        {[t.theme.coverFrom, t.theme.accentColor, t.theme.bgColor].map((c, i) => <i key={i} className="h-3.5 w-3.5 rounded-full ring-2 ring-surface" style={{ background: c }} />)}
                       </span>
                     </div>
                     <p className="mt-0.5 text-xs text-ink-mute">{occasionById(t.occasion).label} · {t.style}</p>

@@ -104,9 +104,9 @@ export default function InvitationAnalytics() {
           <h2 className="font-display text-lg font-bold">Attendance</h2>
           <div className="mt-6">
             <SplitBar parts={[
-              { label: 'Attending', value: stats.yes, color: '#455C50' },
+              { label: 'Attending', value: stats.yes, color: 'rgb(var(--c-brand-text))' },
               { label: 'Maybe', value: stats.maybe, color: '#C49B72' },
-              { label: 'Declined', value: stats.no, color: '#D8C9B2' },
+              { label: 'Declined', value: stats.no, color: 'rgb(var(--c-sand))' },
             ]} />
           </div>
           <p className="mt-6 text-sm text-ink-soft">{stats.confirmed} confirmed guest{stats.confirmed === 1 ? '' : 's'} across {stats.yes} accepted response{stats.yes === 1 ? '' : 's'}.</p>
