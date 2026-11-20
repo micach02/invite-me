@@ -10,6 +10,7 @@ import {
 import { BODY_FONTS, COVER_EFFECTS, COVER_LAYOUTS, DECOR_OPTIONS, HEADING_FONTS, OCCASIONS, REVEALS, SECTION_LABELS, SECTION_ORDER, TITLE_ANIMS, occasionById } from '../../data/constants';
 import { PALETTES, paletteToTheme } from '../../data/palettes';
 import { contrast } from '../../lib/color';
+import FontField from '../ui/FontField';
 import { getPath } from '../../lib/utils';
 
 /** Maps a panel to the preview section that should scroll into view when it opens. */
@@ -271,8 +272,8 @@ export default function EditorPanel({ config, set, update, onFocusSection, focus
       </Accordion>
 
       <Accordion id="typography" title="Typography" icon={Type} open={open === 'typography'} onToggle={toggle}>
-        <SelectField label="Heading font" {...b('theme.fontHeading')} options={HEADING_FONTS} />
-        <SelectField label="Body font" {...b('theme.fontBody')} options={BODY_FONTS} />
+        <FontField label="Heading font" {...b('theme.fontHeading')} options={HEADING_FONTS} sample={(config.event.names || config.event.title || '').trim().slice(0, 40) || undefined} hint="Each font is previewed with your own names." />
+        <FontField label="Body font" plain {...b('theme.fontBody')} options={BODY_FONTS} sample={((config.event.description || '').trim().replace(/\s+/g, ' ').slice(0, 58)) || 'We would love to celebrate with you'} />
         <Slider label="Font size" min={0.85} max={1.3} step={0.05} {...b('theme.fontScale', 1)} format={(v) => `${Math.round(v * 100)}%`} />
         <Segmented label="Text alignment" {...b('theme.align', 'center')} options={[
           { value: 'left', label: 'Left', icon: <AlignLeft size={14} /> },
