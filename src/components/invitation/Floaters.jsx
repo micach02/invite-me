@@ -5,7 +5,7 @@ export const PETAL = 'M12 1C17 6 19 12 12 23C5 12 7 6 12 1z';
 export const AUTUMN_LEAF = 'M12 1C13 5 17 6 21 6C20 11 17 12 17 15C17 18 14 19 12.7 19.2V23H11.3V19.2C10 19 7 18 7 15C7 12 4 11 3 6C7 6 11 5 12 1Z';
 
 export const FALLING = ['snow', 'petals', 'autumn'];
-export const FLOATER_KINDS = ['hearts', 'snow', 'bubbles', 'balloons', 'petals', 'autumn', 'lanterns', 'fireflies', 'fireworks', 'memphis'];
+export const FLOATER_KINDS = ['hearts', 'snow', 'bubbles', 'balloons', 'petals', 'autumn', 'lanterns', 'fireflies', 'fireworks', 'memphis', 'parols', 'ornaments'];
 
 const BALLOON_COLORS = ['var(--inv-accent)', '#FF6B8B', '#6BCBFF', '#FFD36B', '#7AD7A1', '#B58CFF'];
 const AUTUMN_COLORS = ['#C8561E', '#E0922A', '#A63A1B', '#D9B13B', '#8C3B17'];
@@ -149,7 +149,57 @@ function Memphis() {
   );
 }
 
+/* ---------------------------------------------------------------- Christmas: hanging parols and ornaments */
+
+const starPoints = (cx, cy, R, r, n = 5) => Array.from({ length: n * 2 }, (_, k) => {
+  const a = ((-90 + k * (180 / n)) * Math.PI) / 180;
+  const rad = k % 2 ? r : R;
+  return `${(cx + rad * Math.cos(a)).toFixed(1)},${(cy + rad * Math.sin(a)).toFixed(1)}`;
+}).join(' ');
+const OUTER_STAR = starPoints(30, 34, 28, 12.5);
+const INNER_STAR = starPoints(30, 34, 15, 6.5);
+
+const PAROL_COLORS = ['#FFC83D', '#E63946', '#35B56C', '#FFF1C9'];
+const ORNAMENT_COLORS = ['#D62839', '#E9B949', '#2E9A5B', 'var(--inv-accent)'];
+const HANGERS = [6, 19, 32, 46, 60, 74, 88].map((x, i) => ({
+  x, len: 1.6 + ((i * 7) % 5) * 1.5, size: 2.3 + ((i * 3) % 4) * 0.6, dur: 4.2 + (i % 4) * 0.8, delay: -i * 0.9, c: i % 4,
+}));
+
+/** A Filipino parol: a lit five-point star lantern with a tassel, swinging gently from the top edge. */
+const Parol = ({ color }) => (
+  <svg viewBox="0 0 60 82" style={{ filter: `drop-shadow(0 0 .8rem ${color})` }}>
+    <polygon points={OUTER_STAR} fill={color} stroke="#fff" strokeOpacity=".5" strokeWidth="1" strokeLinejoin="round" />
+    <polygon className="inv-parol-glow" points={INNER_STAR} fill="#fff" opacity=".7" />
+    <circle cx="30" cy="34" r="3" fill={color} />
+    <path d="M30 58V80M26 58l-3 20M34 58l3 20" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+  </svg>
+);
+
+/** A glass bauble with a gold cap, hanging from a thread. */
+const Ornament = ({ color }) => (
+  <svg viewBox="0 0 40 54">
+    <rect x="15" y="0" width="10" height="7" rx="1.8" fill="#D8B04A" />
+    <circle cx="20" cy="31" r="19" fill={color} />
+    <path d="M2.5 33C10 40 30 40 37.5 33" stroke="#fff" strokeOpacity=".3" strokeWidth="2.2" fill="none" />
+    <ellipse cx="13" cy="21" rx="4" ry="7" fill="#fff" opacity=".35" transform="rotate(25 13 21)" />
+  </svg>
+);
+
+function Hangers({ kind }) {
+  return (
+    <div className="inv-decor" aria-hidden="true">
+      {HANGERS.map((h, i) => (
+        <span key={i} className="inv-hang" style={{ left: `${h.x}%`, width: `${h.size}rem`, animationDuration: `${h.dur}s`, animationDelay: `${h.delay}s` }}>
+          <i className="inv-string" style={{ height: `${h.len}rem` }} />
+          {kind === 'parols' ? <Parol color={PAROL_COLORS[h.c]} /> : <Ornament color={ORNAMENT_COLORS[h.c]} />}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export function Floaters({ kind }) {
+  if (kind === 'parols' || kind === 'ornaments') return <Hangers kind={kind} />;
   if (kind === 'fireflies') return <Fireflies />;
   if (kind === 'fireworks') return <Fireworks />;
   if (kind === 'memphis') return <Memphis />;

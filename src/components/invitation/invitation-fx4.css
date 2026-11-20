@@ -55,3 +55,14 @@
   background: #455C50; color: #fff; box-shadow: 0 2px 8px rgb(0 0 0 / .25);
 }
 .inv[data-editable] [data-sec].inv-section { position: relative; }
+
+/* ---------- opening envelope still closed: hold the entrance animations until the guest taps ---------- */
+.inv[data-hold] *, .inv[data-hold] *::before, .inv[data-hold] *::after { animation-play-state: paused !important; }
+
+/* ---------- Christmas: hanging parols and ornaments swing from the top edge ---------- */
+.inv-hang { position: absolute; top: -2px; display: flex; flex-direction: column; align-items: center; transform-origin: 50% 0; animation: inv-swing ease-in-out infinite alternate; }
+.inv-hang .inv-string { display: block; width: 1px; flex: none; background: color-mix(in srgb, var(--inv-cover-text) 60%, transparent); }
+.inv-hang svg { display: block; width: 100%; height: auto; overflow: visible; }
+.inv-parol-glow { animation: inv-parol 2.2s ease-in-out infinite alternate; }
+@keyframes inv-swing { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+@keyframes inv-parol { from { opacity: .3; } to { opacity: .85; } }

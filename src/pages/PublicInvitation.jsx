@@ -17,6 +17,7 @@ export default function PublicInvitation({ preview = false }) {
   const [inv, setInv] = useState(undefined);
   const [error, setError] = useState(null);
   const [opened, setOpened] = useState(false);
+  const [started, setStarted] = useState(false); // the guest has tapped the envelope
 
   useEffect(() => {
     if (preview && authLoading) return undefined;
@@ -88,8 +89,8 @@ export default function PublicInvitation({ preview = false }) {
           <Link to={`/editor/${inv.id}`} className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 font-medium hover:bg-white/25"><ArrowLeft size={12} /> Back to editor</Link>
         </div>
       )}
-      {showOverlay && <OpeningOverlay config={config} onOpen={() => setOpened(true)} />}
-      <InvitationRenderer config={config} mode="public" onRsvp={onRsvp} />
+      {showOverlay && <OpeningOverlay config={config} onStart={() => setStarted(true)} onOpen={() => setOpened(true)} />}
+      <InvitationRenderer config={config} mode="public" onRsvp={onRsvp} hold={showOverlay && !started} />
     </div>
   );
 }

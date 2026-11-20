@@ -5,6 +5,7 @@
 import buildExtra from './templates-extra.js';
 import buildExtra2 from './templates-extra2.js';
 import buildExtra3 from './templates-extra3.js';
+import buildExtra4 from './templates-extra4.js';
 
 const t = (id, name, occasion, style, mood, colorFamily, theme, blurb) => ({
   id, name, occasion, style, mood, colorFamily, blurb,
@@ -83,11 +84,11 @@ const BASE = [
     coverFrom: '#14213D', coverTo: '#22345E', coverText: '#FFFFFF',
   }, 'A crisp split layout for conferences and company events.'),
 
-  t('holiday-glow', 'Holiday Glow', 'holiday', 'Traditional', 'Cozy', 'red', {
+  t('holiday-glow', 'Christmas Glow', 'christmas', 'Traditional', 'Cozy', 'red', {
     fontHeading: 'Lora', fontBody: 'Lora', layout: 'classic', decor: 'stars',
     bgColor: '#FBF5EC', textColor: '#3A1F1F', accentColor: '#B8863B',
     coverFrom: '#8E2A2A', coverTo: '#5E1717', coverText: '#FBEFD9',
-  }, 'Rich cranberry and gold for seasonal gatherings.'),
+  }, 'Rich cranberry and gold for a Christmas gathering.'),
 
   t('graduate-bold', 'Cap & Gown', 'graduation', 'Modern', 'Bold', 'black', {
     fontHeading: 'Poppins', fontBody: 'Inter', layout: 'minimal', decor: 'stars', align: 'left',
@@ -119,12 +120,12 @@ const BASE = [
     coverFrom: '#FFD9DF', coverTo: '#F7B2C1', coverText: '#5E2F3B',
   }, 'A taped polaroid with hearts drifting up the page.'),
 
-  t('snowfall', 'Winter Snowfall', 'holiday', 'Elegant', 'Magical', 'blue', {
+  t('snowfall', 'Winter Snowfall', 'christmas', 'Elegant', 'Magical', 'blue', {
     fontHeading: 'Cinzel', fontBody: 'Lora', layout: 'frame', decor: 'snow',
     coverEffect: 'shine', titleAnim: 'rise', reveal: 'fade-up',
     bgColor: '#F4F8FC', textColor: '#17304E', accentColor: '#5C93C9',
     coverFrom: '#1B3B66', coverTo: '#0C2040', coverText: '#F2F7FF',
-  }, 'Gentle snowfall and a passing glimmer of light.'),
+  }, 'Gentle snowfall and a passing glimmer of light on a snowy Christmas.'),
 
   t('balloon-bash', 'Balloon Bash', 'birthday', 'Playful', 'Energetic', 'orange', {
     fontHeading: 'Pacifico', fontBody: 'Poppins', layout: 'bold', decor: 'balloons',
@@ -332,7 +333,7 @@ const BASE = [
     coverFrom: '#0F2557', coverTo: '#1C3F8E', coverText: '#FFFFFF',
   }, 'Navy and gold poster type for the graduation party.'),
 
-  t('candy-cane', 'Candy Cane Christmas', 'holiday', 'Playful', 'Festive', 'red', {
+  t('candy-cane', 'Candy Cane Christmas', 'christmas', 'Playful', 'Festive', 'red', {
     fontHeading: 'Pacifico', fontBody: 'Poppins', layout: 'bold', decor: 'snow',
     coverEffect: 'gradient', titleAnim: 'letters', reveal: 'zoom', fxColor: '#1F8A4C',
     bgColor: '#FFF8F5', textColor: '#3A1618', accentColor: '#D62839',
@@ -350,6 +351,6 @@ const BLANK = {
   blank: true,
 };
 
-export const TEMPLATES = [BLANK, ...BASE, ...buildExtra(t), ...buildExtra2(t), ...buildExtra3(t)];
+export const TEMPLATES = [BLANK, ...BASE, ...buildExtra(t), ...buildExtra2(t), ...buildExtra3(t), ...buildExtra4(t)];
 
 export const templateById = (id) => TEMPLATES.find((tpl) => tpl.id === id) ?? TEMPLATES[0];

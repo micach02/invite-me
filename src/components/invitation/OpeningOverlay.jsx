@@ -6,7 +6,8 @@ import { initials, themeStyle, fontMeta } from './theme';
  * Animated "envelope" opening. Rendered OUTSIDE the `.inv` container because container
  * queries create a containing block for fixed-position descendants.
  */
-export default function OpeningOverlay({ config, onOpen, embedded = false }) {
+/** `onStart` fires the instant the guest taps — the cover's entrance animation begins then, as the doors part. */
+export default function OpeningOverlay({ config, onOpen, onStart, embedded = false }) {
   const [opening, setOpening] = useState(false);
   const reduce = useReducedMotion();
   const { event, page, theme } = config;
@@ -39,7 +40,7 @@ export default function OpeningOverlay({ config, onOpen, embedded = false }) {
           {event.names || event.title}
         </h1>
         <motion.button
-          type="button" onClick={() => setOpening(true)} whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.95 }}
+          type="button" onClick={() => { setOpening(true); onStart?.(); }} whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.95 }}
           aria-label={page.openingText || 'Open invitation'}
           style={{
             width: 96, height: 96, borderRadius: '50%', border: `2px solid ${theme.accentColor}`, background: theme.accentColor,

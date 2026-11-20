@@ -21,7 +21,7 @@ import { useAuth } from '../context/AuthContext';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 const PER_PAGE_OPTIONS = [12, 24, 48];
-const ANIMATED_DECOR = ['hearts', 'snow', 'bubbles', 'balloons', 'petals', 'autumn', 'lanterns', 'fireflies', 'fireworks', 'memphis'];
+const ANIMATED_DECOR = ['hearts', 'snow', 'parols', 'ornaments', 'bubbles', 'balloons', 'petals', 'autumn', 'lanterns', 'fireflies', 'fireworks', 'memphis'];
 const ANIMATED_LAYOUT = ['neon', 'poster', 'ticket', 'polaroid', 'vintage', 'magazine', 'medallion'];
 const isAnimated = (t) => t.theme.coverEffect !== 'none' || ANIMATED_DECOR.includes(t.theme.decor) || ANIMATED_LAYOUT.includes(t.theme.layout);
 

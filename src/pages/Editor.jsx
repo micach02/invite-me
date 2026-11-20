@@ -57,6 +57,8 @@ function EditorWorkspace({ initial }) {
   const [tab, setTab] = useState('edit'); // mobile only
   const [device, setDevice] = useState('mobile');
   const [showOpening, setShowOpening] = useState(false);
+  const [openStarted, setOpenStarted] = useState(false);
+  const [replayKey, setReplayKey] = useState(0); // remounting the preview restarts the cover's animations
   const [publishOpen, setPublishOpen] = useState(params.get('publish') === '1');
   const [shareOpen, setShareOpen] = useState(false);
   const [saveTplOpen, setSaveTplOpen] = useState(false);
@@ -215,7 +217,7 @@ function EditorWorkspace({ initial }) {
               ))}
             </div>
             {config.page.opening && (
-              <button className="btn-secondary btn-sm !bg-surface" onClick={() => { scrollRef.current?.scrollTo({ top: 0 }); setShowOpening(true); }}><RotateCcw size={13} /> Replay opening</button>
+              <button className="btn-secondary btn-sm !bg-surface" onClick={() => { scrollRef.current?.scrollTo({ top: 0 }); setOpenStarted(false); setReplayKey((k) => k + 1); setShowOpening(true); }}><RotateCcw size={13} /> Replay opening</button>
             )}
             <button className="btn-secondary btn-sm !bg-surface md:hidden" onClick={previewAsGuest}><Eye size={13} /> Guest view</button>
             <div className="flex sm:hidden">
@@ -226,9 +228,9 @@ function EditorWorkspace({ initial }) {
           <div className="min-h-0 flex-1 px-3 pb-4 sm:px-6">
             <PreviewFrame
               device={device} scrollRef={scrollRef} onContentClick={onPreviewClick}
-              overlay={showOpening && <OpeningOverlay embedded config={config} onOpen={() => setShowOpening(false)} />}
+              overlay={showOpening && <OpeningOverlay embedded config={config} onStart={() => setOpenStarted(true)} onOpen={() => setShowOpening(false)} />}
             >
-              {(h) => <InvitationRenderer config={config} mode="editor" viewportHeight={h} editable />}
+              {(h) => <InvitationRenderer key={replayKey} config={config} mode="editor" viewportHeight={h} editable hold={showOpening && !openStarted} />}
             </PreviewFrame>
           </div>
         </main>

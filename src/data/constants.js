@@ -1,5 +1,5 @@
 import {
-  Heart, Cake, Baby, Sparkles, HeartHandshake, Gem, GraduationCap, Briefcase, TreePine, PartyPopper, Church, Droplets, House,
+  Heart, Cake, Baby, Sparkles, HeartHandshake, Gem, GraduationCap, Briefcase, TreePine, PartyPopper, Church, Droplets, House, Gift,
 } from 'lucide-react';
 
 /** Occasions the product supports. `category` groups them in the template library. */
@@ -14,7 +14,8 @@ export const OCCASIONS = [
   { id: 'baby-shower', label: 'Baby Shower', category: 'baby-shower', icon: Baby, namesLabel: 'Parents / Baby', namesPlaceholder: 'Baby Cha' },
   { id: 'graduation', label: 'Graduation', category: 'other', icon: GraduationCap, namesLabel: 'Graduate', namesPlaceholder: 'Michael' },
   { id: 'corporate', label: 'Corporate Event', category: 'corporate', icon: Briefcase, namesLabel: 'Event / Company', namesPlaceholder: 'Northwind Annual Summit' },
-  { id: 'holiday', label: 'Holiday Party', category: 'other', icon: TreePine, namesLabel: 'Host / Theme', namesPlaceholder: 'Michael & Cha' },
+  { id: 'christmas', label: 'Christmas Party', category: 'christmas', icon: TreePine, namesLabel: 'Host / Family', namesPlaceholder: 'Michael & Cha' },
+  { id: 'holiday', label: 'Holiday Party', category: 'other', icon: Gift, namesLabel: 'Host / Theme', namesPlaceholder: 'Michael & Cha' },
   { id: 'other', label: 'Other Special Occasion', category: 'other', icon: PartyPopper, namesLabel: 'Names / Theme', namesPlaceholder: 'Our Celebration' },
 ];
 
@@ -27,6 +28,7 @@ export const LIBRARY_CATEGORIES = [
   { id: 'debut', label: 'Debut', icon: Sparkles },
   { id: 'anniversary', label: 'Anniversary', icon: HeartHandshake },
   { id: 'house-blessing', label: 'House Blessing', icon: House },
+  { id: 'christmas', label: 'Christmas', icon: TreePine },
   { id: 'baby-shower', label: 'Baby Shower', icon: Baby },
   { id: 'corporate', label: 'Corporate', icon: Briefcase },
   { id: 'other', label: 'Other Events', icon: PartyPopper },
@@ -99,6 +101,8 @@ export const DECOR_OPTIONS = [
   { value: 'ornament', label: 'Classic ornament' },
   { value: 'hearts', label: 'Floating hearts ✦ animated' },
   { value: 'snow', label: 'Falling snow ✦ animated' },
+  { value: 'parols', label: 'Hanging parols ✦ animated' },
+  { value: 'ornaments', label: 'Christmas ornaments ✦ animated' },
   { value: 'bubbles', label: 'Rising bubbles ✦ animated' },
   { value: 'balloons', label: 'Floating balloons ✦ animated' },
   { value: 'petals', label: 'Falling petals ✦ animated' },

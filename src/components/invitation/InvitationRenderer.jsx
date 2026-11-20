@@ -476,8 +476,11 @@ function Lightbox({ src, onClose }) {
  *  - 'editor'  : live preview inside the builder (no animation delays, RSVP inert, empty sections show hints)
  *  - 'thumb'   : cover only, used for template cards
  */
-/** `editable` (editor preview only) outlines sections on hover so a click can jump to their settings. */
-export default function InvitationRenderer({ config, mode = 'public', onRsvp, viewportHeight, editable = false }) {
+/**
+ * `editable` (editor preview only) outlines sections on hover so a click can jump to their settings.
+ * `hold` keeps every animation on its first frame — used while the opening envelope still covers the page.
+ */
+export default function InvitationRenderer({ config, mode = 'public', onRsvp, viewportHeight, editable = false, hold = false }) {
   const [lightbox, setLightbox] = useState(null);
   const { event, host, venue, images, theme, sections: s } = config;
   const editing = mode === 'editor';
@@ -674,7 +677,7 @@ export default function InvitationRenderer({ config, mode = 'public', onRsvp, vi
   blocks.sort((a, b) => rank(a.id) - rank(b.id));
 
   return (
-    <div className="inv" data-align={theme.align} data-editable={editable ? '' : undefined} style={style}>
+    <div className="inv" data-align={theme.align} data-editable={editable ? '' : undefined} data-hold={hold ? '' : undefined} style={style}>
       <InvitationCover config={config} />
       {blocks.map((b, i) => (
         <Section key={b.id} id={b.id} alt={i % 2 === 1} mode={mode} bg={images.background} reveal={theme.reveal} {...b.props}>{b.content}</Section>

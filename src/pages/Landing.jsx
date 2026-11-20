@@ -68,7 +68,7 @@ const FAQ = [
   ['Can I edit my invitation after publishing?', 'Yes. Changes save automatically and go live immediately at the same link.'],
   ['Can I share through Messenger and WhatsApp?', 'Yes. One tap sends your link to Facebook, Messenger or WhatsApp, and you can download a QR code too.'],
   ['How do I know who is coming?', 'Every RSVP lands in your dashboard with attendance, guest count, meal preference and messages. Export it any time.'],
-  ['Which occasions are supported?', 'Weddings, birthdays, baptisms, debuts, anniversaries, engagements, baby showers, house blessings, graduations, corporate and holiday events — and anything else.'],
+  ['Which occasions are supported?', 'Weddings, birthdays, baptisms, debuts, anniversaries, engagements, baby showers, house blessings, Christmas parties, graduations, corporate and holiday events — and anything else.'],
 ];
 
 export default function Landing() {
