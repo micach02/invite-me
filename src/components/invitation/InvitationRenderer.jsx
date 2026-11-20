@@ -13,6 +13,7 @@ import RsvpForm from './RsvpForm';
 import { fontMeta, initials, themeStyle } from './theme';
 import { appPath, buildIcs, downloadFile, eventMoment, formatDate, mapsEmbedUrl, mapsLink, timeRange } from '../../lib/utils';
 import dayjs from 'dayjs';
+import { SECTION_ORDER } from '../../data/constants';
 
 /* ------------------------------------------------------------------ helpers */
 
@@ -475,7 +476,8 @@ function Lightbox({ src, onClose }) {
  *  - 'editor'  : live preview inside the builder (no animation delays, RSVP inert, empty sections show hints)
  *  - 'thumb'   : cover only, used for template cards
  */
-export default function InvitationRenderer({ config, mode = 'public', onRsvp, viewportHeight }) {
+/** `editable` (editor preview only) outlines sections on hover so a click can jump to their settings. */
+export default function InvitationRenderer({ config, mode = 'public', onRsvp, viewportHeight, editable = false }) {
   const [lightbox, setLightbox] = useState(null);
   const { event, host, venue, images, theme, sections: s } = config;
   const editing = mode === 'editor';
@@ -666,8 +668,13 @@ export default function InvitationRenderer({ config, mode = 'public', onRsvp, vi
     ));
   }
 
+  // Honour the host's page order; anything missing from it keeps its natural position at the end.
+  const order = Array.isArray(s.order) ? s.order : [];
+  const rank = (id) => { const i = order.indexOf(id); return i === -1 ? order.length + SECTION_ORDER.indexOf(id) : i; };
+  blocks.sort((a, b) => rank(a.id) - rank(b.id));
+
   return (
-    <div className="inv" data-align={theme.align} style={style}>
+    <div className="inv" data-align={theme.align} data-editable={editable ? '' : undefined} style={style}>
       <InvitationCover config={config} />
       {blocks.map((b, i) => (
         <Section key={b.id} id={b.id} alt={i % 2 === 1} mode={mode} bg={images.background} reveal={theme.reveal} {...b.props}>{b.content}</Section>

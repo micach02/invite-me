@@ -45,3 +45,13 @@
 .inv-mat b { font-weight: 700; }
 .inv-mat span { opacity: .85; letter-spacing: .1em; }
 .inv-cover.doorway .inv-scroll-cue { color: var(--inv-cover-text); }
+
+/* ---------- editor preview: click a section to edit it ---------- */
+.inv[data-editable] [data-sec] { cursor: pointer; }
+.inv[data-editable] [data-sec]:hover { outline: 2px dashed rgb(69 92 80 / .7); outline-offset: -8px; }
+.inv[data-editable] [data-sec]:hover::after {
+  content: 'Click to edit'; position: absolute; top: .9em; right: .9em; z-index: 5; pointer-events: none;
+  padding: .3em .75em; border-radius: 99px; font: 600 .7em/1.2 Inter, system-ui, sans-serif; letter-spacing: .02em;
+  background: #455C50; color: #fff; box-shadow: 0 2px 8px rgb(0 0 0 / .25);
+}
+.inv[data-editable] [data-sec].inv-section { position: relative; }

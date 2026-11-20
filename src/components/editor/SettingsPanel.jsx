@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
-import { Bookmark, BookmarkPlus, Check, ChevronDown, CloudOff, ExternalLink, Eye, EyeOff, Globe, Heart, Loader2, Palette, Save, Search, Share2, Link2 } from 'lucide-react';
+import { AlertCircle, Bookmark, BookmarkPlus, Check, CheckCircle2, ChevronDown, CloudOff, ExternalLink, Eye, EyeOff, Globe, Heart, Loader2, Palette, Save, Search, Share2, Link2 } from 'lucide-react';
 import { ImageField, TextArea, TextField, Toggle } from '../ui/fields';
 import { StatusBadge } from '../ui/misc';
 import TemplateThumb from '../invitation/TemplateThumb';
 import Pagination from '../ui/Pagination';
 import FavoriteButton from '../ui/FavoriteButton';
 import { useLibrary } from '../../context/LibraryContext';
+import { buildChecklist } from '../../lib/checklist';
 import { TEMPLATES } from '../../data/templates';
 import { occasionById } from '../../data/constants';
 import { appPath, getPath, publicUrl } from '../../lib/utils';
@@ -48,7 +49,33 @@ export function SaveStatus({ status, compact }) {
   );
 }
 
-export default function SettingsPanel({ invitation, config, set, onTemplate, onSaveTemplate, autosave, onPublish, onUnpublish, onShare, onEditSlug }) {
+/** "Ready to publish?" — what's still missing, with a shortcut to the setting that fixes each item. */
+function Checklist({ config, onFix }) {
+  const { items, done, total, ready } = buildChecklist(config);
+  return (
+    <details className="group rounded-xl border border-line-strong bg-canvas" open={!ready}>
+      <summary className="flex cursor-pointer list-none items-center gap-3 px-3 py-2.5 [&::-webkit-details-marker]:hidden">
+        {ready ? <CheckCircle2 size={16} className="shrink-0 text-emerald-600" /> : <AlertCircle size={16} className="shrink-0 text-amber-600" />}
+        <span className="min-w-0 flex-1">
+          <span className="block text-[13px] font-semibold" data-checklist-summary>{ready ? 'Ready to publish' : `${done} of ${total} essentials done`}</span>
+          <span className="mt-1 block h-1.5 overflow-hidden rounded-full bg-ink/10"><span className="block h-full rounded-full bg-brand transition-all duration-500" style={{ width: `${(done / total) * 100}%` }} /></span>
+        </span>
+        <ChevronDown size={15} className="text-ink-mute transition group-open:rotate-180" aria-hidden="true" />
+      </summary>
+      <ul className="space-y-0.5 border-t border-line px-2 py-2" aria-label="Publishing checklist">
+        {items.map((it) => (
+          <li key={it.id} data-check={it.id} data-ok={it.ok ? 'true' : 'false'} className="flex items-start gap-2 rounded-lg px-1.5 py-1.5 text-[13px]">
+            {it.ok ? <Check size={14} className="mt-0.5 shrink-0 text-emerald-600" /> : <span className="mt-1 h-2 w-2 shrink-0 rounded-full border-2 border-amber-500" aria-hidden="true" />}
+            <span className="min-w-0 flex-1"><span className={it.ok ? 'text-ink-mute' : 'font-medium'}>{it.label}{!it.required && !it.ok ? ' (optional)' : ''}</span>{!it.ok && <span className="block text-xs text-ink-mute">{it.hint}</span>}</span>
+            {!it.ok && <button type="button" className="shrink-0 text-xs font-semibold text-brand hover:underline" onClick={() => onFix?.(it.panel)}>Fix</button>}
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
+export default function SettingsPanel({ invitation, config, set, onTemplate, onSaveTemplate, onFix, autosave, onPublish, onUnpublish, onShare, onEditSlug }) {
   const { saved, favoriteTemplates } = useLibrary();
   const published = invitation.status === 'published';
   const b = (path, fallback = '') => ({ value: getPath(config, path, fallback), onChange: (v) => set(path, v) });
@@ -79,6 +106,7 @@ export default function SettingsPanel({ invitation, config, set, onTemplate, onS
         <p className="text-xs text-ink-mute">
           {published ? 'Anyone with the link can view this invitation. Edits go live as they save.' : 'Only you can see this draft. Publish to get a shareable link.'}
         </p>
+        <Checklist config={config} onFix={onFix} />
         <Toggle label="Hide from search engines" description="Adds a noindex tag. Guests with the link can still open it." checked={Boolean(config.page.noindex)} onChange={(v) => set('page.noindex', v)} />
       </Block>
 

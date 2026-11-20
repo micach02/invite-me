@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bookmark, Check, Eye, Heart, Pencil, Search, SearchX, SlidersHorizontal, Sparkles, Trash2, X } from 'lucide-react';
+import { Bookmark, Check, Eye, Heart, Pencil, Plus, Search, SearchX, SlidersHorizontal, Sparkles, Trash2, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import PublicNav from '../components/layout/PublicNav';
 import Footer from '../components/layout/Footer';
@@ -172,6 +172,7 @@ export default function Templates() {
         <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[.22em] text-accent"><Sparkles size={14} /> Template library</p>
         <h1 className="mt-3 max-w-2xl font-serif text-4xl font-semibold leading-[1.05] sm:text-5xl">Find the design that feels like your day.</h1>
         <p className="mt-3 max-w-xl text-base text-ink-soft">{TEMPLATES.length} fully customisable templates. Change every word, colour, font and photo — and watch it update live.</p>
+        <button className="btn-secondary mt-5" disabled={busyId === 'blank'} onClick={() => start(TEMPLATES.find((t) => t.blank))}><Plus size={16} /> {busyId === 'blank' ? 'Creating…' : 'Start from a blank canvas'}</button>
       </header>
 
       {/* Sticky toolbar */}
@@ -254,7 +255,15 @@ export default function Templates() {
                 <motion.article key={t.id} layout initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.97 }} transition={{ duration: 0.22 }}
                   className="group card card-hover overflow-hidden p-2.5">
                   <div className="relative overflow-hidden rounded-xl">
-                    <TemplateThumb template={t} rounded="rounded-xl" />
+                    {t.blank ? (
+                      <div className="grid place-items-center rounded-xl border-2 border-dashed border-line-strong bg-canvas text-center" style={{ aspectRatio: '390 / 640' }}>
+                        <div className="px-6">
+                          <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-brand-50 text-brand"><Plus size={22} strokeWidth={2} /></span>
+                          <p className="mt-3 font-display text-sm font-bold">Start from scratch</p>
+                          <p className="mt-1 text-xs leading-relaxed text-ink-mute">A plain white page with no sample text. You add everything.</p>
+                        </div>
+                      </div>
+                    ) : <TemplateThumb template={t} rounded="rounded-xl" />}
                     <div className="absolute inset-0 hidden items-end justify-center bg-gradient-to-t from-ink/50 via-transparent to-transparent p-3 opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100 md:flex">
                       <button className="btn-secondary btn-sm" onClick={() => setPreview(t)} aria-label={`Quick preview of ${t.name}`}><Eye size={14} /> Quick preview</button>
                     </div>

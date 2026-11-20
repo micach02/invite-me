@@ -1,8 +1,13 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 
-/** Centered dialog on desktop, bottom sheet (with grab handle) on phones. */
+/**
+ * Centered dialog on desktop, bottom sheet (with grab handle) on phones.
+ * Rendered into <body>: a page wrapper with a transform/animation would otherwise become the containing block of this
+ * `fixed` overlay and clip it to the page content instead of the whole window.
+ */
 export default function Modal({ open, onClose, title, children, footer, size = 'md' }) {
   useEffect(() => {
     if (!open) return undefined;
@@ -15,7 +20,7 @@ export default function Modal({ open, onClose, title, children, footer, size = '
 
   const width = { sm: 'sm:max-w-sm', md: 'sm:max-w-lg', lg: 'sm:max-w-3xl', xl: 'sm:max-w-5xl' }[size];
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
@@ -39,6 +44,7 @@ export default function Modal({ open, onClose, title, children, footer, size = '
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

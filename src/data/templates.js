@@ -340,6 +340,16 @@ const BASE = [
   }, 'A cheerful red gradient with snow tumbling down.'),
 ];
 
-export const TEMPLATES = [...BASE, ...buildExtra(t), ...buildExtra2(t), ...buildExtra3(t)];
+/** A clean white canvas with no sample content (see `blank` in createDefaultConfig). Listed first in the library. */
+const BLANK = {
+  ...t('blank', 'Blank Canvas', 'other', 'Minimalist', 'Chic', 'neutral', {
+    fontHeading: 'Montserrat', fontBody: 'Inter', layout: 'minimal', decor: 'none', align: 'left', titleAnim: 'none', reveal: 'fade-up',
+    bgColor: '#FFFFFF', textColor: '#1E1E1E', accentColor: '#1E1E1E',
+    coverFrom: '#FFFFFF', coverTo: '#FFFFFF', coverText: '#1E1E1E',
+  }, 'Start from scratch: a plain white page with no sample text, no decoration and no animation. Add only what you need.'),
+  blank: true,
+};
+
+export const TEMPLATES = [BLANK, ...BASE, ...buildExtra(t), ...buildExtra2(t), ...buildExtra3(t)];
 
 export const templateById = (id) => TEMPLATES.find((tpl) => tpl.id === id) ?? TEMPLATES[0];

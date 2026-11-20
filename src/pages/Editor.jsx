@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Eye, Globe, Monitor, PencilLine, Redo2, RotateCcw, Settings2, Share2, Smartphone, Undo2 } from 'lucide-react';
+import { ArrowLeft, Eye, Globe, Keyboard, Monitor, PencilLine, Redo2, RotateCcw, Settings2, Share2, Smartphone, Tablet, Undo2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { invitations } from '../services';
 import { useConfig } from '../hooks/useConfig';
@@ -16,6 +16,9 @@ import SettingsPanel, { SaveStatus } from '../components/editor/SettingsPanel';
 import PublishModal from '../components/editor/PublishModal';
 import ShareModal from '../components/editor/ShareModal';
 import SaveTemplateModal from '../components/editor/SaveTemplateModal';
+import HistoryMenu from '../components/editor/HistoryMenu';
+import ShortcutsModal from '../components/editor/ShortcutsModal';
+import { addVersion, listVersions, restoreFrom } from '../lib/versions';
 import { ConfirmDialog, PageLoader, EmptyState } from '../components/ui/misc';
 import Logo from '../components/ui/Logo';
 import ThemeToggle from '../components/ui/ThemeToggle';
@@ -58,7 +61,17 @@ function EditorWorkspace({ initial }) {
   const [shareOpen, setShareOpen] = useState(false);
   const [saveTplOpen, setSaveTplOpen] = useState(false);
   const [unpublishOpen, setUnpublishOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [focusReq, setFocusReq] = useState(null);
   const scrollRef = useRef(null);
+
+  // Jump to the settings that own a part of the invitation (preview click, checklist "Fix").
+  const requestFocus = useCallback((r) => { setTab('edit'); setFocusReq({ ...r, n: Date.now() }); }, []);
+  const onPreviewClick = (e) => {
+    if (e.target.closest('a, button, input, select, textarea, summary, label, iframe')) return;
+    const sec = e.target.closest('[data-sec]')?.getAttribute('data-sec');
+    if (sec) requestFocus({ sec });
+  };
 
   const save = useCallback(async (cfg) => {
     const updated = await invitations.update(initial.id, {
@@ -71,6 +84,24 @@ function EditorWorkspace({ initial }) {
   }, [initial.id]);
 
   const autosave = useAutosave({ value: config, save });
+
+  // Restore points: a starting point on first open, then every few minutes while changes keep coming.
+  const latest = useRef(config);
+  latest.current = config;
+  useEffect(() => {
+    if (!listVersions(initial.id).length) addVersion(initial.id, latest.current, 'Starting point', { auto: true });
+    const t = setInterval(() => addVersion(initial.id, latest.current, 'Automatic snapshot', { auto: true }), 5 * 60 * 1000);
+    return () => clearInterval(t);
+  }, [initial.id]);
+
+  const restoreVersion = (v) => {
+    addVersion(initial.id, latest.current, `Before restoring “${v.label}”`, { auto: true });
+    update((cfg) => {
+      const merged = deepMerge(createDefaultConfig(cfg.meta?.occasion, cfg.theme?.templateId), restoreFrom(cfg, v));
+      return merged;
+    });
+    toast.success('Version restored — press Ctrl+Z to undo');
+  };
 
   useDocumentMeta({ title: `Editing: ${config.event.title || 'Untitled'} — InviteMe`, description: 'Invitation editor', noindex: true });
 
@@ -86,8 +117,10 @@ function EditorWorkspace({ initial }) {
       else if (k === 'z' && !inField) { e.preventDefault(); e.shiftKey ? redo() : undo(); }
       else if (k === 'y' && !inField) { e.preventDefault(); redo(); }
     };
+    const onHelp = (e) => { if (e.key === '?' && !/input|textarea|select/i.test(e.target.tagName) && !e.target.isContentEditable) { e.preventDefault(); setShortcutsOpen(true); } };
+    window.addEventListener('keydown', onHelp);
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('keydown', onHelp); };
   }, [autosave, undo, redo]);
 
   const focusSection = useCallback((secId) => {
@@ -99,6 +132,7 @@ function EditorWorkspace({ initial }) {
   }, []);
 
   const applyTemplate = (tpl) => {
+    addVersion(initial.id, config, `Before “${tpl.name}”`, { auto: true });
     update((cfg) => ({ ...cfg, theme: { ...cfg.theme, ...tpl.theme, fontScale: cfg.theme.fontScale, templateId: tpl.id } }));
     setShowOpening(false);
     toast.success(`Applied “${tpl.name}”`);
@@ -109,6 +143,7 @@ function EditorWorkspace({ initial }) {
       await autosave.saveNow();
       const updated = await invitations.publish(inv.id, slug);
       setInv((p) => ({ ...p, slug: updated.slug, status: updated.status, publishedAt: updated.publishedAt }));
+      addVersion(initial.id, latest.current, 'Published', { auto: true });
       setPublishOpen(false);
       toast.success('Your invitation is live!');
       setShareOpen(true);
@@ -154,6 +189,8 @@ function EditorWorkspace({ initial }) {
           <button className={iconBtn} onClick={undo} disabled={!canUndo} aria-label="Undo" title="Undo (Ctrl+Z)"><Undo2 size={17} /></button>
           <button className={iconBtn} onClick={redo} disabled={!canRedo} aria-label="Redo" title="Redo (Ctrl+Shift+Z)"><Redo2 size={17} /></button>
         </div>
+        <HistoryMenu className="hidden sm:block" invitationId={initial.id} config={config} onRestore={restoreVersion} />
+        <button className={`${iconBtn} hidden lg:grid`} onClick={() => setShortcutsOpen(true)} aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)"><Keyboard size={17} /></button>
         <ThemeToggle className="hidden sm:grid" />
         <button className="btn-secondary btn-sm !h-9 hidden md:inline-flex" onClick={previewAsGuest}><Eye size={14} /> Preview as guest</button>
         {published ? (
@@ -166,13 +203,13 @@ function EditorWorkspace({ initial }) {
       {/* Workspace */}
       <div className="grid min-h-0 flex-1 lg:grid-cols-[22rem_minmax(0,1fr)_20rem]">
         <aside className={`${tab === 'edit' ? 'block' : 'hidden'} scroll-thin min-h-0 overflow-y-auto border-r border-line bg-surface lg:block`} aria-label="Editing controls">
-          <EditorPanel config={config} set={set} update={update} onFocusSection={(s) => { focusSection(s); }} />
+          <EditorPanel config={config} set={set} update={update} onFocusSection={(s) => { focusSection(s); }} focusRequest={focusReq} />
         </aside>
 
         <main className={`${tab === 'preview' ? 'flex' : 'hidden'} min-h-0 flex-col dot-grid lg:flex`} aria-label="Live preview">
           <div className="flex shrink-0 items-center justify-center gap-2 px-4 py-3">
             <div className="hidden rounded-full bg-surface p-1 shadow-card lg:flex" role="group" aria-label="Preview device">
-              {[['mobile', Smartphone, 'Mobile'], ['desktop', Monitor, 'Desktop']].map(([k, Icon, label]) => (
+              {[['mobile', Smartphone, 'Mobile'], ['tablet', Tablet, 'Tablet'], ['desktop', Monitor, 'Desktop']].map(([k, Icon, label]) => (
                 <button key={k} onClick={() => setDevice(k)} aria-pressed={device === k}
                   className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition ${device === k ? 'bg-brand text-white' : 'text-ink-soft'}`}><Icon size={14} />{label}</button>
               ))}
@@ -188,17 +225,17 @@ function EditorWorkspace({ initial }) {
           </div>
           <div className="min-h-0 flex-1 px-3 pb-4 sm:px-6">
             <PreviewFrame
-              device={device === 'desktop' ? 'desktop' : 'mobile'} scrollRef={scrollRef}
+              device={device} scrollRef={scrollRef} onContentClick={onPreviewClick}
               overlay={showOpening && <OpeningOverlay embedded config={config} onOpen={() => setShowOpening(false)} />}
             >
-              {(h) => <InvitationRenderer config={config} mode="editor" viewportHeight={h} />}
+              {(h) => <InvitationRenderer config={config} mode="editor" viewportHeight={h} editable />}
             </PreviewFrame>
           </div>
         </main>
 
         <aside className={`${tab === 'settings' ? 'block' : 'hidden'} scroll-thin min-h-0 overflow-y-auto border-l border-line bg-surface lg:block`} aria-label="Invitation settings">
           <SettingsPanel
-            invitation={inv} config={config} set={set} onTemplate={applyTemplate} onSaveTemplate={() => setSaveTplOpen(true)} autosave={autosave}
+            invitation={inv} config={config} set={set} onTemplate={applyTemplate} onSaveTemplate={() => setSaveTplOpen(true)} onFix={(panel) => requestFocus({ panel })} autosave={autosave}
             onPublish={() => setPublishOpen(true)} onUnpublish={() => setUnpublishOpen(true)} onShare={() => setShareOpen(true)} onEditSlug={() => setPublishOpen(true)}
           />
         </aside>
@@ -214,6 +251,7 @@ function EditorWorkspace({ initial }) {
       </nav>
 
       <PublishModal open={publishOpen} onClose={() => setPublishOpen(false)} invitation={inv} suggestion={suggestion} onConfirm={doPublish} />
+      <ShortcutsModal open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
       <SaveTemplateModal open={saveTplOpen} onClose={() => setSaveTplOpen(false)} config={config} />
       <ShareModal open={shareOpen} onClose={() => setShareOpen(false)} invitation={inv} onPublish={() => { setShareOpen(false); setPublishOpen(true); }} />
       <ConfirmDialog open={unpublishOpen} onClose={() => setUnpublishOpen(false)} onConfirm={doUnpublish} confirmLabel="Unpublish"

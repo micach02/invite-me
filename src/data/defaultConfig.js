@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { uid, slugify } from '../lib/utils';
 import { templateById } from './templates';
+import { SECTION_ORDER } from './constants';
 
 /** Occasion-specific sample copy so a fresh invitation already looks complete. */
 const SAMPLES = {
@@ -100,7 +101,7 @@ export function createDefaultConfig(occasionId = 'wedding', templateId) {
   const tpl = templateById(templateId);
   const date = dayjs().add(75, 'day').format('YYYY-MM-DD');
 
-  return {
+  const config = {
     version: 1,
     event: {
       title: sample.title,
@@ -126,6 +127,7 @@ export function createDefaultConfig(occasionId = 'wedding', templateId) {
     images: { cover: '', background: '', primary: '', secondary: '', gallery: [] },
     theme: { ...tpl.theme, templateId: tpl.id },
     sections: {
+      order: [...SECTION_ORDER],
       story: { enabled: true, title: sample.storyTitle ?? (occasionId === 'corporate' ? 'About the Event' : 'Our Story'), text: sample.story },
       countdown: { enabled: true, title: 'Counting down' },
       program: {
@@ -166,6 +168,33 @@ export function createDefaultConfig(occasionId = 'wedding', templateId) {
       opening: true, openingText: 'Tap to open', noindex: false, hideBranding: false,
     },
     meta: { occasion: occasionId },
+  };
+  return tpl.blank ? blankOut(config) : config;
+}
+
+/** Strips every piece of sample content and switches the optional sections off, leaving a true blank page. */
+function blankOut(c) {
+  const off = (s, extra = {}) => ({ ...s, enabled: false, ...extra });
+  const sec = c.sections;
+  return {
+    ...c,
+    event: { title: 'Untitled invitation', names: '', tagline: '', description: '', date: '', startTime: '', endTime: '' },
+    host: { parents: '', hosts: '', sponsors: '', acknowledgments: '' },
+    venue: { name: '', address: '', mapUrl: '' },
+    sections: {
+      order: sec.order,
+      story: off(sec.story, { text: '' }),
+      countdown: off(sec.countdown),
+      program: off(sec.program, { items: [] }),
+      entourage: off(sec.entourage, { groups: [] }),
+      gallery: off(sec.gallery),
+      dressCode: off(sec.dressCode, { text: '', colors: [] }),
+      gifts: off(sec.gifts, { text: '' }),
+      faq: off(sec.faq, { items: [] }),
+      location: off(sec.location),
+      rsvp: { ...sec.rsvp, enabled: true, message: '', deadline: '' },
+    },
+    page: { ...c.page, opening: false },
   };
 }
 

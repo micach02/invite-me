@@ -4,7 +4,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
  * Device chrome around a scrolling invitation. Children may be a function receiving the
  * inner viewport height (px) so the cover can fill exactly one "screen".
  */
-export default function PreviewFrame({ device = 'mobile', scrollRef, overlay, children }) {
+export default function PreviewFrame({ device = 'mobile', scrollRef, overlay, onContentClick, children }) {
   const viewport = useRef(null);
   const [h, setH] = useState(680);
 
@@ -18,7 +18,7 @@ export default function PreviewFrame({ device = 'mobile', scrollRef, overlay, ch
 
   const body = (
     <div ref={viewport} className="relative min-h-0 flex-1 overflow-hidden bg-white">
-      <div ref={scrollRef} className="scroll-thin h-full overflow-y-auto overscroll-contain">
+      <div ref={scrollRef} onClick={onContentClick} className="scroll-thin h-full overflow-y-auto overscroll-contain">
         {typeof children === 'function' ? children(`${h}px`) : children}
       </div>
       {overlay}
@@ -33,6 +33,14 @@ export default function PreviewFrame({ device = 'mobile', scrollRef, overlay, ch
           <span className="mx-auto rounded-full bg-surface px-8 py-1 text-[11px] text-ink-mute">inviteme.com/invitation/your-event</span>
         </div>
         {body}
+      </div>
+    );
+  }
+
+  if (device === 'tablet') {
+    return (
+      <div className="mx-auto flex h-full max-h-[1000px] w-[768px] max-w-full flex-col rounded-[2rem] bg-night p-3 shadow-lift">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.4rem] bg-white">{body}</div>
       </div>
     );
   }

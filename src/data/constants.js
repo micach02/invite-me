@@ -159,4 +159,12 @@ export const REVEALS = [
   { value: 'blur', label: 'Blur in' },
 ];
 
+/** The order invitation sections appear in (guests scroll top to bottom). The editor lets people rearrange it. */
+export const SECTION_ORDER = ['welcome', 'countdown', 'story', 'details', 'hosts', 'program', 'entourage', 'gallery', 'dressCode', 'gifts', 'location', 'faq', 'rsvp'];
+export const SECTION_LABELS = {
+  welcome: 'Invitation message', countdown: 'Countdown', story: 'Story', details: 'Date, time & place', hosts: 'Hosts & sponsors',
+  program: 'Program', entourage: 'Entourage', gallery: 'Photo gallery', dressCode: 'Dress code', gifts: 'Gift preferences',
+  location: 'Venue & map', faq: 'Questions & answers', rsvp: 'RSVP',
+};
+
 export const ATTENDING_LABEL = { yes: 'Attending', no: 'Declined', maybe: 'Maybe' };
