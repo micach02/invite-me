@@ -55,6 +55,8 @@
   background: #455C50; color: #fff; box-shadow: 0 2px 8px rgb(0 0 0 / .25);
 }
 .inv[data-editable] [data-sec].inv-section { position: relative; }
+.inv[data-editable] [data-panel] { cursor: pointer; }
+.inv[data-editable] [data-panel]:hover img { outline: 2px dashed rgb(69 92 80 / .7); outline-offset: 4px; }
 
 /* ---------- opening envelope still closed: hold the entrance animations until the guest taps ---------- */
 .inv[data-hold] *, .inv[data-hold] *::before, .inv[data-hold] *::after { animation-play-state: paused !important; }

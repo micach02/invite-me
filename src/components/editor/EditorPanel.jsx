@@ -2,13 +2,13 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertTriangle, ArrowDown, ArrowUp, GripVertical, Shuffle,
-  AlignCenter, AlignLeft, AlignRight, CalendarClock, ChevronDown, Image as ImageIcon, LayoutList, MailCheck, MapPin, PartyPopper, Palette, Plus, Type, Users, X, Layers, Wand2,
+  AlignCenter, AlignLeft, AlignRight, CalendarClock, ChevronDown, Image as ImageIcon, LayoutList, MailCheck, MapPin, PartyPopper, Palette, Plus, Stamp, Type, Users, X, Layers, Wand2,
 } from 'lucide-react';
 import {
   ColorField, GalleryField, ImageField, ListEditor, SelectField, Segmented, Slider, TextArea, TextField, Toggle,
 } from '../ui/fields';
 import { BODY_FONTS, COVER_EFFECTS, COVER_LAYOUTS, DECOR_OPTIONS, HEADING_FONTS, OCCASIONS, REVEALS, SECTION_LABELS, SECTION_ORDER, TITLE_ANIMS, occasionById } from '../../data/constants';
-import { PALETTES, paletteToTheme } from '../../data/palettes';
+import { PALETTE_GROUPS, PALETTES, paletteToTheme } from '../../data/palettes';
 import { contrast } from '../../lib/color';
 import FontField from '../ui/FontField';
 import { getPath } from '../../lib/utils';
@@ -16,7 +16,7 @@ import { getPath } from '../../lib/utils';
 /** Maps a panel to the preview section that should scroll into view when it opens. */
 const FOCUS = {
   event: 'cover', host: 'hosts', datetime: 'details', venue: 'location', images: 'story', background: 'cover',
-  typography: 'cover', colors: 'cover', animation: 'cover', rsvp: 'rsvp', sections: 'program',
+  typography: 'cover', colors: 'cover', animation: 'cover', rsvp: 'rsvp', sections: 'program', logo: 'cover',
 };
 
 /** Panels are grouped into three tabs so nobody has to scroll past ten accordions. */
@@ -28,7 +28,7 @@ const TABS = [
 const TAB_OF = {
   event: 'details', host: 'details', datetime: 'details', venue: 'details',
   sections: 'sections', rsvp: 'sections',
-  images: 'design', typography: 'design', colors: 'design', animation: 'design', background: 'design',
+  images: 'design', logo: 'design', typography: 'design', colors: 'design', animation: 'design', background: 'design',
 };
 /** Which settings panel owns each part of the invitation (for click-to-edit from the preview). */
 const SEC_PANEL = {
@@ -48,7 +48,7 @@ const isHidden = (c, id) => {
   const s = c.sections;
   if (id === 'welcome') return !(c.event.description?.trim() || c.host.parents?.trim());
   if (id === 'details') return !(c.event.date || c.venue.name || c.venue.address);
-  if (id === 'hosts') return ![c.host.hosts, c.host.sponsors, c.host.acknowledgments].some((v) => v?.trim());
+  if (id === 'hosts') return s.hosts?.enabled === false || ![c.host.hosts, c.host.sponsors, c.host.acknowledgments].some((v) => v?.trim());
   return s[id] ? !s[id].enabled : false;
 };
 
@@ -97,12 +97,14 @@ function PageOrder({ config, onChange, onFocus }) {
   );
 }
 
-/** One-click colour schemes, a shuffle, and plain-language readability warnings. */
+/** One-click colour schemes (filterable by group), a shuffle within the group, and plain-language readability warnings. */
 function Palettes({ theme, apply }) {
+  const [group, setGroup] = useState('All');
+  const list = group === 'All' ? PALETTES : PALETTES.filter((p) => p.group === group);
   const same = (p) => Object.entries(paletteToTheme(p)).every(([k, v]) => (theme[k] || '').toLowerCase() === v.toLowerCase());
   const shuffle = () => {
-    const pool = PALETTES.filter((p) => !same(p));
-    apply(pool[Math.floor(Math.random() * pool.length)]);
+    const pool = list.filter((p) => !same(p));
+    if (pool.length) apply(pool[Math.floor(Math.random() * pool.length)]);
   };
   return (
     <div>
@@ -110,8 +112,14 @@ function Palettes({ theme, apply }) {
         <span className="label !mb-0">Palettes</span>
         <button type="button" className="btn-ghost btn-sm !h-7" onClick={shuffle}><Shuffle size={13} /> Shuffle</button>
       </div>
+      <div className="mb-2.5 flex flex-wrap gap-1.5" role="group" aria-label="Palette groups">
+        {['All', ...PALETTE_GROUPS].map((g) => (
+          <button key={g} type="button" aria-pressed={group === g} onClick={() => setGroup(g)}
+            className={`rounded-full px-2 py-1 text-[11px] font-semibold transition ${group === g ? 'bg-brand text-white' : 'bg-ink/[.05] text-ink-soft hover:text-ink'}`}>{g}</button>
+        ))}
+      </div>
       <div className="grid grid-cols-6 gap-2" role="group" aria-label="Colour palettes">
-        {PALETTES.map((p) => (
+        {list.map((p) => (
           <button key={p.name} type="button" title={p.name} aria-label={`Apply ${p.name} palette`} aria-pressed={same(p)} onClick={() => apply(p)}
             className={`flex h-9 overflow-hidden rounded-lg ring-2 ring-offset-2 ring-offset-surface transition hover:scale-105 ${same(p) ? 'ring-brand' : 'ring-ink/10'}`}>
             <i className="flex-1" style={{ background: p.from }} /><i className="flex-1" style={{ background: p.bg }} /><i className="flex-1" style={{ background: p.accent }} />
@@ -243,10 +251,13 @@ export default function EditorPanel({ config, set, update, onFocusSection, focus
       </Accordion>
 
       <Accordion id="host" title="Host information" icon={Users} open={open === 'host'} onToggle={toggle}>
-        <TextArea label="Parents' names" rows={3} {...b('host.parents')} placeholder={'Michael’s parents\nCha’s parents'} hint="One line per family." />
-        <TextArea label="Hosts" rows={2} {...b('host.hosts')} />
-        <TextArea label="Sponsors" rows={3} {...b('host.sponsors')} hint="One name per line." />
-        <TextArea label="Special acknowledgments" rows={3} {...b('host.acknowledgments')} />
+        <TextArea label="Parents' names" rows={3} {...b('host.parents')} placeholder={'Michael’s parents\nCha’s parents'} hint="One line per family. Shown with the invitation message." />
+        <Addon label="Show hosts & sponsors" enabled={s.hosts?.enabled !== false} onToggle={(v) => toggleSection('hosts', v)}>
+          <TextArea label="Hosts" rows={2} {...b('host.hosts')} />
+          <TextArea label="Sponsors" rows={3} {...b('host.sponsors')} hint="One name per line." />
+          <TextArea label="Special acknowledgments" rows={3} {...b('host.acknowledgments')} />
+        </Addon>
+        {s.hosts?.enabled === false && <p className="-mt-2 text-xs text-ink-mute">Hidden from guests. Your names are kept — switch it back on any time.</p>}
       </Accordion>
 
       <Accordion id="datetime" title="Date & time" icon={CalendarClock} open={open === 'datetime'} onToggle={toggle}>
@@ -269,6 +280,21 @@ export default function EditorPanel({ config, set, update, onFocusSection, focus
           <ImageField label="Second photo" {...b('images.secondary')} />
         </div>
         <GalleryField label="Photo gallery" {...b('images.gallery', [])} />
+      </Accordion>
+
+      <Accordion id="logo" title="Logo" icon={Stamp} open={open === 'logo'} onToggle={toggle}>
+        <ImageField label="Logo" {...b('images.logo')} contain uploadOptions={{ maxDim: 800, keepAlpha: true }}
+          hint="A company logo, crest or monogram. PNG or SVG with a transparent background looks best." />
+        {config.images.logo && (
+          <>
+            <Slider label="Logo size" min={0.5} max={2} step={0.05} {...b('theme.logoSize', 1)} format={(v) => `${Math.round(v * 100)}%`} />
+            <Segmented label="Show logo on" {...b('theme.logoPlacement', 'cover')} options={[
+              { value: 'cover', label: 'Cover' },
+              { value: 'footer', label: 'Footer' },
+              { value: 'both', label: 'Both' },
+            ]} />
+          </>
+        )}
       </Accordion>
 
       <Accordion id="typography" title="Typography" icon={Type} open={open === 'typography'} onToggle={toggle}>
@@ -301,7 +327,7 @@ export default function EditorPanel({ config, set, update, onFocusSection, focus
 
       <Accordion id="animation" title="Animation & effects" icon={Wand2} open={open === 'animation'} onToggle={toggle}>
         <SelectField label="Cover effect" {...b('theme.coverEffect', 'none')} options={COVER_EFFECTS} />
-        {(config.theme.coverEffect === 'aurora' || config.theme.coverEffect === 'gradient' || config.theme.coverEffect === 'waves') && (
+        {COVER_EFFECTS.find((e) => e.value === config.theme.coverEffect)?.fx && (
           <ColorField label="Effect colour" value={config.theme.fxColor || config.theme.accentColor} onChange={(v) => set('theme.fxColor', v)} />
         )}
         <SelectField label="Title animation" {...b('theme.titleAnim', 'rise')} options={TITLE_ANIMS}
@@ -343,6 +369,10 @@ export default function EditorPanel({ config, set, update, onFocusSection, focus
         <Addon label="Our story / about" id="story" enabled={s.story.enabled} onToggle={(v) => toggleSection('story', v)}>
           <TextField label="Title" {...b('sections.story.title')} />
           <TextArea label="Story" rows={5} {...b('sections.story.text')} />
+        </Addon>
+
+        <Addon label="Hosts & sponsors" id="hosts" enabled={s.hosts?.enabled !== false} onToggle={(v) => toggleSection('hosts', v)}>
+          <p className="text-xs text-ink-mute">Edit hosts, sponsors and acknowledgments under “Host information” in the Details tab.</p>
         </Addon>
 
         <Addon label="Event program" id="program" enabled={s.program.enabled} onToggle={(v) => toggleSection('program', v)}>

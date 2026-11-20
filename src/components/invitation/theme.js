@@ -19,6 +19,10 @@ export function fontMeta(name) {
   if (name === 'Syne') return { scale: 0.88, weight: 700, transform: 'none', spacing: '-.01em', family: 'sans-serif' };
   if (name === 'Abril Fatface') return { scale: 0.95, weight: 400, transform: 'none', spacing: '0', family: 'serif' };
   if (name === 'Fredoka') return { scale: 0.92, weight: 600, transform: 'none', spacing: '0', family: 'sans-serif' };
+  if (name === 'Limelight') return { scale: 0.86, weight: 400, transform: 'none', spacing: '.01em', family: 'serif' };
+  if (name === 'Italiana') return { scale: 0.84, weight: 400, transform: 'uppercase', spacing: '.08em', family: 'serif' };
+  if (name === 'Shrikhand') return { scale: 0.8, weight: 400, transform: 'none', spacing: '0', family: 'serif' };
+  if (name === 'Caveat') return { scale: 1.22, weight: 700, transform: 'none', spacing: '0', family: 'cursive' };
   if (name === 'Playfair Display') return { scale: 0.92, weight: 500, transform: 'none', spacing: '0', family: 'serif' };
   return { scale: 1, weight: 500, transform: 'none', spacing: '0', family: SANS.includes(name) ? 'sans-serif' : 'serif' };
 }

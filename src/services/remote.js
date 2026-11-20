@@ -251,9 +251,9 @@ export const rsvps = {
 };
 
 export const storage = {
-  async uploadImage(file, userId) {
-    const blob = await compressImage(file);
-    const ext = blob.type === 'image/svg+xml' ? 'svg' : blob.type === 'image/gif' ? 'gif' : 'jpg';
+  async uploadImage(file, userId, { maxDim = 1600, keepAlpha = false } = {}) {
+    const blob = await compressImage(file, maxDim, 0.82, { keepAlpha });
+    const ext = { 'image/svg+xml': 'svg', 'image/gif': 'gif', 'image/png': 'png', 'image/webp': 'webp' }[blob.type] ?? 'jpg';
     const path = `${userId}/${uid()}.${ext}`;
     const { error } = await supabase.storage.from(MEDIA_BUCKET).upload(path, blob, { contentType: blob.type, cacheControl: '31536000' });
     fail(error);

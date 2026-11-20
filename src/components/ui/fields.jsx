@@ -112,23 +112,31 @@ export function Slider({ label, value, onChange, min, max, step = 0.05, format =
 function useUploader() {
   const { user } = useAuth();
   const [busy, setBusy] = useState(false);
-  const upload = async (file) => {
+  const upload = async (file, options) => {
     setBusy(true);
-    try { return await storage.uploadImage(file, user.id); }
+    try { return await storage.uploadImage(file, user.id, options); }
     catch (e) { toast.error(e.message || 'Upload failed.'); return null; }
     finally { setBusy(false); }
   };
   return { busy, upload };
 }
 
-export function ImageField({ label, value, onChange, hint }) {
+/** Checkerboard behind uncropped previews so a transparent logo's edges are visible. */
+const CHECKER = {
+  backgroundColor: '#fff',
+  backgroundImage: 'linear-gradient(45deg, #e8e8e8 25%, transparent 25%, transparent 75%, #e8e8e8 75%), linear-gradient(45deg, #e8e8e8 25%, transparent 25%, transparent 75%, #e8e8e8 75%)',
+  backgroundSize: '14px 14px', backgroundPosition: '0 0, 7px 7px',
+};
+
+/** `contain` previews the whole image (logos) instead of cropping it; `uploadOptions` go to storage.uploadImage. */
+export function ImageField({ label, value, onChange, hint, contain = false, uploadOptions }) {
   const ref = useRef();
   const { busy, upload } = useUploader();
   const pick = async (e) => {
     const f = e.target.files?.[0];
     e.target.value = '';
     if (!f) return;
-    const url = await upload(f);
+    const url = await upload(f, uploadOptions);
     if (url) onChange(url);
   };
   return (
@@ -136,7 +144,7 @@ export function ImageField({ label, value, onChange, hint }) {
       <input ref={ref} type="file" accept="image/*" hidden onChange={pick} />
       {value ? (
         <div className="group relative overflow-hidden rounded-xl border border-line-strong">
-          <img src={value} alt="" className="h-28 w-full object-cover" />
+          <img src={value} alt="" className={contain ? 'h-28 w-full object-contain p-3' : 'h-28 w-full object-cover'} style={contain ? CHECKER : undefined} />
           <div className="absolute inset-0 flex items-center justify-center gap-2 bg-night/50 opacity-0 transition group-hover:opacity-100 focus-within:opacity-100">
             <button type="button" className="btn-secondary btn-sm" onClick={() => ref.current.click()}>Replace</button>
             <button type="button" className="btn-secondary btn-sm" onClick={() => onChange('')} aria-label="Remove image"><X size={14} /></button>

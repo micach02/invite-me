@@ -6,6 +6,9 @@ import buildExtra from './templates-extra.js';
 import buildExtra2 from './templates-extra2.js';
 import buildExtra3 from './templates-extra3.js';
 import buildExtra4 from './templates-extra4.js';
+import buildExtra5 from './templates-extra5.js';
+import buildExtra6 from './templates-extra6.js';
+import buildExtra7 from './templates-extra7.js';
 
 const t = (id, name, occasion, style, mood, colorFamily, theme, blurb) => ({
   id, name, occasion, style, mood, colorFamily, blurb,
@@ -351,6 +354,6 @@ const BLANK = {
   blank: true,
 };
 
-export const TEMPLATES = [BLANK, ...BASE, ...buildExtra(t), ...buildExtra2(t), ...buildExtra3(t), ...buildExtra4(t)];
+export const TEMPLATES = [BLANK, ...BASE, ...buildExtra(t), ...buildExtra2(t), ...buildExtra3(t), ...buildExtra4(t), ...buildExtra5(t), ...buildExtra6(t), ...buildExtra7(t)];
 
 export const templateById = (id) => TEMPLATES.find((tpl) => tpl.id === id) ?? TEMPLATES[0];

@@ -204,8 +204,20 @@
 .inv-choice input:focus-visible + span { outline: 2px solid var(--inv-accent); outline-offset: 2px; }
 .inv-thanks { text-align: center; padding: 2rem 0; }
 
-.inv-footer { padding: 2.5rem 1.5rem 3rem; font-size: .8em; opacity: .7; text-align: center; }
+.inv-footer { padding: 2.5rem 1.5rem 3rem; font-size: .8em; text-align: center; }
+.inv-footer-text { opacity: .7; }
 .inv-footer a { color: var(--inv-accent); }
+
+/* ---------- host logo (cover and/or footer) ----------
+   Sized by height so the size slider behaves the same for square crests and wide wordmarks; the width cap keeps
+   wordmarks inside the frame. inline-block + text-align lets each layout's own alignment decide left vs centre. */
+.inv-logo { line-height: 0; margin-bottom: 1.25em; }
+.inv-logo img {
+  display: inline-block; vertical-align: top; width: auto; height: calc(4.5em * var(--inv-logo, 1));
+  max-width: min(calc(13em * var(--inv-logo, 1)), 72cqw); object-fit: contain;
+}
+.inv-cover.magazine .inv-logo { text-align: center; margin: .9em 0 0; }
+.inv-footer .inv-logo { margin-bottom: 1em; }
 
 @media (prefers-reduced-motion: reduce) {
   .inv *, .inv *::before, .inv *::after { animation: none !important; transition: none !important; }

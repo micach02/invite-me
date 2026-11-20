@@ -25,8 +25,9 @@ export default function SaveTemplateModal({ open, onClose, config }) {
     if (!clean) return;
     setBusy(true);
     try {
+      // The logo belongs to this invitation, not the design, so its size/placement stay out of the saved template.
       // eslint-disable-next-line no-unused-vars
-      const { templateId, ...theme } = config.theme;
+      const { templateId, logoSize, logoPlacement, ...theme } = config.theme;
       await saveTemplate({
         name: clean, occasion: config.meta?.occasion ?? base?.occasion ?? 'wedding', baseId,
         style: base?.style, mood: base?.mood, colorFamily: base?.colorFamily, theme,

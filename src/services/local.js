@@ -205,8 +205,8 @@ export const library = {
 };
 
 export const storage = {
-  async uploadImage(file) {
-    const blob = await compressImage(file, 1400, 0.78);
+  async uploadImage(file, _userId, { maxDim = 1400, keepAlpha = false } = {}) {
+    const blob = await compressImage(file, maxDim, 0.78, { keepAlpha });
     return blobToDataUrl(blob);
   },
 };

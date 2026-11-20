@@ -1,8 +1,15 @@
-/** Downscale + re-encode an image client-side to keep uploads (and demo storage) small. */
-export function compressImage(file, maxDim = 1600, quality = 0.82) {
+/** Formats that can carry transparency, which a JPEG re-encode would flatten onto black. */
+const ALPHA_TYPES = ['image/png', 'image/webp', 'image/avif'];
+
+/**
+ * Downscale + re-encode an image client-side to keep uploads (and demo storage) small.
+ * `keepAlpha` (logos) re-encodes transparent formats as WebP — or PNG where the browser can't write WebP — instead of JPEG.
+ */
+export function compressImage(file, maxDim = 1600, quality = 0.82, { keepAlpha = false } = {}) {
   return new Promise((resolve, reject) => {
     if (!file.type.startsWith('image/')) return reject(new Error('Please choose an image file.'));
     if (file.type === 'image/svg+xml' || file.type === 'image/gif') return resolve(file);
+    const alpha = keepAlpha && ALPHA_TYPES.includes(file.type);
     const img = new Image();
     const src = URL.createObjectURL(file);
     img.onload = () => {
@@ -12,7 +19,7 @@ export function compressImage(file, maxDim = 1600, quality = 0.82) {
       canvas.height = Math.round(img.height * scale);
       canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
       URL.revokeObjectURL(src);
-      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Could not process image.'))), 'image/jpeg', quality);
+      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Could not process image.'))), alpha ? 'image/webp' : 'image/jpeg', alpha ? 0.9 : quality);
     };
     img.onerror = () => {
       URL.revokeObjectURL(src);

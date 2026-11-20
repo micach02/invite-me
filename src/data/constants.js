@@ -39,12 +39,13 @@ export const DESIGN_STYLES = [
   'Vintage', 'Art Deco', 'Bohemian', 'Botanical', 'Tropical', 'Futuristic', 'Retro', 'Coastal', 'Gothic', 'Editorial',
   'Neo-Brutalist', 'Watercolor', 'Scandinavian', 'Cottagecore', 'Mid-Century', 'Maximalist', 'Industrial', 'Zen',
   'Modern Farmhouse', 'Japandi', 'Mediterranean',
+  'Celestial', 'Old Hollywood', 'Fiesta', 'Cathedral', 'Garden Party', 'Letterpress',
 ];
 export const MOODS = [
   'Romantic', 'Festive', 'Whimsical', 'Professional', 'Serene', 'Glamorous',
   'Nostalgic', 'Cozy', 'Dreamy', 'Bold', 'Magical', 'Spiritual', 'Energetic', 'Chic', 'Adventurous',
   'Joyful', 'Sophisticated', 'Cinematic', 'Intimate', 'Mysterious', 'Regal', 'Tender', 'Rebellious',
-  'Welcoming', 'Grateful',
+  'Welcoming', 'Grateful', 'Heartfelt', 'Radiant', 'Lively',
 ];
 export const COLOR_FAMILIES = [
   { id: 'green', label: 'Green', hex: '#455C50' },
@@ -78,6 +79,10 @@ export const HEADING_FONTS = [
   { value: 'DM Serif Display', label: 'DM Serif Display — Mid-century serif' },
   { value: 'Josefin Sans', label: 'Josefin Sans — Geometric Scandinavian' },
   { value: 'Space Mono', label: 'Space Mono — Industrial monospace' },
+  { value: 'Limelight', label: 'Limelight — Old Hollywood deco' },
+  { value: 'Italiana', label: 'Italiana — Fine fashion serif' },
+  { value: 'Shrikhand', label: 'Shrikhand — Bold retro italic' },
+  { value: 'Caveat', label: 'Caveat — Handwritten' },
 ];
 
 export const BODY_FONTS = [
@@ -111,6 +116,17 @@ export const DECOR_OPTIONS = [
   { value: 'fireflies', label: 'Fireflies ✦ animated' },
   { value: 'fireworks', label: 'Fireworks ✦ animated' },
   { value: 'memphis', label: 'Memphis shapes ✦ animated' },
+  { value: 'butterflies', label: 'Butterflies ✦ animated' },
+  { value: 'streamers', label: 'Party streamers ✦ animated' },
+  { value: 'doves', label: 'Rising doves ✦ animated' },
+  { value: 'notes', label: 'Music notes ✦ animated' },
+  { value: 'dandelions', label: 'Dandelion seeds ✦ animated' },
+  { value: 'foil', label: 'Foil flakes ✦ animated' },
+  { value: 'clouds', label: 'Drifting clouds ✦ animated' },
+  { value: 'planes', label: 'Paper planes ✦ animated' },
+  { value: 'shooting-stars', label: 'Shooting stars ✦ animated' },
+  { value: 'bokeh', label: 'Bokeh lights ✦ animated' },
+  { value: 'fairy-lights', label: 'Fairy lights ✦ animated' },
 ];
 
 export const COVER_LAYOUTS = [
@@ -132,19 +148,39 @@ export const COVER_LAYOUTS = [
   { value: 'brutal', label: 'Neo-brutalist' },
   { value: 'house', label: 'Little house' },
   { value: 'doorway', label: 'Front door' },
+  { value: 'bunting', label: 'Bunting flags' },
+  { value: 'marquee', label: 'Marquee lights' },
+  { value: 'chapel', label: 'Chapel window' },
+  { value: 'celestial', label: 'Moon & orbits' },
+  { value: 'envelope', label: 'Envelope & wax seal' },
+  { value: 'curtain', label: 'Theatre curtains' },
+  { value: 'wreath', label: 'Botanical wreath' },
+  { value: 'sunburst', label: 'Sunburst' },
+  { value: 'vinyl', label: 'Vinyl record' },
+  { value: 'letterboard', label: 'Letter board' },
+  { value: 'cake', label: 'Tiered cake' },
 ];
 
+/** `fx: true` marks effects that use the theme's effect colour (the editor shows the colour picker for those). */
 export const COVER_EFFECTS = [
   { value: 'none', label: 'None' },
-  { value: 'aurora', label: 'Aurora glow' },
-  { value: 'gradient', label: 'Shifting gradient' },
+  { value: 'aurora', label: 'Aurora glow', fx: true },
+  { value: 'gradient', label: 'Shifting gradient', fx: true },
   { value: 'shine', label: 'Light sweep' },
-  { value: 'spotlight', label: 'Roaming spotlight' },
-  { value: 'waves', label: 'Rolling waves' },
+  { value: 'spotlight', label: 'Roaming spotlight', fx: true },
+  { value: 'waves', label: 'Rolling waves', fx: true },
   { value: 'shimmer', label: 'Shimmering title' },
-  { value: 'watercolor', label: 'Watercolor wash' },
+  { value: 'watercolor', label: 'Watercolor wash', fx: true },
   { value: 'grain', label: 'Film grain' },
   { value: 'kenburns', label: 'Slow photo zoom (needs cover photo)' },
+  { value: 'ripple', label: 'Ripples', fx: true },
+  { value: 'rays', label: 'Light rays', fx: true },
+  { value: 'leaks', label: 'Film light leaks', fx: true },
+  { value: 'holo', label: 'Holographic sheen' },
+  { value: 'blobs', label: 'Liquid blobs', fx: true },
+  { value: 'warp', label: 'Warp-speed stars' },
+  { value: 'rain', label: 'Gentle rain' },
+  { value: 'burst', label: 'Confetti burst', fx: true },
 ];
 
 export const TITLE_ANIMS = [
@@ -154,13 +190,26 @@ export const TITLE_ANIMS = [
   { value: 'blur', label: 'Blur in' },
   { value: 'typewriter', label: 'Typewriter' },
   { value: 'flip', label: '3D flip' },
+  { value: 'drop', label: 'Letters drop' },
+  { value: 'wave', label: 'Letter wave (keeps moving)' },
+  { value: 'pop', label: 'Words pop' },
+  { value: 'wipe', label: 'Ink wipe' },
+  { value: 'tracking', label: 'Tracking in' },
+  { value: 'glow', label: 'Glow (keeps breathing)' },
+  { value: 'glitch', label: 'Glitch' },
 ];
 
 export const REVEALS = [
   { value: 'fade-up', label: 'Fade up' },
   { value: 'zoom', label: 'Zoom in' },
-  { value: 'slide', label: 'Slide in' },
+  { value: 'slide', label: 'Slide in from left' },
+  { value: 'slide-right', label: 'Slide in from right' },
   { value: 'blur', label: 'Blur in' },
+  { value: 'flip', label: '3D flip up' },
+  { value: 'tilt', label: 'Tilt in' },
+  { value: 'wipe', label: 'Wipe up' },
+  { value: 'drop', label: 'Drop down' },
+  { value: 'settle', label: 'Settle (zoom out)' },
 ];
 
 /** The order invitation sections appear in (guests scroll top to bottom). The editor lets people rearrange it. */

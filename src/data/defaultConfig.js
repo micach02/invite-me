@@ -135,12 +135,15 @@ export function createDefaultConfig(occasionId = 'wedding', templateId) {
       address: sample.venue?.address ?? '123 Rosewood Avenue, Quezon City, Metro Manila',
       mapUrl: '',
     },
-    images: { cover: '', background: '', primary: '', secondary: '', gallery: [] },
+    // `logo` is sized and placed by theme.logoSize (multiplier, default 1) and theme.logoPlacement ('cover' | 'footer' | 'both').
+    images: { cover: '', background: '', primary: '', secondary: '', logo: '', gallery: [] },
     theme: { ...tpl.theme, templateId: tpl.id },
     sections: {
       order: [...SECTION_ORDER],
       story: { enabled: true, title: sample.storyTitle ?? (occasionId === 'corporate' ? 'About the Event' : 'Our Story'), text: sample.story },
       countdown: { enabled: true, title: 'Counting down' },
+      // Hosts, sponsors and acknowledgments (content lives in `host`). Off hides the section but keeps the names.
+      hosts: { enabled: true },
       program: {
         enabled: true, title: 'Program',
         items: sample.program.map(([time, title]) => ({ id: uid(), time, title, description: '' })),
@@ -196,6 +199,7 @@ function blankOut(c) {
       order: sec.order,
       story: off(sec.story, { text: '' }),
       countdown: off(sec.countdown),
+      hosts: sec.hosts, // stays on: it only appears once names are typed in
       program: off(sec.program, { items: [] }),
       entourage: off(sec.entourage, { groups: [] }),
       gallery: off(sec.gallery),

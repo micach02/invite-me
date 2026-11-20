@@ -1,0 +1,140 @@
+/* ------------------------------------------------------------------
+   Batch 7: five cover layouts — bunting flags, marquee lights, a stained-glass chapel window,
+   a moon with orbits, an envelope with a wax seal — and three animated decorations
+   (butterflies, streamers, doves).
+------------------------------------------------------------------- */
+
+/* ---------- BUNTING FLAGS ----------
+   The string is a stretched SVG curve; each flag sits on it at top = 4u(1-u) × sag and turns to follow its slope. */
+.inv-cover.bunting { padding-top: 8.5em; }
+.inv-bunting { position: absolute; inset: 0 0 auto; height: 8em; pointer-events: none; z-index: 1; }
+.inv-bunting svg { position: absolute; left: 0; top: .4em; width: 100%; height: 3.2em; overflow: visible; }
+.inv-bunting path { fill: none; stroke: color-mix(in srgb, var(--inv-cover-text) 55%, transparent); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.inv-flag {
+  position: absolute; width: min(2.5em, 7.2cqw); aspect-ratio: 4 / 5; translate: -50% 0; transform-origin: 50% 0;
+  transform: rotate(var(--r, 0deg)); animation: inv-flag 3.4s ease-in-out infinite alternate;
+}
+.inv-flag::before { content: ''; position: absolute; inset: 0; clip-path: polygon(0 0, 100% 0, 50% 100%); background: var(--c); }
+.inv-flag.dots::before {
+  background: radial-gradient(circle, color-mix(in srgb, #fff 60%, transparent) 0 .1em, transparent .12em) 0 0 / .5em .5em, var(--c);
+}
+@keyframes inv-flag { from { transform: rotate(calc(var(--r, 0deg) - 5deg)); } to { transform: rotate(calc(var(--r, 0deg) + 5deg)); } }
+
+/* ---------- MARQUEE LIGHTS ----------
+   Two bulb rings on the sign's border (masked to the padding box): a dim one, and a bright one whose
+   conic mask rotates so a pair of lit arcs chases round the sign. */
+@property --inv-chase { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.inv-marquee-sign {
+  --bulb: 1.15em;
+  position: relative; z-index: 2; width: min(100%, 30em); padding: calc(var(--bulb) + 1.7em) 1.5em calc(var(--bulb) + 1.6em);
+  border-radius: 1.1em; background: color-mix(in srgb, var(--inv-cover-from) 86%, #000);
+  box-shadow: 0 1.6em 3em -1.2em rgba(0, 0, 0, .55), inset 0 0 0 .18em color-mix(in srgb, var(--inv-accent) 70%, transparent);
+}
+.inv-marquee-sign::before, .inv-marquee-sign::after {
+  content: ''; position: absolute; inset: .4em; padding: var(--bulb); border-radius: .8em; pointer-events: none;
+  background: radial-gradient(circle, #fff 0 .09em, var(--bulb-c) .15em, transparent .3em) 0 0 / var(--bulb) var(--bulb) space;
+}
+.inv-marquee-sign::before {
+  --bulb-c: color-mix(in srgb, var(--inv-accent) 50%, transparent); opacity: .7;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
+}
+.inv-marquee-sign::after {
+  --bulb-c: var(--inv-accent);
+  filter: drop-shadow(0 0 .3em var(--inv-accent));
+  -webkit-mask: conic-gradient(from var(--inv-chase), #000 0 22%, transparent 0 50%, #000 0 72%, transparent 0), linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: source-in, xor;
+  mask: conic-gradient(from var(--inv-chase), #000 0 22%, transparent 0 50%, #000 0 72%, transparent 0), linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: intersect, exclude;
+  animation: inv-chase 3.2s linear infinite;
+}
+@keyframes inv-chase { to { --inv-chase: 360deg; } }
+.inv-marquee-sign .inv-eyebrow { letter-spacing: .34em; }
+.inv-cover .inv-marquee-sign .inv-cover-title {
+  font-size: calc(clamp(2.2rem, 12cqw, 4.4rem) * var(--inv-hscale) * var(--inv-fit, 1));
+  text-shadow: 0 0 .35em color-mix(in srgb, var(--inv-accent) 55%, transparent);
+}
+.inv-marquee-sign .inv-cover-meta { margin-top: 1em; }
+.inv-marquee-posts { position: relative; z-index: 1; display: flex; justify-content: space-between; width: min(62%, 18em); height: 2.8em; }
+.inv-marquee-posts i { width: .55em; border-radius: 0 0 .25em .25em; background: linear-gradient(color-mix(in srgb, var(--inv-accent) 65%, #000), transparent); }
+
+/* ---------- CHAPEL WINDOW ---------- */
+.inv-chapel { position: relative; width: min(40cqw, 9.5em); margin: 0 auto 1.3em; }
+.inv-chapel::before {
+  content: ''; position: absolute; left: 50%; top: 18%; width: 300%; aspect-ratio: 1; translate: -50% 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--inv-accent) 32%, transparent), transparent);
+  animation: inv-chapel-glow 6s ease-in-out infinite alternate;
+}
+@keyframes inv-chapel-glow { to { opacity: .45; scale: .9; } }
+.inv-chapel svg { display: block; width: 100%; height: auto; overflow: visible; }
+/* Panes sit over a warm backlight, so lowering their opacity brightens them like sun through glass. */
+.inv-chapel .backlight { fill: color-mix(in srgb, #fff 82%, var(--inv-accent)); }
+.inv-chapel .pane { opacity: .8; animation: inv-pane 5.5s ease-in-out infinite; animation-delay: calc(var(--i) * -.7s); }
+.inv-chapel .g1 { fill: var(--inv-accent); }
+.inv-chapel .g2 { fill: var(--inv-fx); }
+.inv-chapel .g3 { fill: color-mix(in srgb, var(--inv-accent) 50%, var(--inv-fx)); }
+.inv-chapel .g4 { fill: color-mix(in srgb, var(--inv-fx) 55%, #fff); }
+.inv-chapel .lead { fill: none; stroke: color-mix(in srgb, var(--inv-cover-from) 65%, #000); stroke-width: 2.4; stroke-linejoin: round; }
+.inv-chapel .frame { fill: none; stroke: var(--inv-accent); stroke-width: 5; }
+.inv-chapel .sill { fill: var(--inv-accent); }
+@keyframes inv-pane { 50% { opacity: .55; } }
+.inv-chapel svg { filter: drop-shadow(0 0 .8em color-mix(in srgb, var(--inv-accent) 45%, transparent)); }
+
+/* ---------- CELESTIAL: moon and orbits ---------- */
+.inv-orbits { position: absolute; left: 50%; top: 50%; width: min(118cqw, 46em); aspect-ratio: 1; translate: -50% -50%; pointer-events: none; z-index: 0; }
+.inv-orbits .rings { position: absolute; inset: 0; transform: rotate(-14deg) scaleY(.34); }
+.inv-orbits .rings i { position: absolute; border-radius: 50%; border: 1.5px dashed color-mix(in srgb, var(--inv-cover-text) 38%, transparent); animation: inv-spin 110s linear infinite; }
+.inv-orbits .rings i:nth-child(1) { inset: 0; }
+.inv-orbits .rings i:nth-child(2) { inset: 13%; border: 2px dotted color-mix(in srgb, var(--inv-accent) 60%, transparent); animation-duration: 80s; animation-direction: reverse; }
+.inv-orbits .rings i:nth-child(3) { inset: 26%; animation-duration: 60s; }
+.inv-planet {
+  position: absolute; width: var(--s); aspect-ratio: 1; border-radius: 50%; translate: -50% -50%;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, #fff 65%, var(--c)), var(--c) 62%);
+  box-shadow: 0 0 .8em color-mix(in srgb, var(--c) 60%, transparent); animation: inv-planet 4s ease-in-out infinite alternate;
+}
+@keyframes inv-planet { to { scale: 1.2; } }
+.inv-moon { width: min(18cqw, 4.4em); margin: 0 auto 1em; color: var(--inv-accent); filter: drop-shadow(0 0 .9em color-mix(in srgb, var(--inv-accent) 70%, transparent)); }
+.inv-moon svg { display: block; width: 100%; height: auto; animation: inv-moon 7s ease-in-out infinite alternate; }
+@keyframes inv-moon { from { transform: translateY(-.2em) rotate(-8deg); } to { transform: translateY(.2em) rotate(4deg); } }
+
+/* ---------- ENVELOPE ----------
+   back panel + open flap → card (rises out) → front pocket with folds, wax seal and the date "address".
+   The inner wrapper clips the bottom edge so the card never shows below the envelope while it rises. */
+.inv-env {
+  --env: color-mix(in srgb, var(--inv-accent) 16%, var(--inv-bg));
+  --env-back: color-mix(in srgb, var(--inv-accent) 30%, var(--inv-bg));
+  position: relative; z-index: 2; width: min(100%, 23em); filter: drop-shadow(0 1.4em 1.6em rgba(0, 0, 0, .3));
+}
+.inv-env-inner { position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 1.5em; clip-path: inset(-30em -30em 0 -30em); }
+.inv-env-back { position: absolute; left: 0; right: 0; bottom: 0; height: 9.5em; background: var(--env-back); border-radius: .2em .2em .5em .5em; }
+.inv-env-back::before { content: ''; position: absolute; left: 0; right: 0; bottom: 100%; height: 5em; background: var(--env-back); clip-path: polygon(0 100%, 50% 0, 100% 100%); filter: brightness(.95); }
+.inv-env-card {
+  position: relative; z-index: 1; width: 88%; padding: 2.2em 1.3em 7.4em; margin-bottom: -6.6em; text-align: center;
+  color: var(--inv-text); background: var(--inv-bg); border-radius: .3em; box-shadow: 0 .3em 1em -.3em rgba(0, 0, 0, .25);
+  animation: inv-env-rise 1.5s cubic-bezier(.2, .8, .2, 1) both .3s;
+}
+@keyframes inv-env-rise { from { transform: translateY(45%); } }
+.inv-cover .inv-env-card .inv-eyebrow { color: var(--inv-accent); opacity: 1; }
+.inv-cover .inv-env-card .inv-cover-title { color: var(--inv-text); text-wrap: balance; font-size: calc(clamp(2rem, 11cqw, 3.5rem) * var(--inv-hscale) * var(--inv-fit, 1)); }
+.inv-env-front { position: relative; z-index: 2; width: 100%; height: 9.5em; color: var(--inv-text); }
+.inv-env-front svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.inv-env-front .side { fill: var(--env); }
+.inv-env-front .bottom { fill: color-mix(in srgb, var(--env) 93%, #000); }
+.inv-env-front .fold { fill: none; stroke: color-mix(in srgb, var(--inv-text) 16%, transparent); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.inv-env-seal {
+  position: absolute; left: 50%; top: 2.3em; translate: -50% 0; width: 3.6em; aspect-ratio: 1; display: grid; place-items: center;
+  border-radius: 47% 53% 50% 50% / 52% 48% 52% 48%; color: var(--inv-on-accent); font: 600 1.05em var(--inv-heading);
+  background: radial-gradient(circle at 38% 32%, color-mix(in srgb, var(--inv-accent) 72%, #fff), var(--inv-accent) 55%, color-mix(in srgb, var(--inv-accent) 72%, #000));
+  box-shadow: 0 .25em .5em -.1em rgba(0, 0, 0, .35), inset 0 0 0 .3em color-mix(in srgb, var(--inv-accent) 82%, #000);
+  animation: inv-seal .7s cubic-bezier(.3, 1.6, .5, 1) both 1.5s;
+}
+@keyframes inv-seal { from { scale: 1.7; opacity: 0; } }
+.inv-env-meta { position: absolute; left: 1em; right: 1em; bottom: .8em; font-size: .7em; letter-spacing: .16em; text-transform: uppercase; line-height: 1.5; text-align: center; }
+.inv-env-meta span { display: block; }
+
+/* ---------- animated decorations ---------- */
+.inv-flap { animation: inv-flap .3s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+@keyframes inv-flap { to { transform: scaleX(.45); } }
+.inv-dove { filter: drop-shadow(0 .06rem .12rem rgba(0, 0, 0, .3)); }
+.inv-dove-wing { animation: inv-wing .55s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes inv-wing { to { transform: scaleY(.3); } }

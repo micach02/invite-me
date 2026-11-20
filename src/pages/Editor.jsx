@@ -71,6 +71,9 @@ function EditorWorkspace({ initial }) {
   const requestFocus = useCallback((r) => { setTab('edit'); setFocusReq({ ...r, n: Date.now() }); }, []);
   const onPreviewClick = (e) => {
     if (e.target.closest('a, button, input, select, textarea, summary, label, iframe')) return;
+    // Elements that own a settings panel of their own (the logo) win over the section they sit in.
+    const panel = e.target.closest('[data-panel]')?.getAttribute('data-panel');
+    if (panel) return requestFocus({ panel });
     const sec = e.target.closest('[data-sec]')?.getAttribute('data-sec');
     if (sec) requestFocus({ sec });
   };

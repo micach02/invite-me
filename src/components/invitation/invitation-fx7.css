@@ -1,0 +1,146 @@
+/* ------------------------------------------------------------------
+   Batch 9: eight cover effects (ripples, light rays, film light leaks, holographic sheen, liquid blobs,
+   warp-speed stars, gentle rain, confetti burst) and seven title animations (drop, wave, pop, ink wipe,
+   tracking, glow, glitch). Particles rest invisible (opacity 0) so reduced motion shows a clean cover.
+------------------------------------------------------------------- */
+
+/* ================================================================ cover effects */
+
+/* ripples: rings spreading from the centre */
+.inv-fx.ripple i {
+  position: absolute; left: 50%; top: 50%; width: 150cqw; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; opacity: 0;
+  border: 2px solid color-mix(in srgb, var(--inv-fx) 65%, transparent);
+  box-shadow: inset 0 0 2.5em color-mix(in srgb, var(--inv-fx) 22%, transparent);
+  animation: inv-ripple 9s cubic-bezier(.2, .6, .4, 1) infinite;
+}
+.inv-fx.ripple i:nth-child(2) { animation-delay: -2.25s; }
+.inv-fx.ripple i:nth-child(3) { animation-delay: -4.5s; }
+.inv-fx.ripple i:nth-child(4) { animation-delay: -6.75s; }
+@keyframes inv-ripple { from { scale: .04; opacity: .9; } to { scale: 1; opacity: 0; } }
+
+/* light rays falling from the top-left corner, swaying slowly */
+.inv-fx.rays i {
+  --ray: color-mix(in srgb, color-mix(in srgb, var(--inv-fx) 35%, #fff) 20%, transparent);
+  position: absolute; top: -25%; left: -25%; width: 150%; height: 160%; transform-origin: 0 0; opacity: .8;
+  background: repeating-conic-gradient(from 95deg at 0 0, var(--ray) 0deg 3.5deg, transparent 3.5deg 10deg);
+  -webkit-mask: radial-gradient(farthest-side at 0 0, #000 15%, transparent 88%); mask: radial-gradient(farthest-side at 0 0, #000 15%, transparent 88%);
+  animation: inv-rays-sway 13s ease-in-out infinite alternate;
+}
+.inv-fx.rays i:nth-child(2) { background: repeating-conic-gradient(from 101deg at 0 0, var(--ray) 0deg 2deg, transparent 2deg 13deg); animation-duration: 19s; animation-delay: -7s; opacity: .6; }
+@keyframes inv-rays-sway { from { rotate: -5deg; opacity: .45; } to { rotate: 4deg; opacity: 1; } }
+
+/* film light leaks: warm glows bleeding in from the edges */
+.inv-fx.leaks i { position: absolute; width: 95%; height: 70%; border-radius: 50%; filter: blur(clamp(24px, 9cqw, 48px)); mix-blend-mode: screen; opacity: 0; animation: inv-leak 11s ease-in-out infinite; }
+.inv-fx.leaks i:nth-child(1) { left: -40%; top: -18%; background: radial-gradient(closest-side, #FF8A3D, transparent); }
+.inv-fx.leaks i:nth-child(2) { right: -40%; top: 26%; background: radial-gradient(closest-side, var(--inv-fx), transparent); animation-delay: -4s; animation-duration: 13s; }
+.inv-fx.leaks i:nth-child(3) { left: -22%; bottom: -28%; background: radial-gradient(closest-side, #FF4F7B, transparent); animation-delay: -7.5s; }
+@keyframes inv-leak { 0%, 100% { opacity: 0; transform: translateX(-8%) scale(.9); } 40% { opacity: .8; } 65% { opacity: .5; transform: translateX(12%) scale(1.15); } }
+
+/* holographic sheen: a turning iridescent wash plus a sweeping highlight band */
+.inv-fx.holo i:nth-child(1) {
+  position: absolute; inset: -50%; opacity: .5; mix-blend-mode: overlay; filter: blur(28px) saturate(1.5);
+  background: conic-gradient(from 0deg, #FF9AD5, #A9F0FF, #C3FFB0, #FFF3A6, #FFB3A7, #D0B3FF, #FF9AD5);
+  animation: inv-spin 18s linear infinite;
+}
+.inv-fx.holo i:nth-child(2) {
+  position: absolute; inset: 0; background-size: 260% 100%;
+  background-image: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, .28) 44%, rgba(255, 190, 240, .22) 50%, rgba(160, 235, 255, .26) 56%, transparent 68%);
+  animation: inv-holo-sweep 7s ease-in-out infinite alternate;
+}
+@keyframes inv-holo-sweep { from { background-position: 100% 0; } to { background-position: 0 0; } }
+
+/* liquid blobs: morphing shapes drifting about */
+.inv-fx.blobs i {
+  position: absolute; width: 46%; aspect-ratio: 1; opacity: .5; background: var(--inv-accent); filter: blur(2px);
+  border-radius: 42% 58% 63% 37% / 45% 38% 62% 55%;
+  animation: inv-blob 14s ease-in-out infinite alternate, inv-drift 22s ease-in-out infinite alternate;
+}
+.inv-fx.blobs i:nth-child(1) { top: -10%; left: -14%; }
+.inv-fx.blobs i:nth-child(2) { right: -16%; top: 30%; width: 54%; background: var(--inv-fx); animation-duration: 17s, 26s; animation-delay: -5s, -9s; }
+.inv-fx.blobs i:nth-child(3) { left: 8%; bottom: -16%; width: 40%; background: color-mix(in srgb, var(--inv-accent) 50%, var(--inv-fx)); animation-duration: 12s, 19s; animation-delay: -3s, -12s; }
+@keyframes inv-blob {
+  0% { border-radius: 42% 58% 63% 37% / 45% 38% 62% 55%; }
+  50% { border-radius: 63% 37% 41% 59% / 58% 62% 38% 42%; }
+  100% { border-radius: 36% 64% 52% 48% / 38% 51% 49% 62%; rotate: 40deg; }
+}
+
+/* warp-speed stars streaming out from the centre (each <i> is turned to its own heading) */
+.inv-fx.warp i {
+  position: absolute; left: 50%; top: 50%; width: 3em; height: 1.5px; transform-origin: 0 50%; opacity: 0;
+  background: linear-gradient(90deg, transparent, var(--inv-cover-text)); animation: inv-warp linear infinite;
+}
+@keyframes inv-warp { from { transform: translateX(.8em) scaleX(.15); opacity: 0; } 25% { opacity: .9; } to { transform: translateX(72cqw) scaleX(1.5); opacity: 0; } }
+
+/* gentle rain falling at a slant */
+.inv-fx.rain i {
+  position: absolute; top: -12%; width: 1px; rotate: 12deg; opacity: 0;
+  background: linear-gradient(transparent, color-mix(in srgb, var(--inv-cover-text) 60%, transparent));
+  animation: inv-rain linear infinite;
+}
+@keyframes inv-rain { from { transform: translateY(0); opacity: .9; } to { transform: translateY(75em); opacity: .9; } }
+
+/* confetti burst: a cannon pop from below the title every 9s — sideways motion on the span, rise-and-fall on the piece */
+.inv-fx.burst span { position: absolute; left: 50%; top: 62%; opacity: 0; animation: inv-burst-x 9s cubic-bezier(.12, .62, .3, 1) infinite var(--dl); }
+.inv-fx.burst i { display: block; height: .32em; background: var(--c); animation: inv-burst-y 9s infinite var(--dl); }
+@keyframes inv-burst-x {
+  0% { transform: translateX(0); opacity: 0; }
+  1% { opacity: 1; }
+  30% { transform: translateX(var(--dx)); opacity: 1; }
+  38%, 100% { transform: translateX(var(--dx)); opacity: 0; }
+}
+@keyframes inv-burst-y {
+  0% { transform: translateY(0) rotate(0); animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
+  11% { transform: translateY(var(--dy)) rotate(280deg); animation-timing-function: cubic-bezier(.5, 0, .9, .6); }
+  38%, 100% { transform: translateY(calc(var(--dy) * -.55)) rotate(700deg); }
+}
+
+/* ================================================================ title animations */
+
+/* letters drop in from above and bounce */
+.inv-letter.drop { animation: inv-drop .9s cubic-bezier(.3, 1.45, .55, 1) both; animation-delay: calc(var(--i) * 50ms + .25s); }
+@keyframes inv-drop { from { opacity: 0; transform: translateY(-1.1em) rotate(-6deg); } 40% { opacity: 1; } }
+
+/* letters rise in, then ripple in a wave forever */
+.inv-letter.wave {
+  animation: inv-letter .85s cubic-bezier(.2, .8, .2, 1) both, inv-wave-y 2.8s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 55ms + .25s), calc(var(--i) * 90ms + 1.5s);
+}
+@keyframes inv-wave-y { 0%, 55%, 100% { translate: 0 0; } 27% { translate: 0 -.13em; } }
+
+/* words spring in */
+.inv-pop { display: inline-block; animation: inv-pop .8s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: calc(var(--i) * .14s + .2s); }
+@keyframes inv-pop { from { opacity: 0; transform: scale(.3); } 60% { opacity: 1; } }
+
+/* ink wipe: revealed left to right (wide side insets keep script swashes uncut) */
+.t-wipe { animation: inv-wipe 1.6s cubic-bezier(.6, 0, .2, 1) both .2s; }
+@keyframes inv-wipe { from { clip-path: inset(-.3em 100% -.4em -.6em); } to { clip-path: inset(-.3em -.6em -.4em -.6em); } }
+
+/* tracking in: letters close up from wide spacing, sharpening as they land */
+.t-tracking { animation: inv-tracking 1.7s cubic-bezier(.2, .8, .2, 1) both .2s; }
+@keyframes inv-tracking { from { letter-spacing: .4em; opacity: 0; filter: blur(8px); } 45% { opacity: 1; } }
+
+/* glow: blooms in, then breathes softly */
+.t-glow { animation: inv-glow-in 1.6s ease-out both .2s, inv-glow-breathe 4s ease-in-out infinite 1.8s; }
+@keyframes inv-glow-in { from { opacity: 0; filter: blur(4px); text-shadow: 0 0 1.2em var(--inv-accent); } }
+@keyframes inv-glow-breathe {
+  0%, 100% { text-shadow: 0 0 .15em color-mix(in srgb, var(--inv-accent) 40%, transparent); }
+  50% { text-shadow: 0 0 .55em color-mix(in srgb, var(--inv-accent) 80%, transparent); }
+}
+
+/* glitch: red/cyan copies slice and jitter on arrival, then twitch every few seconds */
+.t-glitch { position: relative; animation: inv-blurin .6s both .1s; }
+.t-glitch::before, .t-glitch::after { content: attr(data-text); position: absolute; inset: 0; pointer-events: none; opacity: .85; clip-path: inset(0 0 100% 0); }
+.t-glitch::before { color: #FF2E63; animation: inv-glitch-a 5s steps(1) infinite .35s; }
+.t-glitch::after { color: #08D9D6; animation: inv-glitch-b 5s steps(1) infinite .35s; }
+@keyframes inv-glitch-a {
+  0% { transform: translate(-.06em, .02em); clip-path: inset(10% 0 60% 0); }
+  3% { transform: translate(.05em, -.03em); clip-path: inset(55% 0 20% 0); }
+  6% { transform: translate(-.03em, 0); clip-path: inset(30% 0 45% 0); }
+  9%, 100% { transform: none; clip-path: inset(0 0 100% 0); }
+}
+@keyframes inv-glitch-b {
+  0% { transform: translate(.06em, -.02em); clip-path: inset(60% 0 10% 0); }
+  3% { transform: translate(-.05em, .03em); clip-path: inset(20% 0 55% 0); }
+  6% { transform: translate(.03em, 0); clip-path: inset(45% 0 30% 0); }
+  9%, 100% { transform: none; clip-path: inset(0 0 100% 0); }
+}
